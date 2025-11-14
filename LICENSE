@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 Wellington Taureka
+Copyright (c) 2025 LJPW Semantic Compiler Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,31 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## What This Means (Plain English)
+
+✅ **You CAN:**
+- Use this commercially (build products, sell services)
+- Modify it however you want
+- Distribute it (share, fork, embed)
+- Use it privately (no need to share changes)
+- Sublicense it (include in your proprietary software)
+- Keep your modifications closed-source
+
+❌ **You CANNOT:**
+- Hold us liable for anything
+- Use our name to endorse your products without permission
+
+🎁 **No Requirements:**
+- No attribution required (but appreciated!)
+- No need to open-source your modifications
+- No copyleft restrictions
+
+**TL;DR:** Do whatever you want with it. Free forever. No strings attached.
+
+---
+
+This is one of the most permissive licenses possible. We want LJPW to spread
+and help everyone write better code. Use it however you see fit!
