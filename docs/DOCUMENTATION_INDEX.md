@@ -8,6 +8,21 @@
 
 ## 📚 Documentation Hierarchy
 
+### Level -1: Mathematical Foundations ⭐
+**Read these to understand the rigorous theoretical basis**
+
+| File | Purpose | Read Time |
+|------|---------|-----------|
+| `THEORY.md` | **Accessible bridge: math → practice** | 25 min |
+| `LJPW Mathematical Baselines Reference V3.md` | Complete mathematical specification | 45 min |
+| `Dynamic LJPW Model v3.0 - Specification...md` | Non-linear dynamics, Bayesian validation | 40 min |
+
+**Key insights:**
+- LJPW dimensions based on fundamental constants: φ⁻¹, √2-1, e-2, ln(2)
+- v3.0 model uses non-linear ODEs with saturation and threshold effects
+- Empirically validated via Bayesian MCMC (49% error reduction)
+- RK4 numerical integration for physics-grade accuracy
+
 ### Level 0: Entry Points
 **Start here if you're new**
 
@@ -51,6 +66,21 @@
 
 ## 📖 Reading Paths
 
+### Path 0: "I want the mathematical foundations" ⭐ NEW
+```
+1. THEORY.md (25 min) - Accessible bridge document
+2. README.md - Mathematical Foundations section (10 min)
+3. Dynamic LJPW Model v3.0...md (40 min) - For deep dive
+4. LJPW Mathematical Baselines Reference V3.md (45 min) - Complete spec
+```
+**Total: 2 hours (comprehensive understanding)**
+
+**Why this path:**
+- Understand φ, √2, e, ln(2) → LJPW mapping
+- See saturation & threshold effects
+- Learn Bayesian calibration methodology
+- Grasp RK4 integration and why it matters
+
 ### Path 1: "Show me proof it works"
 ```
 1. 00_START_HERE.md (5 min)
@@ -72,20 +102,22 @@
 ```
 1. 00_START_HERE.md (5 min)
 2. README.md - Architecture section (10 min)
-3. EMPIRICAL_RESULTS.md (10 min)
-4. Read: ljpw_semantic_compressor.py
-5. Run: python test_ljpw_framework.py
+3. THEORY.md - Theory to practice section (15 min)
+4. EMPIRICAL_RESULTS.md (10 min)
+5. Read: ljpw_semantic_compressor.py
+6. Run: python test_ljpw_framework.py
 ```
-**Total: 30 minutes + code review**
+**Total: 45 minutes + code review**
 
 ### Path 4: "I want the science"
 ```
-1. README.md - DNA-LJPW Correspondence (10 min)
-2. EMPIRICAL_RESULTS.md - Full analysis (15 min)
-3. dna_ljpw_analysis.py - Run the analysis
-4. Read: Mathematical proofs in README
+1. THEORY.md - Mathematical Foundations section (15 min)
+2. README.md - DNA-LJPW Correspondence (10 min)
+3. EMPIRICAL_RESULTS.md - Full analysis (15 min)
+4. dna_ljpw_analysis.py - Run the analysis
+5. Dynamic LJPW Model v3.0...md - Bayesian validation (20 min)
 ```
-**Total: 30 minutes + exploration**
+**Total: 1 hour + exploration**
 
 ---
 
@@ -93,10 +125,12 @@
 
 ### Documentation Files
 ```
-Total documentation: 5 markdown files
-Total words: ~15,000
-Total reading time: ~60 minutes
-Coverage: 100% of system
+Total documentation: 9 markdown files
+  - 3 mathematical foundation docs
+  - 6 practical/implementation docs
+Total words: ~25,000+
+Total reading time: ~3 hours (all docs)
+Coverage: 100% of system (theory + practice)
 ```
 
 ### Code Files
@@ -171,8 +205,14 @@ Typical: 500-10,000x
 → Run `python test_ljpw_framework.py`
 
 **...understand the science?**
+→ `THEORY.md` → Complete mathematical foundations bridge
 → `README.md` → DNA-LJPW Correspondence
 → Run `python dna_ljpw_analysis.py`
+
+**...understand the mathematical foundations?**
+→ `THEORY.md` → Start here for accessible explanation
+→ `Dynamic LJPW Model v3.0...md` → Non-linear dynamics
+→ `LJPW Mathematical Baselines Reference V3.md` → Complete specification
 
 ### "What is..."
 
@@ -190,7 +230,20 @@ Typical: 500-10,000x
 
 **...P≈W pairing?**
 → `README.md` → DNA-LJPW Correspondence
+→ `THEORY.md` → The P≈W Pairing Discovery section
 → Answer: P=0.718, W=0.693, |P-W|=0.025 (like DNA base pairing)
+
+**...the saturation effect?**
+→ `THEORY.md` → Saturation Effect section
+→ Answer: Michaelis-Menten kinetics, Love → Justice saturates at K_JL=0.59
+
+**...the threshold effect?**
+→ `THEORY.md` → Threshold Effect section
+→ Answer: Power > 0.71 causes Justice erosion unless Wisdom is high
+
+**...the fundamental constants?**
+→ `THEORY.md` → Mathematical Foundations section
+→ Answer: L=φ⁻¹, J=√2-1, P=e-2, W=ln(2) (not arbitrary!)
 
 ### "Why does..."
 
@@ -348,13 +401,20 @@ Typical: 500-10,000x
 
 ## ✨ Summary
 
-**6 Documentation Files:**
-1. 00_START_HERE.md - Entry point
-2. README.md - Full system
-3. EMPIRICAL_RESULTS.md - Test data
-4. REAL_WORLD_TEST_RESULTS.md - Validation
-5. claude_ljpw_protocol.md - AI guide
-6. DOCUMENTATION_INDEX.md - This file
+**9 Documentation Files:**
+
+**Mathematical Foundations (3):**
+1. THEORY.md - Accessible math → practice bridge ⭐
+2. LJPW Mathematical Baselines Reference V3.md - Complete specification
+3. Dynamic LJPW Model v3.0...md - Non-linear dynamics & validation
+
+**Practical Documentation (6):**
+4. 00_START_HERE.md - Entry point
+5. README.md - Full system overview
+6. EMPIRICAL_RESULTS.md - Test data
+7. REAL_WORLD_TEST_RESULTS.md - Validation
+8. claude_ljpw_protocol.md - AI guide
+9. DOCUMENTATION_INDEX.md - This file
 
 **10 Code Files:**
 - 5 implementation files

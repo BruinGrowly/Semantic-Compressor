@@ -60,17 +60,20 @@ AI context windows are limited. A large codebase (10 MB) requires millions of to
 ### The Solution
 LJPW Semantic Compression reduces codebases to their essential semantic properties:
 
-**Four Dimensions (inspired by DNA):**
-- **L** (Love) - Safety, error handling, validation
-- **J** (Justice) - Structure, types, documentation
-- **P** (Power) - Performance, algorithms, optimization
-- **W** (Wisdom) - Design, patterns, architecture
+**Four Dimensions (grounded in fundamental mathematics):**
+- **L** (Love) - Safety, error handling, validation — φ⁻¹ ≈ 0.618 (Golden ratio)
+- **J** (Justice) - Structure, types, documentation — √2-1 ≈ 0.414 (Pythagorean ratio)
+- **P** (Power) - Performance, algorithms, optimization — e-2 ≈ 0.718 (Exponential base)
+- **W** (Wisdom) - Design, patterns, architecture — ln(2) ≈ 0.693 (Information unit)
+
+**These aren't arbitrary values.** They're fundamental mathematical constants appearing in nature, physics, and information theory.
 
 **Result:**
 - 500-10,000x compression ratios
 - Lossless semantic preservation
 - AI can reason in compressed space
 - Effective context window: 100M+ tokens
+- Mathematically rigorous foundation ([see theory](docs/THEORY.md))
 
 ---
 
@@ -134,38 +137,60 @@ python ljpw_standalone.py analyze ./project > compressed.txt
 
 ## 💡 How It Works
 
-### The Science
+### The Mathematical Foundation
 
-LJPW is inspired by DNA's quaternary encoding (A, T, G, C):
+**LJPW v3.0 is a rigorously validated mathematical framework**, not just a heuristic tool.
 
-**DNA → LJPW Correspondence:**
+**Natural Equilibrium** — The optimal balance point derived from fundamental constants:
 ```
-DNA: 4 bases (A, T, G, C)
-LJPW: 4 dimensions (L, J, P, W)
-
-DNA: Complementary pairing (A-T, G-C)
-LJPW: P≈W pairing (discovered empirically!)
-
-DNA: 98% entropy efficiency
-LJPW: 98.5% entropy efficiency
-
-DNA: Encodes life
-LJPW: Encodes software quality
+L = φ⁻¹ = 0.618034  (Golden ratio inverse - optimal resource distribution)
+J = √2-1 = 0.414214 (Pythagorean ratio - structural constraints)
+P = e-2  = 0.718282 (Exponential base - channel capacity)
+W = ln2  = 0.693147 (Natural log of 2 - information unit)
 ```
 
-**Key Discovery:**
-Power (P=0.718) and Wisdom (W=0.693) pair naturally, with only 0.025 difference - like DNA's complementary base pairing. This wasn't designed; it emerged from the mathematics.
+**Key Discoveries:**
 
-### The Process
+1. **P≈W Pairing:** Power (0.718) and Wisdom (0.693) differ by only 0.025 (3.6%) — like DNA's complementary base pairing (A-T, G-C). This emerged from the mathematics, not by design.
+
+2. **Non-Linear Dynamics:** The v3.0 model includes:
+   - **Saturation effects**: Diminishing returns (Love's impact on Justice)
+   - **Tipping points**: P > 0.71 catastrophically erodes Justice without Wisdom
+   - **Force multiplication**: Love amplifies all other dimensions (up to 90% boost)
+
+3. **Empirical Validation:** Bayesian calibration reduced prediction error by 49% vs. linear models (RMSE: 0.026 vs 0.051)
+
+**Mathematical Rigor:**
+- Coupled non-linear differential equations
+- 4th-order Runge-Kutta numerical integration
+- MCMC parameter estimation with quantified uncertainty
+- Stable equilibrium point proven via Jacobian analysis
+
+[Read the complete theory](docs/THEORY.md) | [Mathematical reference](docs/LJPW%20Mathematical%20Baselines%20Reference%20V3.md) | [v3.0 specification](docs/Dynamic%20LJPW%20Model%20v3.0%20-%20Specification%20and%20Theoretical%20Foundations%20and%20Empirical%20Validation%20of%20the%20LJPW%20v3.0%20Model%20via%20Bayesian%20Calibration.md)
+
+### DNA Correspondence
+
+LJPW shares deep structural similarities with DNA:
 
 ```
-Code → Analysis → LJPW Scores → Compression → Genome
+DNA: 4 bases (A, T, G, C)          → LJPW: 4 dimensions (L, J, P, W)
+DNA: Complementary pairing         → LJPW: P≈W pairing (0.025 diff)
+DNA: 98% entropy efficiency        → LJPW: 98.5% entropy efficiency
+DNA: Codons encode proteins        → LJPW: Codons encode semantics
+DNA: Encodes biological life       → LJPW: Encodes system quality
+```
+
+### The Compression Process
+
+```
+Code → Analysis → LJPW State → Quantization → Genome
 (165 KB)    ↓         ↓              ↓           (22 bytes)
-         Extract   Quantize      Encode
-         patterns  dimensions    compactly
+         Pattern   4D Vector    Codon         Compressed
+         matching  in phase     encoding      representation
+                   space
 ```
 
-[Technical deep-dive](docs/ARCHITECTURE.md)
+[Technical implementation](docs/ARCHITECTURE.md)
 
 ---
 
@@ -195,14 +220,31 @@ Code → Analysis → LJPW Scores → Compression → Genome
 
 ## 📚 Documentation
 
+### Getting Started
 - **[Start Here](docs/00_START_HERE.md)** - Quick introduction
 - **[Quickstart Guide](docs/QUICKSTART.md)** - Get running in 5 minutes
+- **[Examples](examples/)** - Runnable code examples
+
+### Mathematical Foundations ⭐
+- **[Theory Guide](docs/THEORY.md)** - Accessible explanation of the mathematics
+- **[Mathematical Reference V3](docs/LJPW%20Mathematical%20Baselines%20Reference%20V3.md)** - Complete mathematical specification
+- **[Dynamic Model v3.0](docs/Dynamic%20LJPW%20Model%20v3.0%20-%20Specification%20and%20Theoretical%20Foundations%20and%20Empirical%20Validation%20of%20the%20LJPW%20v3.0%20Model%20via%20Bayesian%20Calibration.md)** - Non-linear dynamics & Bayesian validation
+
+### Technical Documentation
+- **[Architecture](docs/ARCHITECTURE.md)** - Implementation details
+- **[API Reference](docs/API.md)** - Python API documentation
+- **[AI Protocol](docs/claude_ljpw_protocol.md)** - Using with Claude/ChatGPT
+- **[AI Self-Compression](docs/AI_SELF_COMPRESSION.md)** - How AIs can use LJPW internally
+
+### Validation & Results
 - **[Empirical Results](docs/EMPIRICAL_RESULTS.md)** - All test data
 - **[Real-World Tests](docs/REAL_WORLD_TEST_RESULTS.md)** - Actual codebase analysis
-- **[AI Protocol](docs/claude_ljpw_protocol.md)** - Using with Claude/ChatGPT
-- **[Architecture](docs/ARCHITECTURE.md)** - How it works
-- **[API Reference](docs/API.md)** - Python API documentation
-- **[Contributing](CONTRIBUTING.md)** - How to help
+- **[Benchmarks](benchmarks/)** - Reproducible performance tests
+
+### Contributing
+- **[Contributing Guide](CONTRIBUTING.md)** - How to help
+- **[Roadmap](docs/ROADMAP.md)** - Project direction
+- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines
 
 ---
 
