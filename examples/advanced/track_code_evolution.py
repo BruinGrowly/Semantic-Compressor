@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from ljpw_standalone import SimpleCodeAnalyzer
 from ljpw_semantic_compressor import SemanticCompressor
+from ljpw_dynamic_v3 import LJPWDynamicModel, analyze_code_evolution, predict_code_future
 
 # Natural Equilibrium target
 NE = (0.618, 0.414, 0.718, 0.693)
@@ -171,38 +172,42 @@ class DataProcessor:
         print(f"  Health: {health*100:.1f}%")
         print(f"  Distance to NE: {distance_to_ne:.3f}")
 
-    # Calculate trajectory metrics
+    # Calculate trajectory metrics using v3.0 dynamic model
     print()
-    print("TRAJECTORY ANALYSIS:")
+    print("TRAJECTORY ANALYSIS (v3.0 Dynamic Model):")
     print("-" * 70)
 
-    # Velocity (rate of change)
-    velocity = calculate_velocity(states, time_deltas)
-    velocity_mag = math.sqrt(sum(v**2 for v in velocity))
+    # Convert to format for v3.0 model
+    ljpw_history = [{'L': s[0], 'J': s[1], 'P': s[2], 'W': s[3]} for s in states]
+
+    # Use v3.0 dynamic model for sophisticated analysis
+    evolution_analysis = analyze_code_evolution(ljpw_history, timestamps=time_deltas if time_deltas else None)
+
+    print(f"\nTrend: {evolution_analysis['trend']}")
+    print(f"  Initial distance from NE: {evolution_analysis['initial_distance_from_ne']:.3f}")
+    print(f"  Final distance from NE: {evolution_analysis['final_distance_from_ne']:.3f}")
+    print(f"  Total improvement: {evolution_analysis['improvement']:+.3f}")
+    print(f"  Volatility: {evolution_analysis['volatility']:.4f}")
+
+    # Velocity from v3.0 model
+    velocity = evolution_analysis['velocity']
+    velocity_mag = evolution_analysis['velocity_magnitude']
 
     print(f"\nVelocity vector: L={velocity[0]:+.4f}, J={velocity[1]:+.4f}, P={velocity[2]:+.4f}, W={velocity[3]:+.4f}")
     print(f"Velocity magnitude: {velocity_mag:.4f} units/day")
 
-    # Direction (toward or away from NE?)
-    initial_dist = calculate_distance(states[0], NE)
-    final_dist = calculate_distance(states[-1], NE)
-
-    if final_dist < initial_dist:
+    # Direction
+    if evolution_analysis['converging']:
         direction = "CONVERGING toward Natural Equilibrium ✓"
-    elif final_dist > initial_dist:
-        direction = "DIVERGING from Natural Equilibrium ✗"
     else:
-        direction = "STABLE (not moving)"
+        direction = "DIVERGING from Natural Equilibrium ✗"
 
     print(f"\nDirection: {direction}")
-    print(f"  Initial distance: {initial_dist:.3f}")
-    print(f"  Final distance: {final_dist:.3f}")
-    print(f"  Net change: {final_dist - initial_dist:+.3f}")
 
-    # Predict ETA
-    eta = predict_eta_to_ne(states[-1], velocity)
+    # Predict ETA using v3.0 model
+    eta = evolution_analysis.get('eta_to_ne', float('inf'))
 
-    print(f"\nPrediction:")
+    print(f"\nPrediction (v3.0 Model):")
     if eta == float('inf'):
         print("  ⚠️ Code is not moving toward NE")
         print("  Continue refactoring to reach equilibrium")
@@ -212,6 +217,12 @@ class DataProcessor:
     else:
         print(f"  ETA to Natural Equilibrium: ~{eta:.0f} days")
         print(f"  (at current velocity)")
+
+    # Threshold crossing warning
+    if evolution_analysis.get('crossing_power_threshold', False):
+        print("\n  ⚠️  WARNING: Power crossed threshold (K_JP = 0.71)")
+        print("     Risk: Premature optimization may erode code structure")
+        print("     Recommendation: Boost Wisdom before further optimization")
 
     # Compress trajectory
     print()
@@ -274,10 +285,13 @@ class DataProcessor:
     print("KEY INSIGHTS:")
     print("-" * 70)
     print("1. Track LJPW scores over time to monitor code health trends")
-    print("2. Calculate velocity to predict when equilibrium is reached")
-    print("3. Compress entire evolution history into tiny genome")
-    print("4. Use trajectory analysis to guide refactoring priorities")
+    print("2. v3.0 dynamic model uses RK4 integration for accurate predictions")
+    print("3. Saturation effects: diminishing returns at high Love (K_JL=0.59)")
+    print("4. Threshold effects: Power > 0.71 erodes Justice unless Wisdom is high")
+    print("5. Compress entire evolution history into tiny genome")
+    print("6. Use trajectory analysis to guide refactoring priorities")
     print()
+    print("See also: ljpw_dynamic_v3.py and docs/THEORY.md")
     print("="*70)
 
 if __name__ == '__main__':
