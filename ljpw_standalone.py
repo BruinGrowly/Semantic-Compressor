@@ -440,6 +440,119 @@ def print_summary(results: List[Dict]):
 
     print("\n" + "=" * 70)
 
+def calculate_distance(coords1: Tuple[float, float, float, float],
+                      coords2: Tuple[float, float, float, float]) -> float:
+    """Calculate Euclidean distance between two LJPW coordinates"""
+    L1, J1, P1, W1 = coords1
+    L2, J2, P2, W2 = coords2
+    return math.sqrt((L1-L2)**2 + (J1-J2)**2 + (P1-P2)**2 + (W1-W2)**2)
+
+def calculate_file_distance(file1: str, file2: str) -> Dict:
+    """Calculate semantic distance between two files"""
+    # Analyze both files
+    result1 = analyze_file(file1)
+    result2 = analyze_file(file2)
+
+    # Check for errors
+    if 'error' in result1:
+        return {'error': f"Failed to analyze {file1}: {result1['error']}"}
+    if 'error' in result2:
+        return {'error': f"Failed to analyze {file2}: {result2['error']}"}
+
+    # Extract coordinates
+    coords1 = (result1['ljpw']['L'], result1['ljpw']['J'],
+               result1['ljpw']['P'], result1['ljpw']['W'])
+    coords2 = (result2['ljpw']['L'], result2['ljpw']['J'],
+               result2['ljpw']['P'], result2['ljpw']['W'])
+
+    # Calculate distance
+    distance = calculate_distance(coords1, coords2)
+
+    # Interpret similarity
+    if distance < 0.2:
+        similarity = "Very High"
+        interpretation = "Nearly identical semantic profiles"
+    elif distance < 0.4:
+        similarity = "High"
+        interpretation = "Closely related, likely work together"
+    elif distance < 0.6:
+        similarity = "Moderate"
+        interpretation = "Different but related purposes"
+    elif distance < 0.8:
+        similarity = "Low"
+        interpretation = "Different concerns, loosely related"
+    else:
+        similarity = "Very Low"
+        interpretation = "Fundamentally different purposes"
+
+    return {
+        'file1': file1,
+        'file2': file2,
+        'coords1': coords1,
+        'coords2': coords2,
+        'distance': distance,
+        'similarity': similarity,
+        'interpretation': interpretation,
+        'result1': result1,
+        'result2': result2
+    }
+
+def format_distance_result(result: Dict) -> str:
+    """Format distance calculation result for display"""
+    if 'error' in result:
+        return f"\nError: {result['error']}\n"
+
+    output = []
+    output.append("\n" + "=" * 70)
+    output.append("LJPW Semantic Distance Analysis")
+    output.append("=" * 70)
+
+    # File 1
+    output.append(f"\nFile 1: {result['file1']}")
+    L1, J1, P1, W1 = result['coords1']
+    output.append(f"  Coordinates: L={L1:.2f}, J={J1:.2f}, P={P1:.2f}, W={W1:.2f}")
+    output.append(f"  Health: {result['result1']['health']:.0%}")
+
+    # File 2
+    output.append(f"\nFile 2: {result['file2']}")
+    L2, J2, P2, W2 = result['coords2']
+    output.append(f"  Coordinates: L={L2:.2f}, J={J2:.2f}, P={P2:.2f}, W={W2:.2f}")
+    output.append(f"  Health: {result['result2']['health']:.0%}")
+
+    # Distance
+    output.append(f"\nSemantic Distance: {result['distance']:.3f}")
+    output.append(f"Similarity: {result['similarity']}")
+    output.append(f"Interpretation: {result['interpretation']}")
+
+    # Dimension differences
+    output.append("\nDimension-by-Dimension Comparison:")
+    output.append(f"  Love (Safety):       {L1:.2f} vs {L2:.2f}  (Δ = {abs(L1-L2):.2f})")
+    output.append(f"  Justice (Structure): {J1:.2f} vs {J2:.2f}  (Δ = {abs(J1-J2):.2f})")
+    output.append(f"  Power (Performance): {P1:.2f} vs {P2:.2f}  (Δ = {abs(P1-P2):.2f})")
+    output.append(f"  Wisdom (Design):     {W1:.2f} vs {W2:.2f}  (Δ = {abs(W1-W2):.2f})")
+
+    # Insights
+    output.append("\nKey Differences:")
+    diffs = [
+        ('Safety', abs(L1-L2), 'more' if L1 > L2 else 'less'),
+        ('Structure', abs(J1-J2), 'more' if J1 > J2 else 'less'),
+        ('Performance', abs(P1-P2), 'more' if P1 > P2 else 'less'),
+        ('Design quality', abs(W1-W2), 'better' if W1 > W2 else 'worse')
+    ]
+    diffs.sort(key=lambda x: x[1], reverse=True)
+
+    if diffs[0][1] > 0.1:
+        dim, diff, comp = diffs[0]
+        output.append(f"  • File 1 has {comp} {dim.lower()} (Δ = {diff:.2f})")
+
+    if diffs[1][1] > 0.1:
+        dim, diff, comp = diffs[1]
+        output.append(f"  • File 1 has {comp} {dim.lower()} (Δ = {diff:.2f})")
+
+    output.append("\n" + "=" * 70)
+
+    return "\n".join(output)
+
 # ============================================================================
 # MAIN
 # ============================================================================
@@ -452,6 +565,7 @@ LJPW Semantic Analyzer - DNA-Inspired Code Quality Analysis
 Usage:
     python ljpw_standalone.py analyze <file_or_directory>
     python ljpw_standalone.py quick "<code>"
+    python ljpw_standalone.py distance <file1> <file2>
     python ljpw_standalone.py help
 
 Examples:
@@ -463,6 +577,9 @@ Examples:
 
     # Quick analysis of code snippet
     python ljpw_standalone.py quick "def hello(): print('hi')"
+
+    # Compare two files (calculate semantic distance)
+    python ljpw_standalone.py distance validation.py api_handler.py
 
 About:
     LJPW measures code quality across 4 dimensions:
@@ -514,6 +631,18 @@ About:
         code = sys.argv[2]
         result = analyze_quick(code)
         print(format_result(result))
+
+    elif command == 'distance':
+        if len(sys.argv) < 4:
+            print("Error: Please provide two files to compare")
+            print("Usage: python ljpw_standalone.py distance <file1> <file2>")
+            return
+
+        file1 = sys.argv[2]
+        file2 = sys.argv[3]
+
+        result = calculate_file_distance(file1, file2)
+        print(format_distance_result(result))
 
     else:
         print(f"Unknown command: {command}")

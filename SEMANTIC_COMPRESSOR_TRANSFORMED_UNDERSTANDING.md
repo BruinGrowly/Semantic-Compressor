@@ -4,6 +4,8 @@
 **Date:** November 16, 2025
 **Focus:** Core Product Value + Scaling Path
 
+**⚠️ Note:** This document includes both implemented features (v1.0) and planned features (v1.1-2.0). See [ROADMAP.md](ROADMAP.md) for current implementation status.
+
 ---
 
 ## The Fundamental Transformation
