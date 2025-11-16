@@ -1,0 +1,422 @@
+[
+  {
+    "file": "ljpw_standalone.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.5,
+      1.5
+    ],
+    "genome": "L5J5P5W5",
+    "dist_to_ne": 1.7944617577424158,
+    "dist_to_anchor": 1.0,
+    "health": 10.276912112879211,
+    "loc": 911
+  },
+  {
+    "file": "large_corpus_test.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.5,
+      1.5
+    ],
+    "genome": "L5J5P5W5",
+    "dist_to_ne": 1.7944617577424158,
+    "dist_to_anchor": 1.0,
+    "health": 10.276912112879211,
+    "loc": 778
+  },
+  {
+    "file": "django_query.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.5,
+      1.5
+    ],
+    "genome": "L5J5P5W5",
+    "dist_to_ne": 1.7944617577424158,
+    "dist_to_anchor": 1.0,
+    "health": 10.276912112879211,
+    "loc": 2886
+  },
+  {
+    "file": "ljpw_pipeline.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.5,
+      1.5
+    ],
+    "genome": "L5J5P5W5",
+    "dist_to_ne": 1.7944617577424158,
+    "dist_to_anchor": 1.0,
+    "health": 10.276912112879211,
+    "loc": 601
+  },
+  {
+    "file": "dna_ljpw_analysis.py",
+    "coords": [
+      0.15,
+      1.5,
+      0.0,
+      0.0
+    ],
+    "genome": "L2J5P0W0",
+    "dist_to_ne": 1.547318002221909,
+    "dist_to_anchor": 1.724093964956667,
+    "health": 22.634099888904547,
+    "loc": 180
+  },
+  {
+    "file": "test_multi_language.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.51,
+      1.1
+    ],
+    "genome": "L5J5P5W1",
+    "dist_to_ne": 1.4718128277739668,
+    "dist_to_anchor": 0.866083136886985,
+    "health": 26.40935861130166,
+    "loc": 490
+  },
+  {
+    "file": "ljpw_virtual_machine.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.15,
+      1.25
+    ],
+    "genome": "L5J5P2W2",
+    "dist_to_ne": 1.6094076550085128,
+    "dist_to_anchor": 1.1335784048754634,
+    "health": 19.52961724957436,
+    "loc": 703
+  },
+  {
+    "file": "ljpw_expander.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.72,
+      1.5
+    ],
+    "genome": "L5J5P7W5",
+    "dist_to_ne": 1.615107736344545,
+    "dist_to_anchor": 0.9101648202386203,
+    "health": 19.244613182772753,
+    "loc": 540
+  },
+  {
+    "file": "test_code_sample.py",
+    "coords": [
+      0.44999999999999996,
+      1.5,
+      0.6,
+      0.30000000000000004
+    ],
+    "genome": "L4J5P6W3",
+    "dist_to_ne": 1.1730272801601844,
+    "dist_to_anchor": 1.0965856099730653,
+    "health": 41.348635991990776,
+    "loc": 32
+  },
+  {
+    "file": "ljpw_semantic_compiler.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.2599999999999998,
+      1.5
+    ],
+    "genome": "L5J5P3W5",
+    "dist_to_ne": 1.7036234912679504,
+    "dist_to_anchor": 0.9042123644365851,
+    "health": 14.818825436602479,
+    "loc": 430
+  },
+  {
+    "file": "ljpw_semantic_compressor.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.3,
+      1.3200000000000003
+    ],
+    "genome": "L5J5P3W3",
+    "dist_to_ne": 1.5890792931757687,
+    "dist_to_anchor": 1.0451794104363137,
+    "health": 20.546035341211567,
+    "loc": 681
+  },
+  {
+    "file": "test_ljpw_framework.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.87,
+      1.5
+    ],
+    "genome": "L5J5P9W5",
+    "dist_to_ne": 1.6222432000165696,
+    "dist_to_anchor": 0.875728268357257,
+    "health": 18.88783999917152,
+    "loc": 651
+  },
+  {
+    "file": "token_analysis.py",
+    "coords": [
+      0.6,
+      1.5,
+      0.0,
+      0.1
+    ],
+    "genome": "L6J5P0W1",
+    "dist_to_ne": 1.4306966834378279,
+    "dist_to_anchor": 1.489966442575134,
+    "health": 28.465165828108606,
+    "loc": 229
+  },
+  {
+    "file": "ljpw_dynamic_v3.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.0,
+      0.8
+    ],
+    "genome": "L5J5P0W8",
+    "dist_to_ne": 1.5761640143081557,
+    "dist_to_anchor": 1.2409673645990857,
+    "health": 21.191799284592218,
+    "loc": 629
+  },
+  {
+    "file": "ljpw_iso_analyzer.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.5,
+      1.1
+    ],
+    "genome": "L5J5P5W1",
+    "dist_to_ne": 1.6536302488766952,
+    "dist_to_anchor": 0.8717797887081347,
+    "health": 17.31848755616524,
+    "loc": 588
+  },
+  {
+    "file": "token_introspection_test.py",
+    "coords": [
+      0.8999999999999999,
+      0.76,
+      0.0,
+      0.0
+    ],
+    "genome": "L9J8P0W0",
+    "dist_to_ne": 1.0931665014991998,
+    "dist_to_anchor": 1.4379151574414952,
+    "health": 45.34167492504001,
+    "loc": 89
+  },
+  {
+    "file": "ljpw_ast_analyzer.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.6,
+      0.95
+    ],
+    "genome": "L5J5P6W0",
+    "dist_to_ne": 1.4273377315828235,
+    "dist_to_anchor": 0.8139410298049854,
+    "health": 28.633113420858823,
+    "loc": 261
+  },
+  {
+    "file": "semantic_code_generator.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.44999999999999996,
+      1.3499999999999999
+    ],
+    "genome": "L5J5P4W3",
+    "dist_to_ne": 1.5686914929328837,
+    "dist_to_anchor": 0.9617692030835672,
+    "health": 21.565425353355817,
+    "loc": 304
+  },
+  {
+    "file": "test_configurable_quantization.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.0,
+      0.35000000000000003
+    ],
+    "genome": "L5J5P0W4",
+    "dist_to_ne": 1.609500854302352,
+    "dist_to_anchor": 1.3865424623862046,
+    "health": 19.524957284882404,
+    "loc": 317
+  },
+  {
+    "file": "validate_ultra_massive.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.0,
+      0.1
+    ],
+    "genome": "L5J5P0W1",
+    "dist_to_ne": 1.6806228012257838,
+    "dist_to_anchor": 1.5198684153570663,
+    "health": 15.96885993871081,
+    "loc": 215
+  },
+  {
+    "file": "validate_real_codebases.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.0,
+      0.2
+    ],
+    "genome": "L5J5P0W2",
+    "dist_to_ne": 1.64799666261798,
+    "dist_to_anchor": 1.4628738838327795,
+    "health": 17.600166869100995,
+    "loc": 300
+  },
+  {
+    "file": "test_bold_prediction.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.5,
+      0.45
+    ],
+    "genome": "L5J5P5W4",
+    "dist_to_ne": 1.6210777279328712,
+    "dist_to_anchor": 1.0259142264341596,
+    "health": 18.94611360335644,
+    "loc": 232
+  },
+  {
+    "file": "benchmark_ljpw_vs_alternatives.py",
+    "coords": [
+      1.45,
+      1.5,
+      0.6,
+      0.75
+    ],
+    "genome": "L4J5P6W8",
+    "dist_to_ne": 1.3743336567224134,
+    "dist_to_anchor": 0.8215838362577492,
+    "health": 31.28331716387933,
+    "loc": 369
+  },
+  {
+    "file": "compare_ast_vs_regex.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.15,
+      0.25
+    ],
+    "genome": "L5J5P2W2",
+    "dist_to_ne": 1.5735923868651627,
+    "dist_to_anchor": 1.3360389215887387,
+    "health": 21.320380656741868,
+    "loc": 300
+  },
+  {
+    "file": "test_distance.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.0,
+      0.30000000000000004
+    ],
+    "genome": "L5J5P0W3",
+    "dist_to_ne": 1.6208926552983083,
+    "dist_to_anchor": 1.4106735979665885,
+    "health": 18.955367235084587,
+    "loc": 301
+  },
+  {
+    "file": "test_analogical_reasoning.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.44999999999999996,
+      0.75
+    ],
+    "genome": "L5J5P4W8",
+    "dist_to_ne": 1.4256202159060456,
+    "dist_to_anchor": 0.9300537618869137,
+    "health": 28.71898920469772,
+    "loc": 341
+  },
+  {
+    "file": "validate_realworld_codebase.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.75,
+      0.35000000000000003
+    ],
+    "genome": "L5J5P8W4",
+    "dist_to_ne": 1.4408306631939785,
+    "dist_to_anchor": 0.9924716620639603,
+    "health": 27.958466840301078,
+    "loc": 245
+  },
+  {
+    "file": "test_comprehensive_validation.py",
+    "coords": [
+      1.5,
+      1.5,
+      1.5,
+      1.5
+    ],
+    "genome": "L5J5P5W5",
+    "dist_to_ne": 1.7944617577424158,
+    "dist_to_anchor": 1.0,
+    "health": 10.276912112879211,
+    "loc": 662
+  },
+  {
+    "file": "validate_massive_codebase.py",
+    "coords": [
+      1.5,
+      1.5,
+      0.0,
+      0.2
+    ],
+    "genome": "L5J5P0W2",
+    "dist_to_ne": 1.64799666261798,
+    "dist_to_anchor": 1.4628738838327795,
+    "health": 17.600166869100995,
+    "loc": 305
+  },
+  {
+    "file": "transformation_library.py",
+    "coords": [
+      1.05,
+      1.5,
+      0.57,
+      0.45000000000000007
+    ],
+    "genome": "L0J5P6W5",
+    "dist_to_ne": 1.2029019078877545,
+    "dist_to_anchor": 0.8601744009211155,
+    "health": 39.854904605612276,
+    "loc": 378
+  }
+]
