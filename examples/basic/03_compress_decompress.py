@@ -153,14 +153,48 @@ def process(data: list) -> list:
     print(f"\nToken reduction: {(1 - compressed_tokens/original_tokens)*100:.1f}%")
     print(f"Savings: {original_tokens - compressed_tokens} tokens")
 
+    # Demonstrate configurable precision
+    print()
+    print("CONFIGURABLE PRECISION:")
+    print("-" * 70)
+    print("\nYou can trade genome size for accuracy using quantization levels:")
+    print()
+
+    test_state = states[0]  # Use first state for comparison
+    precision_levels = [
+        (4, 'fast'),
+        (8, 'balanced'),
+        (16, 'precise'),
+        (32, 'exact'),
+    ]
+
+    print(f"{'Levels':<10} {'Use Case':<12} {'Error':<12} {'Size':<10}")
+    print("-" * 70)
+
+    for levels, use_case in precision_levels:
+        comp = SemanticCompressor(quantization_levels=levels)
+        decomp = SemanticDecompressor(quantization_levels=levels)
+
+        g = comp.compress_state_sequence([test_state])
+        recon = decomp.decompress_genome(g)[0]
+
+        error = sum((o - r)**2 for o, r in zip(test_state, recon))**0.5
+        size = len(g.to_string())
+
+        print(f"{levels:<10} {use_case:<12} {error:<12.4f} {size:<10} bytes")
+
+    print()
+    print("Tip: Use LJPWQuantizer.recommend_levels('balanced') for guidance")
+
     print()
     print("="*70)
     print("KEY TAKEAWAYS:")
     print("-" * 70)
     print("1. LJPW compresses code quality to tiny genomes")
-    print("2. Compression is lossless for semantic quality analysis")
+    print("2. Configurable precision: 4-64 levels for accuracy vs size trade-off")
     print("3. Enables massive token savings when working with AI")
     print("4. Built-in error correction via complementary pairing")
+    print("5. Use recommend_levels() for guidance on precision settings")
     print()
     print("Next: Try running 04_interpret_scores.py")
     print("="*70)

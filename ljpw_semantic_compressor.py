@@ -49,20 +49,96 @@ NATURAL_EQUILIBRIUM = {
 class LJPWQuantizer:
     """
     Quantizes continuous LJPW values into discrete 'bases'
-    Uses 4 levels per dimension (like DNA's 4 bases)
+
+    Configurable precision levels allow trading genome size for accuracy:
+    - 4 levels:  Small genome (~13 bytes), ~20% reconstruction error
+    - 8 levels:  Medium genome (~13 bytes), ~10% reconstruction error
+    - 16 levels: Larger genome (~13 bytes), ~5% reconstruction error
+    - 32 levels: Large genome (~13 bytes), ~2-3% reconstruction error
+
+    Args:
+        levels: Number of quantization levels (must be power of 2: 4, 8, 16, 32, or 64)
+
+    Raises:
+        ValueError: If levels is not valid
     """
 
+    # Valid quantization levels (powers of 2 for efficient encoding)
+    VALID_LEVELS = {4, 8, 16, 32, 64}
+
+    # Recommended levels by use case
+    RECOMMENDATIONS = {
+        'fast': 4,      # Quick analysis, token savings priority
+        'balanced': 8,  # Good balance of size and accuracy
+        'precise': 16,  # Research/scientific applications
+        'exact': 32,    # Maximum precision while still compressed
+    }
+
     def __init__(self, levels=4):
+        """
+        Initialize quantizer with specified precision level
+
+        Args:
+            levels: Number of quantization levels (4, 8, 16, 32, or 64)
+
+        Raises:
+            TypeError: If levels is not an integer
+            ValueError: If levels is not in VALID_LEVELS
+        """
+        # Validate input type
+        if not isinstance(levels, int):
+            raise TypeError(
+                f"Quantization levels must be an integer, got {type(levels).__name__}"
+            )
+
+        # Validate levels value
+        if levels not in self.VALID_LEVELS:
+            raise ValueError(
+                f"Quantization levels must be one of {sorted(self.VALID_LEVELS)}, got {levels}. "
+                f"Use LJPWQuantizer.recommend_levels(use_case) for guidance."
+            )
+
         self.levels = levels
         # Define quantization thresholds
         self.thresholds = [i / levels for i in range(levels + 1)]
 
-    def quantize_value(self, value: float, dim: str) -> int:
+    @classmethod
+    def recommend_levels(cls, use_case: str = 'balanced') -> int:
         """
-        Quantize a single LJPW value to discrete level (0-3)
+        Get recommended quantization level for a use case
+
+        Args:
+            use_case: One of 'fast', 'balanced', 'precise', 'exact'
 
         Returns:
-            Integer level 0-3
+            Recommended number of levels
+
+        Raises:
+            ValueError: If use_case is not recognized
+
+        Examples:
+            >>> LJPWQuantizer.recommend_levels('fast')
+            4
+            >>> LJPWQuantizer.recommend_levels('precise')
+            16
+        """
+        if use_case not in cls.RECOMMENDATIONS:
+            valid = ', '.join(f"'{k}'" for k in cls.RECOMMENDATIONS.keys())
+            raise ValueError(
+                f"Unknown use case '{use_case}'. Valid options: {valid}"
+            )
+        return cls.RECOMMENDATIONS[use_case]
+
+    def quantize_value(self, value: float, dim: str) -> int:
+        """
+        Quantize a single LJPW value to discrete level
+
+        Args:
+            value: Continuous LJPW value (typically 0.0 to 1.5)
+            dim: Dimension name (L, J, P, or W) for error messages
+
+        Returns:
+            Integer level from 0 to (self.levels - 1)
         """
         # Clamp to [0, 1.5] range (LJPW can exceed 1.0 due to coupling)
         clamped = max(0.0, min(1.5, value))
@@ -154,14 +230,17 @@ class LJPWCodon:
         except ValueError as e:
             raise ValueError(
                 f"Invalid level number in codon '{s}'. "
-                f"Levels must be digits 0-3. Error: {e}"
+                f"Levels must be single digits (0-9). Error: {e}"
             )
 
-        # Validate level ranges (assuming 4 quantization levels: 0-3)
+        # Validate level ranges
+        # Note: String format uses single digits, so max level is 9
+        # This limits us to quantization_levels <= 10 for this encoding
+        MAX_LEVEL_IN_STRING = 9
         for i, (level, pos) in enumerate([(level1, 1), (level2, 3), (level3, 5)]):
-            if not (0 <= level < 4):
+            if not (0 <= level <= MAX_LEVEL_IN_STRING):
                 raise ValueError(
-                    f"Level at position {pos} is {level}, must be 0-3"
+                    f"Level at position {pos} is {level}, must be 0-{MAX_LEVEL_IN_STRING}"
                 )
 
         return cls(
