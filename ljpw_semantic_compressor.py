@@ -107,11 +107,67 @@ class LJPWCodon:
 
     @classmethod
     def from_string(cls, s: str):
-        """Parse from compact string"""
+        """
+        Parse codon from compact string
+
+        Args:
+            s: String in format 'L0J0P0' (6 characters)
+
+        Raises:
+            TypeError: If s is not a string
+            ValueError: If s has wrong format
+
+        Returns:
+            LJPWCodon instance
+        """
+        if not isinstance(s, str):
+            raise TypeError(f"Expected string, got {type(s).__name__}")
+
+        if len(s) != 6:
+            raise ValueError(
+                f"Codon must be exactly 6 characters (e.g. 'L0J0P0'), got {len(s)}: '{s}'"
+            )
+
+        # Extract bases and levels
+        base1, base2, base3 = s[0], s[2], s[4]
+        valid_bases = {'L', 'J', 'P', 'W'}
+
+        # Validate bases
+        if base1 not in valid_bases:
+            raise ValueError(
+                f"Invalid base at position 0: '{base1}'. Must be L, J, P, or W"
+            )
+        if base2 not in valid_bases:
+            raise ValueError(
+                f"Invalid base at position 2: '{base2}'. Must be L, J, P, or W"
+            )
+        if base3 not in valid_bases:
+            raise ValueError(
+                f"Invalid base at position 4: '{base3}'. Must be L, J, P, or W"
+            )
+
+        # Parse levels
+        try:
+            level1 = int(s[1])
+            level2 = int(s[3])
+            level3 = int(s[5])
+        except ValueError as e:
+            raise ValueError(
+                f"Invalid level number in codon '{s}'. "
+                f"Levels must be digits 0-3. Error: {e}"
+            )
+
+        # Validate level ranges (assuming 4 quantization levels: 0-3)
+        for i, (level, pos) in enumerate([(level1, 1), (level2, 3), (level3, 5)]):
+            if not (0 <= level < 4):
+                raise ValueError(
+                    f"Level at position {pos} is {level}, must be 0-3"
+                )
+
         return cls(
-            base1=s[0], level1=int(s[1]),
-            base2=s[2], level2=int(s[3]),
-            base3=s[4], level3=int(s[5])
+            base1=base1, level1=level1,
+            base2=base2, level2=level2,
+            base3=base3, level3=level3
         )
 
     def complement(self) -> 'LJPWCodon':
@@ -186,7 +242,49 @@ class SemanticCompressor:
 
         Returns:
             Compressed SemanticGenome
+
+        Raises:
+            ValueError: If states is empty or contains invalid values
+            TypeError: If states contains non-numeric values
         """
+        # Validate inputs
+        if not states:
+            raise ValueError("Cannot compress empty state sequence")
+
+        if not isinstance(states, (list, tuple)):
+            raise TypeError(f"Expected list or tuple of states, got {type(states).__name__}")
+
+        # Validate each state
+        for i, state in enumerate(states):
+            if not isinstance(state, (list, tuple)):
+                raise TypeError(
+                    f"State {i} must be a tuple/list, got {type(state).__name__}"
+                )
+
+            if len(state) != 4:
+                raise ValueError(
+                    f"State {i} must have exactly 4 elements (L,J,P,W), got {len(state)}: {state}"
+                )
+
+            # Validate each dimension
+            for j, (val, dim) in enumerate(zip(state, ['L', 'J', 'P', 'W'])):
+                if not isinstance(val, (int, float)):
+                    raise TypeError(
+                        f"State {i}, dimension {dim}: expected numeric value, got {type(val).__name__}"
+                    )
+                if math.isnan(val):
+                    raise ValueError(
+                        f"State {i}, dimension {dim}: NaN is not allowed"
+                    )
+                if math.isinf(val):
+                    raise ValueError(
+                        f"State {i}, dimension {dim}: Infinity is not allowed"
+                    )
+                if val < 0:
+                    raise ValueError(
+                        f"State {i}, dimension {dim}: negative value {val} is not allowed"
+                    )
+
         codons = []
 
         for state in states:
@@ -227,13 +325,24 @@ class SemanticCompressor:
                                     original_states: List[Tuple],
                                     codons: List[LJPWCodon]) -> float:
         """
-        Calculate compression ratio
+        Calculate compression ratio accurately
 
         Original: 4 floats × 8 bytes = 32 bytes per state
-        Compressed: 6 chars × 1 byte = 6 bytes per codon pair
+        Compressed: Actual string length of genome
+                   Format: "L0J0P0-W0L0P0" = 13 bytes per state typically
         """
-        original_bytes = len(original_states) * 4 * 8  # 4 floats × 8 bytes
-        compressed_bytes = len(codons) * 1  # ~1 byte per base (6 chars per codon)
+        # Original size: 4 floats × 8 bytes per float
+        original_bytes = len(original_states) * 4 * 8
+
+        # Compressed size: actual string representation
+        # Build the genome string to get exact size
+        genome_string = '-'.join(c.to_string() for c in codons)
+        compressed_bytes = len(genome_string)
+
+        # Avoid division by zero
+        if compressed_bytes == 0:
+            return 0.0
+
         return original_bytes / compressed_bytes
 
 # ============================================================================
@@ -253,15 +362,27 @@ class SemanticDecompressor:
         """
         Decompress a semantic genome back to LJPW states
 
+        Args:
+            genome: SemanticGenome to decompress
+
         Returns:
             List of (L, J, P, W) tuples
+
+        Raises:
+            ValueError: If genome has odd number of codons (data corruption)
         """
+        # Validate genome structure
+        if len(genome.codons) % 2 != 0:
+            raise ValueError(
+                f"Genome has odd number of codons ({len(genome.codons)}). "
+                f"Valid genomes must have pairs of codons (main + checksum). "
+                f"This genome appears to be corrupted."
+            )
+
         states = []
 
         # Process codons in pairs (main codon + W checksum codon)
         for i in range(0, len(genome.codons), 2):
-            if i + 1 >= len(genome.codons):
-                break
 
             main_codon = genome.codons[i]
             w_codon = genome.codons[i + 1]
