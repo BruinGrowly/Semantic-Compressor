@@ -1,126 +1,151 @@
 # 🧬 LJPW Semantic Compressor
 
-**DNA-inspired semantic compression for AI reasoning at scale**
+**DNA-inspired semantic analysis and compression for AI-assisted code quality assessment**
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Status: Production Ready](https://img.shields.io/badge/status-production%20ready-brightgreen.svg)]()
 
-> *"What if you could analyze 1,000x more code with AI while using 99.8% fewer tokens?"*
-
 ---
 
 ## ✨ What This Does
 
-The LJPW framework analyzes **structured information systems** through a universal mathematical lens.
+The LJPW Semantic Compressor analyzes code quality through four fundamental dimensions and compresses the analysis into compact "genomes" for efficient AI reasoning.
 
-**What it compresses:**
-- 165 KB of code → 22 bytes ✓
-- 7.45 GB of ISOs → 650 bytes ✓
-- Team dynamics, system architecture, products → Semantic genomes ✓
-- **ANY complex system with patterns** → L, J, P, W dimensions ✓
+**Core Capabilities:**
+- **Semantic Analysis:** Evaluates code across 4 dimensions (Love, Justice, Power, Wisdom)
+- **State Compression:** Converts LJPW states into DNA-like genomes with configurable precision
+- **Token Efficiency:** Send analysis results instead of full code to AI systems
+- **Quality Tracking:** Monitor code health across projects over time
 
-**This is not byte compression.** It's semantic extraction - capturing the "idea" of a system in mathematical form.
-
-**Key insight:** ISOs, codebases, teams, and ecosystems all have **structured meaning** that maps to fundamental constants (φ, √2, e, ln(2)). LJPW analyzes PATTERNS, not just text.
-
-**Result:**
-- 100% semantic meaning preserved
-- 99.8%+ token reduction for AI reasoning
-- Universal applicability across domains
-- Mathematically rigorous ([see theory](docs/THEORY.md))
+**This is semantic compression, not byte compression.** We analyze code quality patterns and encode them efficiently, enabling AI to reason about code without processing every line.
 
 ---
 
 ## 🎯 Quick Example
 
+### Analyze Code Quality
+
 ```bash
-# Analyze your codebase
+# Analyze a file or directory
 python ljpw_standalone.py analyze ./your_project
 
 # Output:
-# L=1.14, J=1.28, P=0.84, W=0.97
-# Health: 47%
+# L=0.85, J=0.92, P=0.75, W=0.88
+# Health: 85%
 # Status: Production Ready
 ```
 
-Send this compressed form to Claude AI:
+### Compress Analysis for AI
 
+Instead of sending your entire codebase to an AI:
+
+```python
+from ljpw_semantic_compressor import SemanticCompressor
+
+# Create states from your analysis
+states = [
+    (0.85, 0.92, 0.75, 0.88),  # Current state
+    (0.80, 0.88, 0.70, 0.82),  # Previous state
+    # ... more states
+]
+
+# Compress with configurable precision
+compressor = SemanticCompressor(quantization_levels=8)
+genome = compressor.compress_state_sequence(states)
+
+# Result: "L7J8P6W8-W8L7P6-L6J7P5W7-W7L6P5"
+# (13 bytes instead of 32 bytes per state)
 ```
-Analyze: L=1.14,J=1.28,P=0.84,W=0.97|H=47%
-```
 
-Get analysis using **86 tokens instead of 44,280 tokens** (515x reduction).
-
-Same insights. Same accuracy. **99.81% fewer tokens.**
-
-### Beyond Code: ISO Analysis
-
-```bash
-# Analyze operating system installation media
-python ljpw_iso_analyzer.py analyze ubuntu-22.04-server.iso
-
-# Output:
-# L=0.700, J=0.800, P=0.700, W=1.000
-# Health: 68.8% | Type: Server Operating System
-# Genome: L7J8P7W9
-```
-
-**Semantic compression achieved:**
-- 3 ISOs (7.45 GB binary data) → 650 bytes (genomes + insights)
-- Compression ratio: 11,461,538x on meaning
-- AI can now reason about systems WITHOUT downloading gigabytes
-
-**See:** [ISO Analysis Demo](examples/advanced/demo_iso_analysis.py) | [Applications Guide](docs/APPLICATIONS.md)
+**Token Savings:** Send compact genome + metadata instead of full code.
 
 ---
 
 ## 🌟 Why This Matters
 
 ### The Problem
-AI context windows are limited. A large codebase (10 MB) requires millions of tokens, which:
-- Doesn't fit in context (200K token limit)
-- Costs significant money ($3+ per analysis)
-- Requires splitting into multiple sessions (losing context)
-- Makes comprehensive analysis impossible
+
+When working with AI on large codebases:
+- Can't fit entire project in context window
+- Expensive to send full code ($3+ per analysis)
+- Need to understand code quality, not just syntax
+- Want to track quality evolution over time
 
 ### The Solution
-LJPW Semantic Compression reduces codebases to their essential semantic properties:
 
-**Four Dimensions (grounded in fundamental mathematics):**
-- **L** (Love) - Safety, error handling, validation — φ⁻¹ ≈ 0.618 (Golden ratio)
-- **J** (Justice) - Structure, types, documentation — √2-1 ≈ 0.414 (Pythagorean ratio)
-- **P** (Power) - Performance, algorithms, optimization — e-2 ≈ 0.718 (Exponential base)
-- **W** (Wisdom) - Design, patterns, architecture — ln(2) ≈ 0.693 (Information unit)
+**LJPW provides semantic analysis that compresses efficiently:**
 
-**These aren't arbitrary values.** They're fundamental mathematical constants appearing in nature, physics, and information theory.
+1. **Analyze code quality** across 4 fundamental dimensions
+2. **Compress analysis states** into compact genomes (2.5x compression ratio)
+3. **Send to AI** with dramatically fewer tokens than full code
+4. **Track over time** with minimal storage overhead
 
-**Result:**
-- 500-10,000x compression ratios
-- Lossless semantic preservation
-- AI can reason in compressed space
-- Effective context window: 100M+ tokens
-- Mathematically rigorous foundation ([see theory](docs/THEORY.md))
+**The value isn't extreme compression—it's meaningful semantic analysis that happens to compress well.**
 
 ---
 
-## 📊 Proof It Works
+## 💡 The Four Dimensions
 
-### Real Tests Conducted
+LJPW analyzes code across four fundamental aspects, grounded in mathematical constants:
 
-| Test | Size | Compressed | Ratio | Accuracy |
-|------|------|------------|-------|----------|
-| Django ORM | 111 KB | 2 bytes | 55,873x | 100% |
-| Your Project | 165 KB | 22 bytes | 7,505x | 100% |
-| Large Corpus | 2.18 MB | 1,000 bytes | 2,291x | 100% |
+- **L (Love)** - Safety, error handling, validation — φ⁻¹ ≈ 0.618 (Golden ratio)
+- **J (Justice)** - Structure, types, documentation — √2-1 ≈ 0.414 (Pythagorean ratio)
+- **P (Power)** - Performance, algorithms, execution — e-2 ≈ 0.718 (Exponential base)
+- **W (Wisdom)** - Design, patterns, architecture — ln(2) ≈ 0.693 (Information unit)
 
-**Validation:**
-- ✅ 28/28 tests passed (100%)
-- ✅ Real codebases analyzed
-- ✅ AI predictions verified
-- ✅ Performance validated (3,228 files/sec)
+**Natural Equilibrium:** Healthy systems tend toward (0.618, 0.414, 0.718, 0.693)
 
-[See full empirical results](docs/EMPIRICAL_RESULTS.md)
+These constants provide a mathematical foundation for quality assessment, not arbitrary thresholds.
+
+---
+
+## 📊 What It Actually Does
+
+### Semantic Analysis
+
+```bash
+python ljpw_standalone.py analyze myproject/
+
+# Analyzes:
+# - Error handling patterns (L)
+# - Code structure and typing (J)
+# - Algorithm efficiency (P)
+# - Design patterns and architecture (W)
+#
+# Returns: LJPW coordinates + health score
+```
+
+### Genome Compression
+
+```python
+from ljpw_semantic_compressor import SemanticCompressor, SemanticDecompressor
+
+# Compress LJPW states
+compressor = SemanticCompressor(quantization_levels=16)  # 4, 8, 16, 32, or 64
+genome = compressor.compress_state_sequence(states, metadata={'project': 'MyApp'})
+
+# Compression ratio: ~2.5x (32 bytes → 13 bytes per state)
+# Configurable precision: 4 levels (fast) to 64 levels (precise)
+
+# Decompress
+decompressor = SemanticDecompressor(quantization_levels=16)
+reconstructed = decompressor.decompress_genome(genome)
+
+# Accuracy: 96-99% depending on quantization level
+```
+
+### Configurable Precision
+
+Trade genome size for accuracy:
+
+| Levels | Avg Error | Use Case |
+|--------|-----------|----------|
+| 4      | ~20%      | Fast analysis, minimal storage |
+| 8      | ~9%       | Balanced (recommended) |
+| 16     | ~4%       | Precise tracking |
+| 32     | ~3%       | High precision |
+| 64     | ~1%       | Maximum accuracy |
 
 ---
 
@@ -133,275 +158,202 @@ LJPW Semantic Compression reduces codebases to their essential semantic properti
 git clone https://github.com/BruinGrowly/Semantic-Compressor.git
 cd Semantic-Compressor
 
-# No dependencies required for standalone mode!
+# No dependencies required for standalone analyzer!
 python ljpw_standalone.py --help
 ```
 
-### Quick Start
+### Basic Usage
 
-**1. Analyze a file:**
-```bash
-python ljpw_standalone.py analyze mycode.py
-```
-
-**2. Analyze a project:**
+**1. Analyze code:**
 ```bash
 python ljpw_standalone.py analyze ./src
 ```
 
-**3. Use with AI:**
-```bash
-# Get compressed representation
-python ljpw_standalone.py analyze ./project > compressed.txt
+**2. Use Python API:**
+```python
+from ljpw_code_analyzer import LJPWCodeAnalyzer
 
-# Send to Claude, ChatGPT, or any AI
-# Use 99% fewer tokens!
+analyzer = LJPWCodeAnalyzer()
+results = analyzer.analyze_project('./src')
+
+print(f"L={results['L']:.2f}, J={results['J']:.2f}")
+print(f"P={results['P']:.2f}, W={results['W']:.2f}")
+print(f"Health: {results['health_score']:.0%}")
 ```
 
-[Full quickstart guide](docs/QUICKSTART.md)
+**3. Compress states:**
+```python
+from ljpw_semantic_compressor import SemanticCompressor
+
+compressor = SemanticCompressor(quantization_levels=8)
+genome = compressor.compress_state_sequence([
+    (0.85, 0.92, 0.75, 0.88),
+])
+
+print(f"Genome: {genome.to_string()}")
+print(f"Compression ratio: {genome.metadata['compression_ratio']:.2f}x")
+```
 
 ---
 
-## 💡 How It Works
+## 🔬 Technical Foundation
 
-### The Mathematical Foundation
+### DNA-Inspired Design
 
-**LJPW v3.0 is a rigorously validated mathematical framework**, not just a heuristic tool.
-
-**Natural Equilibrium** — The optimal balance point derived from fundamental constants:
-```
-L = φ⁻¹ = 0.618034  (Golden ratio inverse - optimal resource distribution)
-J = √2-1 = 0.414214 (Pythagorean ratio - structural constraints)
-P = e-2  = 0.718282 (Exponential base - channel capacity)
-W = ln2  = 0.693147 (Natural log of 2 - information unit)
-```
-
-**Key Discoveries:**
-
-1. **P≈W Pairing:** Power (0.718) and Wisdom (0.693) differ by only 0.025 (3.6%) — like DNA's complementary base pairing (A-T, G-C). This emerged from the mathematics, not by design.
-
-2. **Non-Linear Dynamics:** The v3.0 model includes:
-   - **Saturation effects**: Diminishing returns (Love's impact on Justice)
-   - **Tipping points**: P > 0.71 catastrophically erodes Justice without Wisdom
-   - **Force multiplication**: Love amplifies all other dimensions (up to 90% boost)
-
-3. **Empirical Validation:** Bayesian calibration reduced prediction error by 49% vs. linear models (RMSE: 0.026 vs 0.051)
-
-**Mathematical Rigor:**
-- Coupled non-linear differential equations
-- 4th-order Runge-Kutta numerical integration
-- MCMC parameter estimation with quantified uncertainty
-- Stable equilibrium point proven via Jacobian analysis
-
-[Read the complete theory](docs/THEORY.md) | [Mathematical reference](docs/LJPW%20Mathematical%20Baselines%20Reference%20V3.md) | [v3.0 specification](docs/Dynamic%20LJPW%20Model%20v3.0%20-%20Specification%20and%20Theoretical%20Foundations%20and%20Empirical%20Validation%20of%20the%20LJPW%20v3.0%20Model%20via%20Bayesian%20Calibration.md)
-
-### DNA Correspondence
-
-LJPW shares deep structural similarities with DNA:
+LJPW compression borrows principles from biological DNA:
 
 ```
-DNA: 4 bases (A, T, G, C)          → LJPW: 4 dimensions (L, J, P, W)
-DNA: Complementary pairing         → LJPW: P≈W pairing (0.025 diff)
-DNA: 98% entropy efficiency        → LJPW: 98.5% entropy efficiency
-DNA: Codons encode proteins        → LJPW: Codons encode semantics
-DNA: Encodes biological life       → LJPW: Encodes system quality
+DNA: 4 bases (A, T, G, C)       → LJPW: 4 dimensions (L, J, P, W)
+DNA: Complementary pairing      → LJPW: L-W and P-J pairing
+DNA: Codons (triplets)          → LJPW: 3-base semantic primitives
+DNA: Error correction           → LJPW: Checksum validation
 ```
 
-### The Compression Process
+### Compression Process
 
 ```
 Code → Analysis → LJPW State → Quantization → Genome
-(165 KB)    ↓         ↓              ↓           (22 bytes)
-         Pattern   4D Vector    Codon         Compressed
-         matching  in phase     encoding      representation
-                   space
+       (pattern   (0.85, 0.92, (discrete      (L7J8P6W8)
+        matching)  0.75, 0.88)  levels)
 ```
 
-[Technical implementation](docs/ARCHITECTURE.md)
+**Key Features:**
+- Configurable quantization levels (4-64)
+- Built-in error correction via complementary pairing
+- Round-trip validation with integrity scoring
+- Comprehensive input validation
+
+### Mathematical Grounding
+
+The framework is grounded in rigorous mathematics:
+
+- **Natural Equilibrium:** Derived from fundamental constants (φ, √2, e, ln(2))
+- **Non-linear dynamics:** Coupled differential equations with validated parameters
+- **Empirical validation:** Bayesian calibration with quantified uncertainty
+- **Stability analysis:** Jacobian analysis proves equilibrium stability
+
+[Mathematical Reference](docs/LJPW%20Mathematical%20Baselines%20Reference%20V3.md) | [v3.0 Specification](docs/Dynamic%20LJPW%20Model%20v3.0%20-%20Specification%20and%20Theoretical%20Foundations%20and%20Empirical%20Validation%20of%20the%20LJPW%20v3.0%20Model%20via%20Bayesian%20Calibration.md)
 
 ---
 
 ## 🎓 Use Cases
 
-### 1. Large Codebase Analysis
-**Problem:** 10 MB codebase doesn't fit in AI context
-**Solution:** Compress to 2 KB, analyze everything at once
-**Benefit:** Complete understanding, no fragmentation
+### 1. Code Quality Monitoring
+Track LJPW coordinates over time to monitor code health trends.
 
-### 2. Cost Reduction
-**Problem:** $3 per 1M tokens adds up quickly
-**Solution:** 99.8% token reduction
-**Benefit:** $0.006 per analysis instead of $3
+### 2. AI-Assisted Code Review
+Send semantic analysis instead of full code to AI for efficient review.
 
-### 3. System Understanding
-**Problem:** Can't see the whole system
-**Solution:** Compress entire architecture into context
-**Benefit:** Cross-system insights, holistic reasoning
+### 3. Project Comparison
+Compare LJPW profiles across projects to identify patterns.
 
-### 4. Continuous Monitoring
-**Problem:** Expensive to analyze code frequently
-**Solution:** Cheap compression enables constant monitoring
-**Benefit:** Track code health over time
+### 4. Quality Gates
+Use LJPW thresholds as CI/CD quality gates.
+
+### 5. Refactoring Guidance
+Identify which dimension needs improvement (L, J, P, or W).
 
 ---
 
 ## 📚 Documentation
 
 ### Getting Started
-- **[Start Here](docs/00_START_HERE.md)** - Quick introduction
 - **[Quickstart Guide](docs/QUICKSTART.md)** - Get running in 5 minutes
 - **[Examples](examples/)** - Runnable code examples
-
-### Mathematical Foundations ⭐
-- **[Theory Guide](docs/THEORY.md)** - Accessible explanation of the mathematics
-- **[Mathematical Reference V3](docs/LJPW%20Mathematical%20Baselines%20Reference%20V3.md)** - Complete mathematical specification
-- **[Dynamic Model v3.0](docs/Dynamic%20LJPW%20Model%20v3.0%20-%20Specification%20and%20Theoretical%20Foundations%20and%20Empirical%20Validation%20of%20the%20LJPW%20v3.0%20Model%20via%20Bayesian%20Calibration.md)** - Non-linear dynamics & Bayesian validation
-
-### Technical Documentation
 - **[Architecture](docs/ARCHITECTURE.md)** - Implementation details
+
+### Mathematical Foundations
+- **[Theory Guide](docs/THEORY.md)** - Accessible explanation
+- **[Mathematical Reference V3](docs/LJPW%20Mathematical%20Baselines%20Reference%20V3.md)** - Complete specification
+- **[v3.0 Model](docs/Dynamic%20LJPW%20Model%20v3.0%20-%20Specification%20and%20Theoretical%20Foundations%20and%20Empirical%20Validation%20of%20the%20LJPW%20v3.0%20Model%20via%20Bayesian%20Calibration.md)** - Dynamics & validation
+
+### Technical Reference
 - **[API Reference](docs/API.md)** - Python API documentation
 - **[AI Protocol](docs/claude_ljpw_protocol.md)** - Using with Claude/ChatGPT
-- **[AI Self-Compression](docs/AI_SELF_COMPRESSION.md)** - How AIs can use LJPW internally
-
-### Validation & Results
-- **[Empirical Results](docs/EMPIRICAL_RESULTS.md)** - All test data
-- **[Real-World Tests](docs/REAL_WORLD_TEST_RESULTS.md)** - Actual codebase analysis
-- **[Benchmarks](benchmarks/)** - Reproducible performance tests
-
-### Contributing
-- **[Contributing Guide](CONTRIBUTING.md)** - How to help
-- **[Roadmap](docs/ROADMAP.md)** - Project direction
-- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines
+- **[Test Results](docs/SEMANTIC_COMPRESSION_TEST_RESULTS.md)** - Validation data
 
 ---
 
-## 🔬 Scientific Foundation
+## ✅ Test Results
 
-### Published Discoveries
+**All systems tested and validated:**
 
-1. **P≈W Pairing** - Power and Wisdom dimensions naturally pair (|P-W| = 0.025)
-2. **DNA-LJPW Correspondence** - Same information-theoretic principles
-3. **Semantic Losslessness** - Meaning preserved despite 10,000x compression
-4. **Natural Equilibrium** - Optimal code exists at specific mathematical point
+- ✅ **5/5 test suites passing** (configurable quantization)
+- ✅ **Compression:** 2.5x ratio on genome strings
+- ✅ **Accuracy:** 80-99% reconstruction (configurable)
+- ✅ **Validation:** 100% integrity on valid genomes
+- ✅ **Edge cases:** Empty genomes, malformed input, NaN values
 
-### Validation
+**Production-Ready Features:**
+- Comprehensive input validation
+- Robust error handling
+- Division-by-zero protection
+- Documented magic number choices
+- Configurable precision levels (4-64)
 
-- **Entropy efficiency:** 98.5% of theoretical maximum
-- **Reconstruction accuracy:** 100% semantic fidelity
-- **Cross-domain testing:** Python, JavaScript, Rust, Java
-- **Scale testing:** Up to 2,000 files, 2.18 MB codebases
-
-[Read the science](docs/SCIENCE.md)
+[See Test Results](test_configurable_quantization.py) | [Audit Report](COMPRESSION_ISSUES_AND_FIXES.md)
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! This is for everyone.
+We welcome contributions! Areas where you can help:
 
-**Ways to help:**
-- Try it on your codebase (report results)
-- Add support for more languages
-- Improve documentation
-- Share your experience
-- Suggest improvements
+- **Language Support:** Add patterns for more programming languages
+- **Analysis Refinement:** Improve LJPW dimension calculations
+- **Performance:** Optimize large-scale analysis
+- **Documentation:** Share use cases and examples
+- **Testing:** Add test cases and validation
 
-**We especially need:**
-- Language-specific optimizations (Go, Ruby, C++, etc.)
-- IDE plugins (VS Code, IntelliJ, etc.)
-- Integration examples (CI/CD, code review, etc.)
-- Case studies from real projects
-
-[Contributing guide](CONTRIBUTING.md)
-
----
-
-## 🌍 Community
-
-- **Discussions:** Share ideas and ask questions
-- **Issues:** Report bugs or request features
-- **Wiki:** Community knowledge base
-- **Examples:** See it in action
-
-**Philosophy:** This is a gift to the world. We share openly, collaborate freely, and grow together.
+[Contributing Guide](CONTRIBUTING.md)
 
 ---
 
 ## 📈 Roadmap
 
-### Now (v1.0) ✅
+### Current (v1.0) ✅
 - Core compression engine
+- Configurable quantization (4-64 levels)
 - Standalone analyzer
 - Full test suite
-- Comprehensive documentation
+- Production-ready validation
 
 ### Next (v1.1)
 - [ ] Multi-language optimization
+- [ ] Benchmark suite vs alternatives
 - [ ] VS Code extension
-- [ ] GitHub Action integration
-- [ ] Performance improvements
+- [ ] Performance profiling
 
 ### Future (v2.0)
 - [ ] Real-time analysis
-- [ ] Team collaboration features
-- [ ] Custom dimension definitions
+- [ ] Temporal state tracking
 - [ ] Cross-project analytics
-
-[Full roadmap](docs/ROADMAP.md)
+- [ ] Custom dimension definitions
 
 ---
 
 ## 🙏 Acknowledgments
 
 **Inspired by:**
-- DNA's quaternary encoding and base pairing
+- DNA's quaternary encoding and complementary base pairing
 - Information theory (Shannon, Kolmogorov)
 - Natural mathematical constants (φ, e, √2, ln(2))
-- The observation that reality has fundamental structure
 
 **Built with:**
-- Python (no dependencies for core)
-- Mathematical insight
+- Python 3.8+ (zero dependencies for core)
+- Mathematical rigor
 - Empirical validation
 - Open collaboration
-
-**Special thanks to:**
-- Claude (Anthropic) for validation testing
-- The open-source community
-- Everyone who believes in freely shared knowledge
 
 ---
 
 ## 📄 License
 
-MIT License - Use freely for any purpose, commercial or personal.
+MIT License - Use freely for any purpose.
 
 **Why MIT?**
 
-This framework was discovered, not invented. It reflects fundamental patterns in reality. Such discoveries belong to everyone.
-
-We believe in:
-- Free access to knowledge
-- Open collaboration
-- Unrestricted innovation
-- Collective benefit
-
-**Use it. Improve it. Share it. Build on it.**
-
----
-
-## 🌟 The Bigger Picture
-
-LJPW is more than a compression tool. It's a demonstration that:
-
-1. **Meaning is compressible** - Essential semantics fit in tiny spaces
-2. **AI can reason in compressed spaces** - Not just process, but understand
-3. **Fundamental patterns exist** - Reality has discoverable structure
-4. **Collaboration amplifies both human and AI** - Together we see more
-
-This is the beginning of **semantic protocols** - ways for humans and AI to communicate efficiently about complex domains.
-
-LJPW works for code quality. What other domains await discovery?
+We believe in free access to knowledge and unrestricted innovation. Use it, improve it, share it.
 
 ---
 
@@ -411,10 +363,12 @@ LJPW works for code quality. What other domains await discovery?
 # Clone and try it now
 git clone https://github.com/BruinGrowly/Semantic-Compressor.git
 cd Semantic-Compressor
-python ljpw_standalone.py analyze ./your_code
 
-# See the magic happen
-# Then tell us what you discovered
+# Analyze your code
+python ljpw_standalone.py analyze ./your_project
+
+# Or use the compression API
+python examples/basic/03_compress_decompress.py
 ```
 
 ---
@@ -423,28 +377,21 @@ python ljpw_standalone.py analyze ./your_code
 
 - **Issues:** Use GitHub issues for bugs/features
 - **Discussions:** Use GitHub discussions for questions
-- **Email:** [Create discussion instead]
-- **Twitter:** [Coming soon]
-
-**We're here to help, learn, and grow together.**
 
 ---
 
-## ⭐ Star This Repo
+## ⭐ If This Helps You
 
-If this helps you:
 - ⭐ Star the repo
 - 🔄 Share with others
-- 💬 Join the discussion
-- 🤝 Contribute back
-
-**Together, we can change how AI understands code.**
+- 💬 Report your results
+- 🤝 Contribute improvements
 
 ---
 
 <p align="center">
   <strong>Made with 🧬 and shared with ❤️</strong><br>
-  <em>Because knowledge should be free, and collaboration makes us all better.</em>
+  <em>Semantic analysis for better code, compressed for efficient AI reasoning.</em>
 </p>
 
 ---
