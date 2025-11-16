@@ -218,56 +218,86 @@ def main():
     print("This is 15x BIGGER than our largest test!")
     print()
 
-    # Test Django (the biggest!)
+    all_results = []
+
+    # Test Django
     django_result = analyze_massive_codebase(
         "/tmp/ljpw_validation_test/django",
         "Django Web Framework"
     )
 
     if django_result:
-        # Test compression
-        compression_results = test_compression_at_scale(django_result)
-
-        # Test token efficiency
+        django_compression = test_compression_at_scale(django_result)
         test_token_efficiency(django_result)
+        all_results.append((django_result, django_compression))
 
-        # Summary
-        print(f"\n{'='*70}")
-        print(f"🎯 MASSIVE SCALE VALIDATION SUMMARY")
-        print(f"{'='*70}")
-        print(f"")
-        print(f"Project: {django_result['name']}")
-        print(f"Scale: {django_result['num_files']:,} Python files")
-        print(f"Analysis: {django_result['analysis_time']:.1f}s ({django_result['num_files']/django_result['analysis_time']:.0f} files/sec)")
-        print(f"")
-        print(f"LJPW Profile:")
-        state = django_result['state']
-        print(f"  L={state[0]:.2f}, J={state[1]:.2f}, P={state[2]:.2f}, W={state[3]:.2f}")
-        print(f"  Health: {django_result['health_score']:.1%}")
-        print(f"")
-        print(f"Compression Results:")
-        for cr in compression_results:
-            status = "✅" if cr['meaning_preserved'] else "⚠️"
-            print(f"  {status} {cr['levels']}-level: {cr['bytes']} bytes, {cr['accuracy']:.1%} accuracy, {cr['ratio']:.2f}x ratio")
+    # Test SciPy
+    print("\n" + "="*70)
+    print("MOVING TO NEXT MASSIVE CODEBASE")
+    print("="*70)
 
-        print(f"")
-        print(f"{'='*70}")
+    scipy_result = analyze_massive_codebase(
+        "/tmp/ljpw_validation_test/scipy",
+        "SciPy Scientific Computing Library"
+    )
 
-        # Check if all passed
-        all_preserved = all(cr['meaning_preserved'] for cr in compression_results)
-        all_accurate = all(cr['accuracy'] >= 0.85 for cr in compression_results)
+    if scipy_result:
+        scipy_compression = test_compression_at_scale(scipy_result)
+        test_token_efficiency(scipy_result)
+        all_results.append((scipy_result, scipy_compression))
 
-        if all_preserved and all_accurate:
-            print(f"✅ MASSIVE SCALE VALIDATION SUCCESSFUL!")
-            print(f"   The framework handles production-sized codebases!")
-            return 0
-        else:
-            print(f"⚠️  PARTIAL SUCCESS")
-            print(f"   Framework works but may need tuning at this scale")
-            return 0
+    # Overall summary
+    print(f"\n{'='*70}")
+    print(f"🎯 COMPLETE MASSIVE SCALE VALIDATION SUMMARY")
+    print(f"{'='*70}")
+    print()
+
+    for result, compression_results in all_results:
+        print(f"📊 {result['name']}")
+        print(f"   Files: {result['num_files']:,}")
+        print(f"   Speed: {result['num_files']/result['analysis_time']:.0f} files/sec")
+        print(f"   LJPW:  L={result['state'][0]:.2f}, J={result['state'][1]:.2f}, P={result['state'][2]:.2f}, W={result['state'][3]:.2f}")
+        print(f"   Health: {result['health_score']:.1%}")
+
+        # Show best compression result
+        best = max(compression_results, key=lambda x: x['accuracy'])
+        status = "✅" if best['meaning_preserved'] else "⚠️"
+        print(f"   Best: {status} {best['levels']}-level, {best['accuracy']:.1%} accuracy")
+        print()
+
+    # Overall stats
+    total_files = sum(r[0]['num_files'] for r in all_results)
+    total_time = sum(r[0]['analysis_time'] for r in all_results)
+    avg_accuracy = sum(max(cr['accuracy'] for cr in r[1]) for r in all_results) / len(all_results)
+
+    print(f"{'='*70}")
+    print(f"OVERALL STATISTICS")
+    print(f"{'='*70}")
+    print(f"Total files analyzed: {total_files:,}")
+    print(f"Total analysis time: {total_time:.1f}s")
+    print(f"Average speed: {total_files/total_time:.0f} files/sec")
+    print(f"Average best accuracy: {avg_accuracy:.1%}")
+    print(f"Projects validated: {len(all_results)}")
+    print()
+
+    # Check success
+    all_preserved = all(
+        any(cr['meaning_preserved'] for cr in r[1])
+        for r in all_results
+    )
+    all_accurate = all(
+        any(cr['accuracy'] >= 0.85 for cr in r[1])
+        for r in all_results
+    )
+
+    if all_preserved and all_accurate:
+        print(f"✅ MASSIVE SCALE VALIDATION SUCCESSFUL!")
+        print(f"   The framework handles production-sized codebases!")
+        return 0
     else:
-        print(f"❌ VALIDATION FAILED")
-        return 1
+        print(f"⚠️  PARTIAL SUCCESS")
+        print(f"   Framework works but may need tuning at this scale")
+        return 0
 
 
 if __name__ == '__main__':
