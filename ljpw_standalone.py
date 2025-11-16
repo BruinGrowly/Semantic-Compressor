@@ -553,6 +553,192 @@ def format_distance_result(result: Dict) -> str:
 
     return "\n".join(output)
 
+def format_distance_result_json(result: Dict) -> str:
+    """Format distance calculation result as JSON"""
+    # Create clean JSON output (remove full analysis results, keep key info)
+    json_result = {
+        'file1': result.get('file1'),
+        'file2': result.get('file2'),
+        'coordinates': {
+            'file1': {
+                'L': result['coords1'][0],
+                'J': result['coords1'][1],
+                'P': result['coords1'][2],
+                'W': result['coords1'][3]
+            },
+            'file2': {
+                'L': result['coords2'][0],
+                'J': result['coords2'][1],
+                'P': result['coords2'][2],
+                'W': result['coords2'][3]
+            }
+        },
+        'health': {
+            'file1': result['result1']['health'],
+            'file2': result['result2']['health']
+        },
+        'distance': result['distance'],
+        'similarity': result['similarity'],
+        'interpretation': result['interpretation'],
+        'differences': {
+            'Love': abs(result['coords1'][0] - result['coords2'][0]),
+            'Justice': abs(result['coords1'][1] - result['coords2'][1]),
+            'Power': abs(result['coords1'][2] - result['coords2'][2]),
+            'Wisdom': abs(result['coords1'][3] - result['coords2'][3])
+        }
+    }
+
+    if 'error' in result:
+        json_result = {'error': result['error']}
+
+    return json.dumps(json_result, indent=2)
+
+def calculate_batch_distance(files: List[str]) -> Dict:
+    """
+    Calculate distances between multiple files.
+    Returns a distance matrix and analysis for all pairs.
+    """
+    if len(files) < 2:
+        return {'error': 'Need at least 2 files for distance calculation'}
+
+    # Analyze all files
+    analyses = {}
+    for filepath in files:
+        result = analyze_file(filepath)
+        if 'error' in result:
+            return {'error': f"Failed to analyze {filepath}: {result['error']}"}
+        analyses[filepath] = result
+
+    # Build distance matrix
+    n = len(files)
+    distance_matrix = [[0.0] * n for _ in range(n)]
+
+    for i in range(n):
+        for j in range(i+1, n):
+            file1 = files[i]
+            file2 = files[j]
+
+            coords1 = (analyses[file1]['ljpw']['L'], analyses[file1]['ljpw']['J'],
+                      analyses[file1]['ljpw']['P'], analyses[file1]['ljpw']['W'])
+            coords2 = (analyses[file2]['ljpw']['L'], analyses[file2]['ljpw']['J'],
+                      analyses[file2]['ljpw']['P'], analyses[file2]['ljpw']['W'])
+
+            dist = calculate_distance(coords1, coords2)
+            distance_matrix[i][j] = dist
+            distance_matrix[j][i] = dist
+
+    # Find most similar and most different pairs
+    pairs = []
+    for i in range(n):
+        for j in range(i+1, n):
+            pairs.append((files[i], files[j], distance_matrix[i][j]))
+
+    pairs.sort(key=lambda x: x[2])
+
+    return {
+        'files': files,
+        'analyses': analyses,
+        'distance_matrix': distance_matrix,
+        'most_similar': pairs[0] if pairs else None,
+        'most_different': pairs[-1] if pairs else None,
+        'all_pairs': pairs
+    }
+
+def format_batch_distance_result(result: Dict) -> str:
+    """Format batch distance calculation result for display"""
+    if 'error' in result:
+        return f"\nError: {result['error']}\n"
+
+    output = []
+    output.append("\n" + "=" * 70)
+    output.append("LJPW Batch Semantic Distance Analysis")
+    output.append("=" * 70)
+
+    files = result['files']
+    n = len(files)
+
+    # Show file coordinates
+    output.append(f"\nAnalyzed {n} files:\n")
+    for i, filepath in enumerate(files):
+        analysis = result['analyses'][filepath]
+        coords = (analysis['ljpw']['L'], analysis['ljpw']['J'],
+                 analysis['ljpw']['P'], analysis['ljpw']['W'])
+        output.append(f"{i+1}. {filepath}")
+        output.append(f"   L={coords[0]:.2f}, J={coords[1]:.2f}, P={coords[2]:.2f}, W={coords[3]:.2f}")
+        output.append(f"   Health: {analysis['health']:.0%}")
+        output.append("")
+
+    # Distance matrix
+    output.append("Distance Matrix:")
+    output.append("")
+
+    # Header
+    header = "     "
+    for i in range(n):
+        header += f" {i+1:5}"
+    output.append(header)
+
+    # Rows
+    for i in range(n):
+        row = f" {i+1}.  "
+        for j in range(n):
+            if i == j:
+                row += "   -  "
+            else:
+                row += f"{result['distance_matrix'][i][j]:5.2f} "
+        output.append(row)
+
+    # Most similar and different
+    if result['most_similar']:
+        file1, file2, dist = result['most_similar']
+        output.append(f"\nMost Similar: {file1} ↔ {file2}")
+        output.append(f"  Distance: {dist:.3f}")
+
+    if result['most_different']:
+        file1, file2, dist = result['most_different']
+        output.append(f"\nMost Different: {file1} ↔ {file2}")
+        output.append(f"  Distance: {dist:.3f}")
+
+    output.append("\n" + "=" * 70)
+
+    return "\n".join(output)
+
+def format_batch_distance_result_json(result: Dict) -> str:
+    """Format batch distance calculation result as JSON"""
+    if 'error' in result:
+        return json.dumps({'error': result['error']}, indent=2)
+
+    # Create clean JSON structure
+    json_result = {
+        'files': result['files'],
+        'coordinates': {},
+        'health': {},
+        'distance_matrix': result['distance_matrix'],
+        'most_similar': {
+            'file1': result['most_similar'][0],
+            'file2': result['most_similar'][1],
+            'distance': result['most_similar'][2]
+        } if result['most_similar'] else None,
+        'most_different': {
+            'file1': result['most_different'][0],
+            'file2': result['most_different'][1],
+            'distance': result['most_different'][2]
+        } if result['most_different'] else None
+    }
+
+    # Add coordinates for each file
+    for filepath in result['files']:
+        analysis = result['analyses'][filepath]
+        json_result['coordinates'][filepath] = {
+            'L': analysis['ljpw']['L'],
+            'J': analysis['ljpw']['J'],
+            'P': analysis['ljpw']['P'],
+            'W': analysis['ljpw']['W']
+        }
+        json_result['health'][filepath] = analysis['health']
+
+    return json.dumps(json_result, indent=2)
+
 # ============================================================================
 # MAIN
 # ============================================================================
@@ -565,7 +751,7 @@ LJPW Semantic Analyzer - DNA-Inspired Code Quality Analysis
 Usage:
     python ljpw_standalone.py analyze <file_or_directory>
     python ljpw_standalone.py quick "<code>"
-    python ljpw_standalone.py distance <file1> <file2>
+    python ljpw_standalone.py distance <file1> <file2> [file3...] [--json] [--save <filename>]
     python ljpw_standalone.py help
 
 Examples:
@@ -581,6 +767,18 @@ Examples:
     # Compare two files (calculate semantic distance)
     python ljpw_standalone.py distance validation.py api_handler.py
 
+    # Compare multiple files (batch distance matrix)
+    python ljpw_standalone.py distance file1.py file2.py file3.py
+
+    # Output distance results as JSON
+    python ljpw_standalone.py distance file1.py file2.py --json
+
+    # Save distance results to a file
+    python ljpw_standalone.py distance file1.py file2.py --save results.txt
+
+    # Combine options
+    python ljpw_standalone.py distance f1.py f2.py f3.py --json --save matrix.json
+
 About:
     LJPW measures code quality across 4 dimensions:
     - Love (L): Safety, error handling, validation
@@ -589,7 +787,7 @@ About:
     - Wisdom (W): Design, patterns, architecture
 
     MIT License - Free for all, forever
-    Version 1.0
+    Version 1.1
         """)
         return
 
@@ -634,15 +832,75 @@ About:
 
     elif command == 'distance':
         if len(sys.argv) < 4:
-            print("Error: Please provide two files to compare")
-            print("Usage: python ljpw_standalone.py distance <file1> <file2>")
+            print("Error: Please provide at least two files to compare")
+            print("Usage: python ljpw_standalone.py distance <file1> <file2> [file3...] [--json] [--save <filename>]")
             return
 
-        file1 = sys.argv[2]
-        file2 = sys.argv[3]
+        # Parse arguments
+        files = []
+        use_json = False
+        save_file = None
+        i = 2
 
-        result = calculate_file_distance(file1, file2)
-        print(format_distance_result(result))
+        while i < len(sys.argv):
+            arg = sys.argv[i]
+            if arg == '--json':
+                use_json = True
+                i += 1
+            elif arg == '--save':
+                if i + 1 < len(sys.argv):
+                    save_file = sys.argv[i + 1]
+                    i += 2
+                else:
+                    print("Error: --save requires a filename")
+                    return
+            else:
+                # It's a file path
+                files.append(arg)
+                i += 1
+
+        if len(files) < 2:
+            print("Error: Please provide at least two files to compare")
+            return
+
+        # Check if batch comparison (3+ files) or pairwise (2 files)
+        if len(files) == 2:
+            # Pairwise comparison
+            result = calculate_file_distance(files[0], files[1])
+
+            # Format output
+            if use_json:
+                output = format_distance_result_json(result)
+            else:
+                output = format_distance_result(result)
+
+            # Display output
+            print(output)
+
+            # Save if requested
+            if save_file:
+                with open(save_file, 'w') as f:
+                    f.write(output)
+                print(f"\nResults saved to {save_file}")
+
+        else:
+            # Batch comparison
+            result = calculate_batch_distance(files)
+
+            # Format output
+            if use_json:
+                output = format_batch_distance_result_json(result)
+            else:
+                output = format_batch_distance_result(result)
+
+            # Display output
+            print(output)
+
+            # Save if requested
+            if save_file:
+                with open(save_file, 'w') as f:
+                    f.write(output)
+                print(f"\nResults saved to {save_file}")
 
     else:
         print(f"Unknown command: {command}")

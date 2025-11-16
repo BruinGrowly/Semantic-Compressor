@@ -5,13 +5,20 @@ Test Suite for Distance Calculation
 Tests the semantic distance calculation between files.
 """
 
+import json
 import math
 import sys
 from pathlib import Path
 
 # Import from ljpw_standalone
 sys.path.insert(0, str(Path(__file__).parent))
-from ljpw_standalone import calculate_distance, calculate_file_distance
+from ljpw_standalone import (
+    calculate_distance,
+    calculate_file_distance,
+    calculate_batch_distance,
+    format_distance_result_json,
+    format_batch_distance_result_json
+)
 
 # ============================================================================
 # TEST SUITE
@@ -187,6 +194,105 @@ def main():
     distance = calculate_distance(coords1, coords2)
     # Distance = sqrt(4 * 1^2) = 2.0
     test.assert_equal(distance, 2.0, "Large coordinates distance")
+
+    # ========================================================================
+    # Test 11: JSON Output Format
+    # ========================================================================
+    if Path(file1).exists() and Path(file2).exists():
+        result = calculate_file_distance(file1, file2)
+        json_output = format_distance_result_json(result)
+
+        # Parse JSON to verify it's valid
+        try:
+            parsed = json.loads(json_output)
+            test.assert_true('file1' in parsed, "JSON contains file1")
+            test.assert_true('file2' in parsed, "JSON contains file2")
+            test.assert_true('coordinates' in parsed, "JSON contains coordinates")
+            test.assert_true('distance' in parsed, "JSON contains distance")
+            test.assert_true('similarity' in parsed, "JSON contains similarity")
+        except json.JSONDecodeError:
+            test.assert_true(False, "JSON output is valid JSON")
+    else:
+        print(f"\n⚠ Skipping JSON format test (files not found)")
+
+    # ========================================================================
+    # Test 12: Batch Distance Calculation
+    # ========================================================================
+    # Create a list of test files
+    test_files = []
+    for filepath in [file1, file2, "test_distance.py"]:
+        if Path(filepath).exists():
+            test_files.append(filepath)
+
+    if len(test_files) >= 3:
+        batch_result = calculate_batch_distance(test_files)
+
+        test.assert_true('error' not in batch_result, "Batch calculation succeeds")
+        test.assert_true('files' in batch_result, "Batch result contains files")
+        test.assert_true('distance_matrix' in batch_result, "Batch result contains distance matrix")
+        test.assert_true('most_similar' in batch_result, "Batch result contains most_similar")
+        test.assert_true('most_different' in batch_result, "Batch result contains most_different")
+
+        # Verify distance matrix dimensions
+        n = len(test_files)
+        matrix = batch_result['distance_matrix']
+        test.assert_true(len(matrix) == n, f"Distance matrix has {n} rows")
+        test.assert_true(len(matrix[0]) == n, f"Distance matrix has {n} columns")
+
+        # Verify diagonal is all zeros
+        all_zeros = all(matrix[i][i] == 0.0 for i in range(n))
+        test.assert_true(all_zeros, "Distance matrix diagonal is all zeros")
+
+        # Verify symmetry
+        symmetric = all(matrix[i][j] == matrix[j][i] for i in range(n) for j in range(n))
+        test.assert_true(symmetric, "Distance matrix is symmetric")
+    else:
+        print(f"\n⚠ Skipping batch distance test (need at least 3 files)")
+
+    # ========================================================================
+    # Test 13: Batch JSON Output Format
+    # ========================================================================
+    if len(test_files) >= 3:
+        batch_result = calculate_batch_distance(test_files)
+        json_output = format_batch_distance_result_json(batch_result)
+
+        # Parse JSON to verify it's valid
+        try:
+            parsed = json.loads(json_output)
+            test.assert_true('files' in parsed, "Batch JSON contains files")
+            test.assert_true('coordinates' in parsed, "Batch JSON contains coordinates")
+            test.assert_true('distance_matrix' in parsed, "Batch JSON contains distance_matrix")
+            test.assert_true('most_similar' in parsed, "Batch JSON contains most_similar")
+            test.assert_true('most_different' in parsed, "Batch JSON contains most_different")
+        except json.JSONDecodeError:
+            test.assert_true(False, "Batch JSON output is valid JSON")
+    else:
+        print(f"\n⚠ Skipping batch JSON format test (need at least 3 files)")
+
+    # ========================================================================
+    # Test 14: Most Similar/Different Detection
+    # ========================================================================
+    if len(test_files) >= 3:
+        batch_result = calculate_batch_distance(test_files)
+
+        most_sim = batch_result['most_similar']
+        most_diff = batch_result['most_different']
+
+        test.assert_true(most_sim is not None, "Most similar pair found")
+        test.assert_true(most_diff is not None, "Most different pair found")
+
+        # Most similar should have smaller distance than most different
+        if most_sim and most_diff:
+            test.assert_true(most_sim[2] <= most_diff[2],
+                           "Most similar distance <= most different distance")
+    else:
+        print(f"\n⚠ Skipping most similar/different test (need at least 3 files)")
+
+    # ========================================================================
+    # Test 15: Batch Error Handling (< 2 files)
+    # ========================================================================
+    batch_result = calculate_batch_distance(["single_file.py"])
+    test.assert_true('error' in batch_result, "Batch with <2 files returns error")
 
     return test.print_results()
 
