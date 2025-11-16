@@ -194,24 +194,38 @@ python ljpw_standalone.py --help
 
 ### Basic Usage
 
-**1. Analyze code:**
+**1. Analyze a single file:**
+```bash
+python ljpw_standalone.py analyze myfile.py
+```
+
+**2. Analyze a directory:**
 ```bash
 python ljpw_standalone.py analyze ./src
 ```
 
-**2. Use Python API:**
-```python
-from ljpw_code_analyzer import LJPWCodeAnalyzer
-
-analyzer = LJPWCodeAnalyzer()
-results = analyzer.analyze_project('./src')
-
-print(f"L={results['L']:.2f}, J={results['J']:.2f}")
-print(f"P={results['P']:.2f}, W={results['W']:.2f}")
-print(f"Health: {results['health_score']:.0%}")
+**3. Quick analysis of code snippet:**
+```bash
+python ljpw_standalone.py quick "def hello(): print('hi')"
 ```
 
-**3. Compress states:**
+**4. Use Python API:**
+```python
+# For analysis
+from ljpw_standalone import analyze_file, analyze_directory
+
+# Analyze single file
+result = analyze_file('myfile.py')
+print(f"L={result['ljpw']['L']:.2f}, J={result['ljpw']['J']:.2f}")
+print(f"P={result['ljpw']['P']:.2f}, W={result['ljpw']['W']:.2f}")
+print(f"Health: {result['health']:.0%}")
+
+# Analyze directory
+results = analyze_directory('./src')
+print(f"Analyzed {len(results)} files")
+```
+
+**5. Compress states:**
 ```python
 from ljpw_semantic_compressor import SemanticCompressor
 
@@ -353,23 +367,34 @@ We welcome contributions! Areas where you can help:
 ## 📈 Roadmap
 
 ### Current (v1.0) ✅
-- Core compression engine
-- Configurable quantization (4-64 levels)
-- Standalone analyzer
-- Full test suite
-- Production-ready validation
+- ✅ Core analysis engine (9,538 files validated)
+- ✅ Configurable compression (4-64 precision levels)
+- ✅ Standalone CLI analyzer
+- ✅ Python API for analysis and compression
+- ✅ Comprehensive documentation and tests
 
-### Next (v1.1)
-- [ ] Multi-language optimization
-- [ ] Benchmark suite vs alternatives
-- [ ] VS Code extension
-- [ ] Performance profiling
+### In Progress (v1.1) 🚧
+- 🔄 Distance calculation between files (this week)
+- 🔄 Documentation cleanup (this week)
+- 📋 File comparison command (next 2 weeks)
+- 📋 Basic clustering implementation (next 2 weeks)
 
-### Future (v2.0)
-- [ ] Real-time analysis
-- [ ] Temporal state tracking
-- [ ] Cross-project analytics
-- [ ] Custom dimension definitions
+### Coming Soon (v1.2-1.5)
+- Progress indicators and better error messages
+- Multi-language optimization
+- Visualization tools
+- Configuration file support
+- More export formats
+
+### Future Features (v2.0+)
+- Semantic search with query language
+- Refactoring guidance and trajectories
+- Git integration and temporal tracking
+- Concept mapping tools
+- API server mode
+- IDE integration (VS Code extension)
+
+**See [ROADMAP.md](ROADMAP.md) for detailed timelines and feature descriptions.**
 
 ---
 
