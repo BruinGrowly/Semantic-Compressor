@@ -36,6 +36,36 @@ fn add(a: i32, b: i32) -> i32 {
 }
 """
 
+cpp_add = """
+int add(int a, int b) {
+    return a + b;
+}
+"""
+
+go_add = """
+func add(a int, b int) int {
+    return a + b
+}
+"""
+
+ruby_add = """
+def add(a, b)
+  a + b
+end
+"""
+
+swift_add = """
+func add(_ a: Int, _ b: Int) -> Int {
+    return a + b
+}
+"""
+
+kotlin_add = """
+fun add(a: Int, b: Int): Int {
+    return a + b
+}
+"""
+
 # Test 2: Input validation
 python_validate = """
 def validate(data):
@@ -120,7 +150,12 @@ def test_cross_language():
         ("Simple Addition", [
             ("Python", python_add),
             ("JavaScript", javascript_add),
-            ("Rust", rust_add)
+            ("Rust", rust_add),
+            ("C++", cpp_add),
+            ("Go", go_add),
+            ("Ruby", ruby_add),
+            ("Swift", swift_add),
+            ("Kotlin", kotlin_add)
         ]),
         ("Input Validation", [
             ("Python", python_validate),
