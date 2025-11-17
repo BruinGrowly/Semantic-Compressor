@@ -11,7 +11,7 @@ This tests whether LJPW captures language-independent meaning.
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
 from ljpw_standalone import analyze_quick, calculate_distance
 
 # ============================================================================

@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 # Import from ljpw_standalone
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
 from ljpw_standalone import (
     calculate_distance,
     calculate_file_distance,

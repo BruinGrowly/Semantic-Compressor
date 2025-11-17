@@ -14,7 +14,7 @@ import math
 from pathlib import Path
 from typing import List, Dict, Any
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
 
 from ljpw_ast_analyzer import LJPWASTAnalyzer
 from ljpw_standalone import analyze_file as regex_analyze_file
