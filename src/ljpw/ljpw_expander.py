@@ -21,9 +21,11 @@ import sys
 import importlib.util
 
 # Load the compiler module dynamically
+import os
+_current_dir = os.path.dirname(os.path.abspath(__file__))
 spec = importlib.util.spec_from_file_location(
     "ljpw_semantic_compiler",
-    "ljpw_semantic_compiler.py"
+    os.path.join(_current_dir, "ljpw_semantic_compiler.py")
 )
 compiler_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(compiler_module)

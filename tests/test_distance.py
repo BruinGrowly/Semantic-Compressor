@@ -24,7 +24,7 @@ from ljpw_standalone import (
 # TEST SUITE
 # ============================================================================
 
-class TestDistance:
+class DistanceTestRunner:
     def __init__(self):
         self.passed = 0
         self.failed = 0
@@ -75,7 +75,7 @@ class TestDistance:
             return 1
 
 def main():
-    test = TestDistance()
+    test = DistanceTestRunner()
 
     # ========================================================================
     # Test 1: Identical Coordinates

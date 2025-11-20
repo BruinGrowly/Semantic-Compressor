@@ -39,7 +39,7 @@ def test_invalid_levels():
             passed += 1
 
     print(f"\nResult: {passed} passed, {failed} failed")
-    return failed == 0
+    assert failed == 0, f"{failed} tests failed"
 
 
 def test_recommend_levels():
@@ -68,13 +68,13 @@ def test_recommend_levels():
     try:
         LJPWQuantizer.recommend_levels('invalid')
         print("✗ FAIL: Invalid use case should raise ValueError")
-        return False
+        assert False, "Invalid use case should raise ValueError"
     except ValueError:
         print("✓ PASS: Invalid use case correctly rejected")
         passed += 1
 
     print(f"\nResult: {passed}/{len(test_cases)+1} passed")
-    return passed == len(test_cases) + 1
+    assert passed == len(test_cases) + 1
 
 
 def calculate_error(original, reconstructed):
@@ -163,7 +163,7 @@ def test_quantization_accuracy():
     else:
         print("\n✗ FAIL: Accuracy should improve with more levels")
 
-    return monotonic
+    assert monotonic, "Compression accuracy should improve monotonically with more levels"
 
 
 def test_round_trip_all_levels():
@@ -210,7 +210,7 @@ def test_round_trip_all_levels():
         if not passed:
             all_passed = False
 
-    return all_passed
+    assert all_passed, "Some levels failed integrity check"
 
 
 def test_codon_parsing_edge_cases():
@@ -258,7 +258,7 @@ def test_codon_parsing_edge_cases():
 
     total = len(valid_cases) + len(invalid_cases)
     print(f"\nResult: {passed}/{total} passed")
-    return passed == total
+    assert passed == total, f"{total - passed} edge cases failed"
 
 
 def main():

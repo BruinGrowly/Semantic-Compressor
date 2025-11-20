@@ -422,7 +422,8 @@ def test_edge_cases():
             'dist_to_ne': dist_to_ne
         })
 
-    return results
+    # Test passes if no exceptions were raised
+    assert len(results) > 0
 
 
 def test_design_patterns():
@@ -474,7 +475,8 @@ def test_design_patterns():
     print(f"✓ Patterns cluster together" if avg_pattern_distance < 0.5 else "✗ Patterns are scattered")
     print()
 
-    return results
+    # Test passes if no exceptions were raised
+    assert len(results) > 0
 
 
 def test_code_smells():
@@ -516,7 +518,8 @@ def test_code_smells():
     print(f"✓ Code smells are far from NE" if avg_smell_distance > 0.8 else "✗ Code smells near NE")
     print()
 
-    return results
+    # Test passes if no exceptions were raised
+    assert len(results) > 0
 
 
 def test_refactoring_sequences():
@@ -579,7 +582,8 @@ def test_refactoring_sequences():
     print(f"{'✓ HYPOTHESIS CONFIRMED' if success_rate >= 70 else '✗ HYPOTHESIS CHALLENGED'}")
     print()
 
-    return results
+    # Test passes if no exceptions were raised
+    assert len(results) > 0
 
 
 def test_algorithmic_complexity():
@@ -620,7 +624,8 @@ def test_algorithmic_complexity():
             'dist_to_ne': dist_to_ne
         })
 
-    return results
+    # Test passes if no exceptions were raised
+    assert len(results) > 0
 
 
 def main():

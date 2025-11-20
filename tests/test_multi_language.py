@@ -9,6 +9,7 @@ Tests the framework with:
 """
 
 import importlib.util
+import os
 
 def load_module(name, path):
     spec = importlib.util.spec_from_file_location(name, path)
@@ -16,7 +17,8 @@ def load_module(name, path):
     spec.loader.exec_module(module)
     return module
 
-pipeline_mod = load_module("ljpw_pipeline", "ljpw_pipeline.py")
+base_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'ljpw')
+pipeline_mod = load_module("ljpw_pipeline", os.path.join(base_path, "ljpw_pipeline.py"))
 LJPWPipeline = pipeline_mod.LJPWPipeline
 
 # ============================================================================

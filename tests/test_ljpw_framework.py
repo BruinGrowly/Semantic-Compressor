@@ -25,10 +25,12 @@ def load_module(name, path):
     return module
 
 # Load modules
-compiler_mod = load_module("ljpw_semantic_compiler", "ljpw_semantic_compiler.py")
-compressor_mod = load_module("ljpw_semantic_compressor", "ljpw_semantic_compressor.py")
-expander_mod = load_module("ljpw_expander", "ljpw_expander.py")
-pipeline_mod = load_module("ljpw_pipeline", "ljpw_pipeline.py")
+import os
+base_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'ljpw')
+compiler_mod = load_module("ljpw_semantic_compiler", os.path.join(base_path, "ljpw_semantic_compiler.py"))
+compressor_mod = load_module("ljpw_semantic_compressor", os.path.join(base_path, "ljpw_semantic_compressor.py"))
+expander_mod = load_module("ljpw_expander", os.path.join(base_path, "ljpw_expander.py"))
+pipeline_mod = load_module("ljpw_pipeline", os.path.join(base_path, "ljpw_pipeline.py"))
 
 # Import classes
 SemanticCompressor = compressor_mod.SemanticCompressor
@@ -43,7 +45,7 @@ NE = (0.618034, 0.414214, 0.718282, 0.693147)
 # TEST SUITE 1: DNA-LJPW CORRESPONDENCE PROPERTIES
 # ============================================================================
 
-class TestDNACorrespondence:
+class DNACorrespondenceSuite:
     """Test the DNA-LJPW correspondence claims"""
 
     def __init__(self):
@@ -187,7 +189,7 @@ class TestDNACorrespondence:
 # TEST SUITE 2: COMPRESSION/DECOMPRESSION FIDELITY
 # ============================================================================
 
-class TestCompressionFidelity:
+class CompressionFidelitySuite:
     """Test compression and decompression accuracy"""
 
     def __init__(self):
@@ -353,7 +355,7 @@ class TestCompressionFidelity:
 # TEST SUITE 3: FULL PIPELINE INTEGRATION
 # ============================================================================
 
-class TestPipelineIntegration:
+class PipelineIntegrationSuite:
     """Test the complete pipeline end-to-end"""
 
     def __init__(self):
@@ -506,7 +508,7 @@ def safe_efficient_well_designed_function(data: list) -> list:
 # TEST SUITE 4: PERFORMANCE BENCHMARKS
 # ============================================================================
 
-class TestPerformance:
+class PerformanceSuite:
     """Benchmark performance characteristics"""
 
     def __init__(self):
@@ -600,10 +602,10 @@ def run_all_tests():
 
     # Run test suites
     suites = [
-        ("DNA-LJPW Correspondence", TestDNACorrespondence()),
-        ("Compression Fidelity", TestCompressionFidelity()),
-        ("Pipeline Integration", TestPipelineIntegration()),
-        ("Performance Benchmarks", TestPerformance()),
+        ("DNA-LJPW Correspondence", DNACorrespondenceSuite()),
+        ("Compression Fidelity", CompressionFidelitySuite()),
+        ("Pipeline Integration", PipelineIntegrationSuite()),
+        ("Performance Benchmarks", PerformanceSuite()),
     ]
 
     results_summary = []

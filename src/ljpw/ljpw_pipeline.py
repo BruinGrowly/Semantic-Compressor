@@ -27,8 +27,10 @@ def load_module(name, path):
     return module
 
 # Load components
-compiler_mod = load_module("ljpw_semantic_compiler", "ljpw_semantic_compiler.py")
-expander_mod = load_module("ljpw_expander", "ljpw_expander.py")
+import os
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+compiler_mod = load_module("ljpw_semantic_compiler", os.path.join(_current_dir, "ljpw_semantic_compiler.py"))
+expander_mod = load_module("ljpw_expander", os.path.join(_current_dir, "ljpw_expander.py"))
 
 AdvancedSemanticCompressor = compiler_mod.AdvancedSemanticCompressor
 SemanticExpander = expander_mod.SemanticExpander
