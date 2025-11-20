@@ -178,21 +178,43 @@ class SimpleCodeAnalyzer:
         score += len(re.findall(self.patterns['error_handling'], code, re.I)) * 0.15
         score += len(re.findall(self.patterns['validation'], code, re.I)) * 0.12
         score += len(re.findall(self.patterns['null_safety'], code, re.I)) * 0.10
-        return min(score * min(lines / 20, 1.0), 1.5)
+        
+        # Normalize by code size (more forgiving for larger files)
+        size_factor = min(1.0, 0.5 + lines / 50)  # Start at 0.5, reach 1.0 at 25 lines
+        
+        # Cap at NE_L × 1.5 to stay in reasonable range (0.618 × 1.5 ≈ 0.93)
+        max_love = NATURAL_EQUILIBRIUM['L'] * 1.5
+        return min(score * size_factor, max_love)
 
     def _score_justice(self, code: str, lines: int) -> float:
         """Score structural quality"""
         score = 0.0
         score += len(re.findall(self.patterns['type_annotations'], code)) * 0.12
         score += len(re.findall(self.patterns['documentation'], code)) * 0.10
-        return min(score * min(lines / 20, 1.0), 1.5)
+        
+        # Bonus for well-structured code (having any structure is good)
+        if score > 0:
+            score += 0.05  # Base bonus for having any structure
+        
+        # Normalize by code size
+        size_factor = min(1.0, 0.5 + lines / 50)
+        
+        # Cap at NE_J × 2 for better balance (0.414 × 2 ≈ 0.83)
+        max_justice = NATURAL_EQUILIBRIUM['J'] * 2.0
+        return min(score * size_factor, max_justice)
 
     def _score_power(self, code: str, lines: int) -> float:
         """Score performance considerations"""
         score = 0.0
         score += len(re.findall(self.patterns['algorithms'], code, re.I)) * 0.15
         score += len(re.findall(self.patterns['async'], code, re.I)) * 0.12
-        return min(score * min(lines / 20, 1.0), 1.5)
+        
+        # Normalize by code size
+        size_factor = min(1.0, 0.5 + lines / 50)
+        
+        # Cap at NE_P × 1.2 (0.718 × 1.2 ≈ 0.86)
+        max_power = NATURAL_EQUILIBRIUM['P'] * 1.2
+        return min(score * size_factor, max_power)
 
     def _score_wisdom(self, code: str, lines: int) -> float:
         """Score design quality"""
@@ -200,16 +222,49 @@ class SimpleCodeAnalyzer:
         score += len(re.findall(self.patterns['abstraction'], code, re.I)) * 0.15
         score += len(re.findall(self.patterns['patterns'], code, re.I)) * 0.12
         score += len(re.findall(self.patterns['modularity'], code)) * 0.05
-        return min(score * min(lines / 20, 1.0), 1.5)
+        
+        # Bonus for having any modularity
+        if score > 0:
+            score += 0.03  # Base bonus for modular code
+        
+        # Normalize by code size
+        size_factor = min(1.0, 0.5 + lines / 50)
+        
+        # Cap at NE_W × 1.3 (0.693 × 1.3 ≈ 0.90)
+        max_wisdom = NATURAL_EQUILIBRIUM['W'] * 1.3
+        return min(score * size_factor, max_wisdom)
 
     def _calculate_health(self, L: float, J: float, P: float, W: float) -> float:
-        """Calculate overall health score (0-1)"""
+        """
+        Calculate overall health score (0-1).
+        
+        Uses a more forgiving formula that:
+        - Rewards any positive LJPW values
+        - Considers both distance from NE and absolute magnitude
+        - Provides meaningful differentiation across quality levels
+        """
         NE = NATURAL_EQUILIBRIUM
         distance = math.sqrt(
             (NE['L'] - L)**2 + (NE['J'] - J)**2 +
             (NE['P'] - P)**2 + (NE['W'] - W)**2
         )
-        return max(0, 1.0 - distance / 2)
+        
+        # Improved health calculation
+        # 1. Distance-based component (proximity to Natural Equilibrium)
+        # Use divisor of 3 instead of 2 to be more forgiving
+        distance_health = max(0, 1.0 - distance / 3.0)
+        
+        # 2. Magnitude-based component (having any good practices)
+        # Average of actual values relative to NE
+        magnitude = (L + J + P + W) / 4.0
+        ne_magnitude = (NE['L'] + NE['J'] + NE['P'] + NE['W']) / 4.0
+        magnitude_health = min(1.0, magnitude / ne_magnitude)
+        
+        # 3. Combine both components (70% distance, 30% magnitude)
+        # This rewards both balance AND absolute quality
+        health = 0.7 * distance_health + 0.3 * magnitude_health
+        
+        return max(0, min(1.0, health))
 
     def _distance_from_ne(self, L: float, J: float, P: float, W: float) -> float:
         """Calculate distance from Natural Equilibrium"""

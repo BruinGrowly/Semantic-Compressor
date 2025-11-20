@@ -104,9 +104,15 @@ class LJPWISOAnalyzer:
         # Generate genome
         genome = self._generate_genome(L_score, J_score, P_score, W_score)
 
-        # Calculate health
+        # Calculate health with improved formula
         distance = self._distance_from_ne((L_score, J_score, P_score, W_score))
-        health = max(0, 1 - distance / 2)
+        
+        # Improved health calculation (matching ljpw_standalone.py)
+        distance_health = max(0, 1.0 - distance / 3.0)
+        magnitude = (L_score + J_score + P_score + W_score) / 4.0
+        ne_magnitude = (0.618 + 0.414 + 0.718 + 0.693) / 4.0
+        magnitude_health = min(1.0, magnitude / ne_magnitude)
+        health = 0.7 * distance_health + 0.3 * magnitude_health
 
         # Generate insights
         insights = self._generate_insights(L_score, J_score, P_score, W_score, structure)
@@ -234,7 +240,13 @@ class LJPWISOAnalyzer:
 
         genome = self._generate_genome(L, J, P, W)
         distance = self._distance_from_ne((L, J, P, W))
-        health = max(0, 1 - distance / 2)
+        
+        # Improved health calculation (matching ljpw_standalone.py)
+        distance_health = max(0, 1.0 - distance / 3.0)
+        magnitude = (L + J + P + W) / 4.0
+        ne_magnitude = (0.618 + 0.414 + 0.718 + 0.693) / 4.0
+        magnitude_health = min(1.0, magnitude / ne_magnitude)
+        health = 0.7 * distance_health + 0.3 * magnitude_health
 
         return {
             'filename': os.path.basename(iso_path),
