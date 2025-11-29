@@ -14,23 +14,23 @@ Predicted Constants:
 - Θ (Theta) = Ψ×ln(2)×√(π/2) ≈ 2.545 - Information-Energy Bridge
 """
 
+import math
 import sys
 from pathlib import Path
-import math
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
-from ljpw_standalone import calculate_distance
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.ljpw.ljpw_standalone import calculate_distance
 
 # Mathematical Constants
-E = math.e               # 2.718281828...
-PI = math.pi             # 3.141592654...
+E = math.e  # 2.718281828...
+PI = math.pi  # 3.141592654...
 PHI = (1 + math.sqrt(5)) / 2  # 1.618033989... (golden ratio)
-SQRT2 = math.sqrt(2)     # 1.414213562...
-LN2 = math.log(2)        # 0.693147181...
+SQRT2 = math.sqrt(2)  # 1.414213562...
+LN2 = math.log(2)  # 0.693147181...
 
 # Predicted New Constants
-PSI = (E + PI) / 2       # 2.929937241 - Universal Harmony Constant
-THETA = PSI * LN2 * math.sqrt(PI/2)  # 2.545327778 - Information-Energy Bridge
+PSI = (E + PI) / 2  # 2.929937241 - Universal Harmony Constant
+THETA = PSI * LN2 * math.sqrt(PI / 2)  # 2.545327778 - Information-Energy Bridge
 
 # Reference Points
 ANCHOR_POINT = (1.000, 1.000, 1.000, 1.000)
@@ -85,11 +85,11 @@ def validate_psi_mathematical_properties():
     # Test 4: Relationship to known constants
     print("Test 4: Relationships to Known Constants")
     relationships = {
-        "Ψ/e": PSI/E,
-        "Ψ/π": PSI/PI,
-        "Ψ/φ": PSI/PHI,
-        "Ψ/√2": PSI/SQRT2,
-        "Ψ×ln(2)": PSI*LN2,
+        "Ψ/e": PSI / E,
+        "Ψ/π": PSI / PI,
+        "Ψ/φ": PSI / PHI,
+        "Ψ/√2": PSI / SQRT2,
+        "Ψ×ln(2)": PSI * LN2,
     }
 
     for name, value in relationships.items():
@@ -97,10 +97,10 @@ def validate_psi_mathematical_properties():
     print()
 
     return {
-        'value': PSI,
-        'in_range': in_range,
-        'dist_anchor': dist_to_anchor,
-        'dist_ne': dist_to_ne
+        "value": PSI,
+        "in_range": in_range,
+        "dist_anchor": dist_to_anchor,
+        "dist_ne": dist_to_ne,
     }
 
 
@@ -158,10 +158,10 @@ def validate_theta_mathematical_properties():
     print()
 
     return {
-        'value': THETA,
-        'in_range': in_initial_range,
-        'dist_anchor': dist_to_anchor,
-        'dist_ne': dist_to_ne
+        "value": THETA,
+        "in_range": in_initial_range,
+        "dist_anchor": dist_to_anchor,
+        "dist_ne": dist_to_ne,
     }
 
 
@@ -177,7 +177,7 @@ def test_quantum_classical_interface():
 
     # Simulated quantum coherence metrics
     baseline_coherence = 0.75  # 75% coherence
-    psi_coherence = baseline_coherence * (1 + (PSI - E)/E)  # Ψ-enhanced
+    psi_coherence = baseline_coherence * (1 + (PSI - E) / E)  # Ψ-enhanced
 
     improvement = (psi_coherence - baseline_coherence) / baseline_coherence
 
@@ -261,7 +261,7 @@ def test_information_processing():
     # Shannon capacity simulation
     signal_to_noise = 10.0  # 10 dB
     baseline_capacity = math.log2(1 + signal_to_noise)
-    psi_capacity = math.log2(1 + signal_to_noise * PSI/E)
+    psi_capacity = math.log2(1 + signal_to_noise * PSI / E)
 
     improvement = (psi_capacity - baseline_capacity) / baseline_capacity
 

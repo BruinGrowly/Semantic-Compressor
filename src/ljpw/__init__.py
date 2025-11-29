@@ -39,8 +39,9 @@ __description__ = "Semantic Compressor - Compress code by meaning, not syntax"
 
 # Import main analyzer from standalone module
 try:
-    from .ljpw_standalone import analyze_quick, calculate_distance, SimpleCodeAnalyzer
-    __all__ = ['analyze_quick', 'calculate_distance', 'SimpleCodeAnalyzer']
+    from .ljpw_standalone import SimpleCodeAnalyzer, analyze_quick, calculate_distance
+
+    __all__ = ["analyze_quick", "calculate_distance", "SimpleCodeAnalyzer"]
 except ImportError:
     # Fallback if modules aren't accessible
     __all__ = []

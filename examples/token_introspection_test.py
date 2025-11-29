@@ -18,9 +18,7 @@ test_cases = {
     or incomplete implementation. Fifth, the function builds up a list using
     repeated append calls, which could be inefficient for large datasets.
     """,
-
     "ljpw": "L=0.45,J=1.5,P=0.6,W=0.3|H=41%|Δ=1.17|[L-CRIT][W-HIGH]",
-
     "semantic_genome": "LJPW{1unit:TypeDef(2,3,1,2)|SafeInit(3,2,1,2)}",
 }
 
@@ -29,7 +27,7 @@ for mode, content in test_cases.items():
     char_count = len(content)
     # Rough token estimate: ~4 chars per token for English
     estimated_tokens = char_count / 4
-    compression_vs_verbose = len(test_cases['verbose']) / char_count if mode != 'verbose' else 1.0
+    compression_vs_verbose = len(test_cases["verbose"]) / char_count if mode != "verbose" else 1.0
 
     print(f"\n{'='*60}")
     print(f"MODE: {mode.upper()}")
@@ -67,7 +65,9 @@ print(f"  Compressed size: {ljpw_size:,.0f} bytes")
 print(f"  Tokens needed: {ljpw_tokens:.0f}")
 print(f"  Claude context windows: {ljpw_tokens/200000:.4f}")
 print(f"  Would fit? YES")
-print(f"  Token savings: {traditional_tokens - ljpw_tokens:,.0f} ({100*(traditional_tokens-ljpw_tokens)/traditional_tokens:.2f}%)")
+print(
+    f"  Token savings: {traditional_tokens - ljpw_tokens:,.0f} ({100*(traditional_tokens-ljpw_tokens)/traditional_tokens:.2f}%)"
+)
 
 # What this enables
 print(f"\n{'='*60}")

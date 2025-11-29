@@ -11,13 +11,15 @@ Tests the framework with:
 import importlib.util
 import os
 
+
 def load_module(name, path):
     spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
-base_path = os.path.join(os.path.dirname(__file__), '..', 'src', 'ljpw')
+
+base_path = os.path.join(os.path.dirname(__file__), "..", "src", "ljpw")
 pipeline_mod = load_module("ljpw_pipeline", os.path.join(base_path, "ljpw_pipeline.py"))
 LJPWPipeline = pipeline_mod.LJPWPipeline
 
@@ -27,7 +29,9 @@ LJPWPipeline = pipeline_mod.LJPWPipeline
 
 LANGUAGE_SAMPLES = {
     "python": [
-        ("safe_python.py", """
+        (
+            "safe_python.py",
+            """
 from typing import Optional, List
 import logging
 
@@ -71,11 +75,13 @@ class DataValidator:
         except Exception as e:
             self.logger.error(f"Validation error: {e}")
             raise
-"""),
+""",
+        ),
     ],
-
     "javascript": [
-        ("safe_js.js", """
+        (
+            "safe_js.js",
+            """
 class DataProcessor {
     constructor(options = {}) {
         this.validateOptions(options);
@@ -123,11 +129,13 @@ class DataProcessor {
 }
 
 module.exports = DataProcessor;
-"""),
+""",
+        ),
     ],
-
     "rust": [
-        ("safe_rust.rs", """
+        (
+            "safe_rust.rs",
+            """
 use std::error::Error;
 use std::fmt;
 
@@ -198,11 +206,13 @@ mod tests {
         assert!(validator.validate(Some(vec![1, 2, 3])).is_ok());
     }
 }
-"""),
+""",
+        ),
     ],
-
     "java": [
-        ("SafeJava.java", """
+        (
+            "SafeJava.java",
+            """
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -261,7 +271,8 @@ public class DataValidator {
         }
     }
 }
-"""),
+""",
+        ),
     ],
 }
 
@@ -271,16 +282,18 @@ public class DataValidator {
 
 EDGE_CASES = [
     ("empty.py", ""),  # Empty file
-
     ("minimal.py", "x = 1"),  # Minimal code
-
-    ("comment_only.py", """
+    (
+        "comment_only.py",
+        """
 # This file only has comments
 # No actual code here
 # Just documentation
-"""),
-
-    ("massive_safety.py", """
+""",
+    ),
+    (
+        "massive_safety.py",
+        """
 def ultra_safe_function(data):
     '''Maximum safety checks'''
     if data is None:
@@ -310,23 +323,27 @@ def ultra_safe_function(data):
     except Exception as e:
         logging.error(f"Error: {e}")
         raise
-"""),
-
-    ("no_safety.py", """
+""",
+    ),
+    (
+        "no_safety.py",
+        """
 def unsafe_function(data):
     return [x * 2 for x in data]
-"""),
+""",
+    ),
 ]
 
 # ============================================================================
 # TEST EXECUTION
 # ============================================================================
 
+
 def test_multi_language():
     """Test framework with multiple programming languages"""
-    print("="*70)
+    print("=" * 70)
     print("MULTI-LANGUAGE LJPW ANALYSIS TEST")
-    print("="*70)
+    print("=" * 70)
 
     pipeline = LJPWPipeline()
 
@@ -334,30 +351,33 @@ def test_multi_language():
         print(f"\n{language.upper()} Analysis:")
         print("-" * 70)
 
-        results = pipeline.analyze_codebase(samples,
-                                           generate_docs=False,
-                                           generate_improvement_plan=False)
+        results = pipeline.analyze_codebase(
+            samples, generate_docs=False, generate_improvement_plan=False
+        )
 
-        stats = results['statistics']
-        avg_ljpw = stats['average_ljpw']
+        stats = results["statistics"]
+        avg_ljpw = stats["average_ljpw"]
 
         print(f"\nResults for {language}:")
         print(f"  Files analyzed: {stats['total_files']}")
         print(f"  Compression: {stats['compression_ratio']:.1f}x")
         print(f"  Health Score: {stats['health_score']:.1%}")
-        print(f"  Average LJPW: L={avg_ljpw[0]:.2f}, J={avg_ljpw[1]:.2f}, P={avg_ljpw[2]:.2f}, W={avg_ljpw[3]:.2f}")
+        print(
+            f"  Average LJPW: L={avg_ljpw[0]:.2f}, J={avg_ljpw[1]:.2f}, P={avg_ljpw[2]:.2f}, W={avg_ljpw[3]:.2f}"
+        )
 
         # Insights
-        if results['reasoning']['insights']:
+        if results["reasoning"]["insights"]:
             print(f"\n  Top Insights:")
-            for insight in results['reasoning']['insights'][:3]:
+            for insight in results["reasoning"]["insights"][:3]:
                 print(f"    [{insight['type']}] {insight['message']}")
+
 
 def test_edge_cases():
     """Test framework with edge cases"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("EDGE CASE TESTING")
-    print("="*70)
+    print("=" * 70)
 
     pipeline = LJPWPipeline()
 
@@ -366,25 +386,28 @@ def test_edge_cases():
         print("-" * 70)
 
         try:
-            results = pipeline.analyze_codebase([(filename, code)],
-                                               generate_docs=False,
-                                               generate_improvement_plan=False)
+            results = pipeline.analyze_codebase(
+                [(filename, code)], generate_docs=False, generate_improvement_plan=False
+            )
 
-            stats = results['statistics']
-            avg_ljpw = stats['average_ljpw']
+            stats = results["statistics"]
+            avg_ljpw = stats["average_ljpw"]
 
             print(f"  Success!")
             print(f"  Health: {stats['health_score']:.1%}")
-            print(f"  LJPW: L={avg_ljpw[0]:.2f}, J={avg_ljpw[1]:.2f}, P={avg_ljpw[2]:.2f}, W={avg_ljpw[3]:.2f}")
+            print(
+                f"  LJPW: L={avg_ljpw[0]:.2f}, J={avg_ljpw[1]:.2f}, P={avg_ljpw[2]:.2f}, W={avg_ljpw[3]:.2f}"
+            )
 
         except Exception as e:
             print(f"  Error: {e}")
 
+
 def test_extreme_scale():
     """Test with extremely large generated codebase"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("EXTREME SCALE TEST")
-    print("="*70)
+    print("=" * 70)
 
     # Generate 100 files
     print("\nGenerating 100 synthetic code files...")
@@ -415,16 +438,17 @@ def function_{i}(data):
     pipeline = LJPWPipeline()
 
     import time
+
     start = time.time()
 
-    results = pipeline.analyze_codebase(synthetic_files,
-                                       generate_docs=False,
-                                       generate_improvement_plan=False)
+    results = pipeline.analyze_codebase(
+        synthetic_files, generate_docs=False, generate_improvement_plan=False
+    )
 
     elapsed = time.time() - start
 
-    stats = results['statistics']
-    avg_ljpw = stats['average_ljpw']
+    stats = results["statistics"]
+    avg_ljpw = stats["average_ljpw"]
 
     print(f"\nExtreme Scale Results:")
     print(f"  Files: {stats['total_files']}")
@@ -434,28 +458,31 @@ def function_{i}(data):
     print(f"  Processing time: {elapsed:.2f}s")
     print(f"  Throughput: {stats['total_files']/elapsed:.1f} files/sec")
     print(f"  Health: {stats['health_score']:.1%}")
-    print(f"  LJPW: L={avg_ljpw[0]:.2f}, J={avg_ljpw[1]:.2f}, P={avg_ljpw[2]:.2f}, W={avg_ljpw[3]:.2f}")
+    print(
+        f"  LJPW: L={avg_ljpw[0]:.2f}, J={avg_ljpw[1]:.2f}, P={avg_ljpw[2]:.2f}, W={avg_ljpw[3]:.2f}"
+    )
+
 
 def compare_languages():
     """Compare LJPW scores across languages"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("CROSS-LANGUAGE COMPARISON")
-    print("="*70)
+    print("=" * 70)
 
     pipeline = LJPWPipeline()
     language_scores = {}
 
     for language, samples in LANGUAGE_SAMPLES.items():
-        results = pipeline.analyze_codebase(samples,
-                                           generate_docs=False,
-                                           generate_improvement_plan=False)
+        results = pipeline.analyze_codebase(
+            samples, generate_docs=False, generate_improvement_plan=False
+        )
 
-        avg_ljpw = results['statistics']['average_ljpw']
-        health = results['statistics']['health_score']
+        avg_ljpw = results["statistics"]["average_ljpw"]
+        health = results["statistics"]["health_score"]
 
         language_scores[language] = {
-            'ljpw': avg_ljpw,
-            'health': health,
+            "ljpw": avg_ljpw,
+            "health": health,
         }
 
     # Display comparison
@@ -463,29 +490,30 @@ def compare_languages():
     print("-" * 70)
     for lang in sorted(language_scores.keys()):
         scores = language_scores[lang]
-        L, J, P, W = scores['ljpw']
-        health = scores['health']
+        L, J, P, W = scores["ljpw"]
+        health = scores["health"]
         print(f"{lang:15s}\t{L:.2f}\t{J:.2f}\t{P:.2f}\t{W:.2f}\t{health:.1%}")
 
     # Find best language
-    best_lang = max(language_scores.items(), key=lambda x: x[1]['health'])
+    best_lang = max(language_scores.items(), key=lambda x: x[1]["health"])
     print(f"\nHighest Health Score: {best_lang[0]} ({best_lang[1]['health']:.1%})")
+
 
 # ============================================================================
 # RUN ALL TESTS
 # ============================================================================
 
-if __name__ == '__main__':
-    print("#"*70)
+if __name__ == "__main__":
+    print("#" * 70)
     print("# LJPW MULTI-LANGUAGE & EDGE CASE TEST SUITE")
-    print("#"*70)
+    print("#" * 70)
 
     test_multi_language()
     test_edge_cases()
     test_extreme_scale()
     compare_languages()
 
-    print("\n" + "#"*70)
+    print("\n" + "#" * 70)
     print("# ALL MULTI-LANGUAGE TESTS COMPLETE")
-    print("#"*70)
+    print("#" * 70)
     print("\n[SUCCESS] Framework validated across multiple languages and edge cases!")

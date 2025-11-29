@@ -22,13 +22,12 @@ Usage:
     python ljpw_project_manager.py --dashboard
 """
 
-import math
 import json
+import math
+from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Tuple
-from dataclasses import dataclass, asdict
-
 
 # === LJPW Constants ===
 
@@ -38,9 +37,11 @@ NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
 
 # === Data Structures ===
 
+
 @dataclass
 class Task:
     """A project task with LJPW coordinates"""
+
     id: str
     name: str
     track: str  # A, B, C, or D
@@ -67,10 +68,10 @@ class Task:
     def distance_from_ne(self) -> float:
         """Distance from Natural Equilibrium"""
         return math.sqrt(
-            (self.L - NATURAL_EQUILIBRIUM[0])**2 +
-            (self.J - NATURAL_EQUILIBRIUM[1])**2 +
-            (self.P - NATURAL_EQUILIBRIUM[2])**2 +
-            (self.W - NATURAL_EQUILIBRIUM[3])**2
+            (self.L - NATURAL_EQUILIBRIUM[0]) ** 2
+            + (self.J - NATURAL_EQUILIBRIUM[1]) ** 2
+            + (self.P - NATURAL_EQUILIBRIUM[2]) ** 2
+            + (self.W - NATURAL_EQUILIBRIUM[3]) ** 2
         )
 
     def health_score(self) -> float:
@@ -97,9 +98,8 @@ TASKS = [
         effort_hours=20,
         dependencies=[],
         assigned_to="team",
-        deadline="2025-11-24"
+        deadline="2025-11-24",
     ),
-
     Task(
         id="A2",
         name="Batch analyze all implementations",
@@ -114,9 +114,8 @@ TASKS = [
         effort_hours=10,
         dependencies=["A1"],
         assigned_to="automation",
-        deadline="2025-11-26"
+        deadline="2025-11-26",
     ),
-
     Task(
         id="A3",
         name="Statistical analysis",
@@ -131,9 +130,8 @@ TASKS = [
         effort_hours=30,
         dependencies=["A2"],
         assigned_to="data_scientist",
-        deadline="2025-12-03"
+        deadline="2025-12-03",
     ),
-
     Task(
         id="A4",
         name="Write empirical validation paper",
@@ -148,9 +146,8 @@ TASKS = [
         effort_hours=60,
         dependencies=["A3"],
         assigned_to="research_lead",
-        deadline="2025-12-20"
+        deadline="2025-12-20",
     ),
-
     # TRACK B: Meaning Research (Physics/Chemistry/Biology)
     Task(
         id="B1",
@@ -166,9 +163,8 @@ TASKS = [
         effort_hours=25,
         dependencies=[],
         assigned_to="chemist",
-        deadline="2025-12-10"
+        deadline="2025-12-10",
     ),
-
     Task(
         id="B2",
         name="Map biology constants",
@@ -183,9 +179,8 @@ TASKS = [
         effort_hours=25,
         dependencies=[],
         assigned_to="biologist",
-        deadline="2025-12-10"
+        deadline="2025-12-10",
     ),
-
     Task(
         id="B3",
         name="Cross-domain synthesis paper",
@@ -200,9 +195,8 @@ TASKS = [
         effort_hours=80,
         dependencies=["B1", "B2"],
         assigned_to="research_lead",
-        deadline="2026-03-01"
+        deadline="2026-03-01",
     ),
-
     # TRACK C: Practical Tools (Developer Productivity)
     Task(
         id="C1",
@@ -218,9 +212,8 @@ TASKS = [
         effort_hours=40,
         dependencies=[],
         assigned_to="frontend_engineer",
-        deadline="2025-12-15"
+        deadline="2025-12-15",
     ),
-
     Task(
         id="C2",
         name="Train quality prediction model",
@@ -235,9 +228,8 @@ TASKS = [
         effort_hours=35,
         dependencies=[],
         assigned_to="ml_engineer",
-        deadline="2025-12-10"
+        deadline="2025-12-10",
     ),
-
     Task(
         id="C3",
         name="Build semantic search engine",
@@ -252,9 +244,8 @@ TASKS = [
         effort_hours=45,
         dependencies=[],
         assigned_to="backend_engineer",
-        deadline="2025-12-20"
+        deadline="2025-12-20",
     ),
-
     Task(
         id="C4",
         name="Create demonstration website",
@@ -269,9 +260,8 @@ TASKS = [
         effort_hours=30,
         dependencies=["C1", "C2", "C3"],
         assigned_to="fullstack_engineer",
-        deadline="2026-01-10"
+        deadline="2026-01-10",
     ),
-
     # TRACK D: Experimental Validation (Ψ and Θ)
     Task(
         id="D1",
@@ -287,9 +277,8 @@ TASKS = [
         effort_hours=15,
         dependencies=[],
         assigned_to="research_lead",
-        deadline="2025-12-01"
+        deadline="2025-12-01",
     ),
-
     Task(
         id="D2",
         name="Design quantum coherence experiment",
@@ -304,9 +293,8 @@ TASKS = [
         effort_hours=40,
         dependencies=["D1"],
         assigned_to="experimental_physicist",
-        deadline="2026-01-15"
+        deadline="2026-01-15",
     ),
-
     Task(
         id="D3",
         name="Run pilot experiments",
@@ -321,9 +309,8 @@ TASKS = [
         effort_hours=120,
         dependencies=["D2"],
         assigned_to="lab_team",
-        deadline="2026-04-01"
+        deadline="2026-04-01",
     ),
-
     # META TASKS (Project Management)
     Task(
         id="M1",
@@ -339,9 +326,8 @@ TASKS = [
         effort_hours=20,
         dependencies=[],
         assigned_to="claude",
-        deadline="2025-11-17"
+        deadline="2025-11-17",
     ),
-
     Task(
         id="M2",
         name="Weekly progress reports",
@@ -356,14 +342,17 @@ TASKS = [
         effort_hours=2,  # per week
         dependencies=["M1"],
         assigned_to="team",
-        deadline="ongoing"
+        deadline="ongoing",
     ),
 ]
 
 
 # === Analysis Functions ===
 
-def calculate_project_ljpw(tasks: List[Task], status_filter: str = None) -> Tuple[float, float, float, float]:
+
+def calculate_project_ljpw(
+    tasks: List[Task], status_filter: str = None
+) -> Tuple[float, float, float, float]:
     """
     Calculate overall project LJPW coordinates.
 
@@ -387,7 +376,7 @@ def calculate_project_ljpw(tasks: List[Task], status_filter: str = None) -> Tupl
 
 def calculate_project_health(ljpw_coords: Tuple[float, float, float, float]) -> float:
     """Project health = closeness to Natural Equilibrium"""
-    d = math.sqrt(sum((c - ne)**2 for c, ne in zip(ljpw_coords, NATURAL_EQUILIBRIUM)))
+    d = math.sqrt(sum((c - ne) ** 2 for c, ne in zip(ljpw_coords, NATURAL_EQUILIBRIUM)))
     return max(0, 100 * (2 - d) / 2)
 
 
@@ -407,15 +396,17 @@ def get_dimension_balance(tasks: List[Task]) -> Dict[str, float]:
 
     def variance(values):
         mean = sum(values) / len(values)
-        return sum((v - mean)**2 for v in values) / len(values)
+        return sum((v - mean) ** 2 for v in values) / len(values)
 
     return {
-        'L_variance': variance(L_values),
-        'J_variance': variance(J_values),
-        'P_variance': variance(P_values),
-        'W_variance': variance(W_values),
-        'total_variance': (variance(L_values) + variance(J_values) +
-                          variance(P_values) + variance(W_values)) / 4
+        "L_variance": variance(L_values),
+        "J_variance": variance(J_values),
+        "P_variance": variance(P_values),
+        "W_variance": variance(W_values),
+        "total_variance": (
+            variance(L_values) + variance(J_values) + variance(P_values) + variance(W_values)
+        )
+        / 4,
     }
 
 
@@ -445,8 +436,11 @@ def prioritize_tasks_by_ljpw(tasks: List[Task]) -> List[Task]:
         priority_bonus = task.priority * 10
 
         # Dependency penalty
-        unresolved_deps = sum(1 for dep_id in task.dependencies
-                             if not any(t.id == dep_id and t.status == "completed" for t in tasks))
+        unresolved_deps = sum(
+            1
+            for dep_id in task.dependencies
+            if not any(t.id == dep_id and t.status == "completed" for t in tasks)
+        )
         dep_penalty = unresolved_deps * 30
 
         # Total score
@@ -471,9 +465,9 @@ def generate_gantt_chart(tasks: List[Task]) -> str:
 
     # Build chart
     lines = []
-    lines.append("\n" + "="*80)
+    lines.append("\n" + "=" * 80)
     lines.append("PROJECT GANTT CHART (LJPW-Optimized Execution Order)".center(80))
-    lines.append("="*80 + "\n")
+    lines.append("=" * 80 + "\n")
 
     for track, track_tasks in sorted(tracks.items()):
         lines.append(f"\nTrack {track}:")
@@ -481,27 +475,28 @@ def generate_gantt_chart(tasks: List[Task]) -> str:
 
         for task in sorted(track_tasks, key=lambda t: t.id):
             status_icon = {
-                'completed': '✓',
-                'in_progress': '▶',
-                'pending': '○',
-                'blocked': '✗'
-            }.get(task.status, '?')
+                "completed": "✓",
+                "in_progress": "▶",
+                "pending": "○",
+                "blocked": "✗",
+            }.get(task.status, "?")
 
             health = task.health_score()
-            health_bar = '█' * int(health / 10) + '░' * (10 - int(health / 10))
+            health_bar = "█" * int(health / 10) + "░" * (10 - int(health / 10))
 
             lines.append(f"  {status_icon} {task.id}: {task.name:<40} [{health_bar}] {health:.0f}%")
 
-    return '\n'.join(lines)
+    return "\n".join(lines)
 
 
 # === Main Interface ===
 
+
 def show_project_status():
     """Display current project status in LJPW space"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("LJPW PROJECT STATUS DASHBOARD".center(80))
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
     # Overall project LJPW
     all_coords = calculate_project_ljpw(TASKS)
@@ -515,7 +510,7 @@ def show_project_status():
     print(f"\n  Project Health Score:  {all_health:.1f}%")
 
     # Distance from NE
-    d_ne = math.sqrt(sum((c - ne)**2 for c, ne in zip(all_coords, NATURAL_EQUILIBRIUM)))
+    d_ne = math.sqrt(sum((c - ne) ** 2 for c, ne in zip(all_coords, NATURAL_EQUILIBRIUM)))
     print(f"  Distance from Natural Equilibrium: {d_ne:.3f}")
 
     if d_ne < 0.2:
@@ -526,9 +521,9 @@ def show_project_status():
         print("  ✗ NEEDS REBALANCING - Significant imbalance detected")
 
     # Task breakdown by status
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("TASK STATUS BREAKDOWN:")
-    print("-"*80)
+    print("-" * 80)
 
     status_counts = {}
     for task in TASKS:
@@ -540,11 +535,11 @@ def show_project_status():
         print(f"  {status.capitalize():<15} {count:>3} tasks ({pct:.0f}%)")
 
     # Track breakdown
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("PROGRESS BY TRACK:")
-    print("-"*80)
+    print("-" * 80)
 
-    for track in ['A', 'B', 'C', 'D', 'Meta']:
+    for track in ["A", "B", "C", "D", "Meta"]:
         track_tasks = [t for t in TASKS if t.track == track]
         if track_tasks:
             track_coords = calculate_project_ljpw(track_tasks)
@@ -552,14 +547,18 @@ def show_project_status():
             completed = sum(1 for t in track_tasks if t.status == "completed")
             total = len(track_tasks)
 
-            print(f"\n  Track {track}: {completed}/{total} tasks completed ({completed/total*100:.0f}%)")
-            print(f"    LJPW: L={track_coords[0]:.2f} J={track_coords[1]:.2f} P={track_coords[2]:.2f} W={track_coords[3]:.2f}")
+            print(
+                f"\n  Track {track}: {completed}/{total} tasks completed ({completed/total*100:.0f}%)"
+            )
+            print(
+                f"    LJPW: L={track_coords[0]:.2f} J={track_coords[1]:.2f} P={track_coords[2]:.2f} W={track_coords[3]:.2f}"
+            )
             print(f"    Health: {track_health:.1f}%")
 
     # Dimension balance
-    print("\n" + "-"*80)
+    print("\n" + "-" * 80)
     print("DIMENSIONAL BALANCE:")
-    print("-"*80)
+    print("-" * 80)
 
     balance = get_dimension_balance(TASKS)
     print(f"  L variance: {balance['L_variance']:.4f}")
@@ -568,9 +567,9 @@ def show_project_status():
     print(f"  W variance: {balance['W_variance']:.4f}")
     print(f"  Total variance: {balance['total_variance']:.4f}")
 
-    if balance['total_variance'] < 0.05:
+    if balance["total_variance"] < 0.05:
         print("  ✓ EXCELLENT BALANCE across all dimensions")
-    elif balance['total_variance'] < 0.10:
+    elif balance["total_variance"] < 0.10:
         print("  ⚠ GOOD BALANCE with minor variations")
     else:
         print("  ✗ IMBALANCED - Consider adding tasks to underrepresented dimensions")
@@ -578,14 +577,14 @@ def show_project_status():
     # Gantt chart
     print(generate_gantt_chart(TASKS))
 
-    print("\n" + "="*80 + "\n")
+    print("\n" + "=" * 80 + "\n")
 
 
 def show_optimized_execution_order():
     """Display LJPW-optimized task execution order"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("LJPW-OPTIMIZED TASK EXECUTION ORDER".center(80))
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
     prioritized = prioritize_tasks_by_ljpw(TASKS)
 
@@ -593,29 +592,29 @@ def show_optimized_execution_order():
     print("(Health + Impact + Priority - Dependency penalty)\n")
 
     print(f"{'Rank':<6} {'ID':<6} {'Task':<40} {'Health':<10} {'Track':<8}")
-    print("-"*80)
+    print("-" * 80)
 
     for rank, task in enumerate(prioritized[:15], 1):  # Top 15
         health = task.health_score()
         print(f"{rank:<6} {task.id:<6} {task.name:<40} {health:.1f}%     {task.track:<8}")
 
-    print("\n" + "="*80 + "\n")
+    print("\n" + "=" * 80 + "\n")
 
 
 def save_project_state():
     """Save current project state to JSON"""
     output = {
-        'timestamp': datetime.now().isoformat(),
-        'tasks': [asdict(t) for t in TASKS],
-        'overall_ljpw': calculate_project_ljpw(TASKS),
-        'project_health': calculate_project_health(calculate_project_ljpw(TASKS)),
-        'dimensional_balance': get_dimension_balance(TASKS)
+        "timestamp": datetime.now().isoformat(),
+        "tasks": [asdict(t) for t in TASKS],
+        "overall_ljpw": calculate_project_ljpw(TASKS),
+        "project_health": calculate_project_health(calculate_project_ljpw(TASKS)),
+        "dimensional_balance": get_dimension_balance(TASKS),
     }
 
-    output_file = Path(__file__).parent.parent / 'results' / 'project_status.json'
+    output_file = Path(__file__).parent.parent / "results" / "project_status.json"
     output_file.parent.mkdir(exist_ok=True)
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         json.dump(output, f, indent=2)
 
     print(f"Project state saved to: {output_file}")
@@ -628,11 +627,11 @@ def main():
     if len(sys.argv) > 1:
         command = sys.argv[1]
 
-        if command == '--status':
+        if command == "--status":
             show_project_status()
-        elif command == '--optimize':
+        elif command == "--optimize":
             show_optimized_execution_order()
-        elif command == '--save':
+        elif command == "--save":
             save_project_state()
         else:
             print(f"Unknown command: {command}")
@@ -644,5 +643,5 @@ def main():
         save_project_state()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -15,8 +15,8 @@ Usage:
     new_coords = apply_transformation(old_coords, "add_safety")
 """
 
-from typing import Tuple, Dict, List
 import math
+from typing import Dict, List, Tuple
 
 # ============================================================================
 # DISCOVERED TRANSFORMATIONS
@@ -27,27 +27,22 @@ TRANSFORMATIONS: Dict[str, Tuple[float, float, float, float]] = {
     "add_safety": (+0.30, +0.18, 0.00, +0.02),
     "add_validation": (+0.25, +0.10, 0.00, 0.00),
     "add_error_handling": (+0.35, +0.20, 0.00, +0.05),
-
     # Structure Transformations
     "add_documentation": (0.00, +0.18, 0.00, +0.02),
     "add_types": (0.00, +0.20, 0.00, +0.05),
     "add_structure": (+0.05, +0.25, 0.00, +0.10),
-
     # Performance Transformations
     "optimize": (0.00, 0.00, +0.40, +0.20),
     "add_caching": (-0.05, +0.05, +0.30, +0.10),
     "parallelize": (0.00, +0.05, +0.35, +0.15),
-
     # Design Transformations
     "add_abstraction": (+0.05, +0.10, 0.00, +0.30),
     "apply_patterns": (+0.10, +0.15, 0.00, +0.35),
     "refactor": (+0.10, +0.15, +0.05, +0.40),
-
     # Composite Transformations
     "productionize": (+0.40, +0.30, +0.10, +0.20),
     "harden": (+0.45, +0.35, +0.05, +0.15),
     "modernize": (+0.15, +0.30, +0.20, +0.35),
-
     # Direction Transformations
     "move_to_ne": None,  # Special: move toward Natural Equilibrium
     "move_to_anchor": None,  # Special: move toward (1,1,1,1)
@@ -67,35 +62,35 @@ TRANSFORMATION_INFO: Dict[str, Dict] = {
         "use_case": "Make risky code safer",
         "example": "simple function → defensive function",
         "discovered": "Experiment 2 (analogical reasoning)",
-        "confidence": "high"
+        "confidence": "high",
     },
     "add_documentation": {
         "description": "Add docstrings and type annotations",
         "use_case": "Make code more maintainable",
         "example": "undocumented → documented",
         "discovered": "Experiment 2 (analogical reasoning)",
-        "confidence": "high"
+        "confidence": "high",
     },
     "optimize": {
         "description": "Apply performance optimizations",
         "use_case": "Make slow code faster",
         "example": "loop → list comprehension, caching",
         "discovered": "Pattern analysis",
-        "confidence": "medium"
+        "confidence": "medium",
     },
     "productionize": {
         "description": "Transform prototype to production code",
         "use_case": "Prepare code for deployment",
         "example": "prototype → production",
         "discovered": "Experiment 2 (analogical reasoning)",
-        "confidence": "high"
+        "confidence": "high",
     },
     "refactor": {
         "description": "Improve design and architecture",
         "use_case": "Clean up messy code",
         "example": "spaghetti → well-designed",
         "discovered": "Pattern analysis",
-        "confidence": "medium"
+        "confidence": "medium",
     },
 }
 
@@ -103,10 +98,9 @@ TRANSFORMATION_INFO: Dict[str, Dict] = {
 # TRANSFORMATION OPERATIONS
 # ============================================================================
 
+
 def apply_transformation(
-    coords: Tuple[float, float, float, float],
-    transformation_name: str,
-    strength: float = 1.0
+    coords: Tuple[float, float, float, float], transformation_name: str, strength: float = 1.0
 ) -> Tuple[float, float, float, float]:
     """
     Apply a semantic transformation to coordinates.
@@ -144,13 +138,14 @@ def apply_transformation(
         max(0.0, min(1.5, L + strength * dL)),
         max(0.0, min(1.5, J + strength * dJ)),
         max(0.0, min(1.5, P + strength * dP)),
-        max(0.0, min(1.5, W + strength * dW))
+        max(0.0, min(1.5, W + strength * dW)),
     )
+
 
 def move_toward(
     coords: Tuple[float, float, float, float],
     target: Tuple[float, float, float, float],
-    alpha: float = 0.5
+    alpha: float = 0.5,
 ) -> Tuple[float, float, float, float]:
     """
     Move coordinates toward a target position.
@@ -166,16 +161,11 @@ def move_toward(
     L, J, P, W = coords
     tL, tJ, tP, tW = target
 
-    return (
-        L + alpha * (tL - L),
-        J + alpha * (tJ - J),
-        P + alpha * (tP - P),
-        W + alpha * (tW - W)
-    )
+    return (L + alpha * (tL - L), J + alpha * (tJ - J), P + alpha * (tP - P), W + alpha * (tW - W))
+
 
 def compose_transformations(
-    coords: Tuple[float, float, float, float],
-    transformations: List[str]
+    coords: Tuple[float, float, float, float], transformations: List[str]
 ) -> Tuple[float, float, float, float]:
     """
     Apply multiple transformations in sequence.
@@ -199,9 +189,9 @@ def compose_transformations(
         result = apply_transformation(result, transformation)
     return result
 
+
 def suggest_transformation(
-    current: Tuple[float, float, float, float],
-    target: Tuple[float, float, float, float]
+    current: Tuple[float, float, float, float], target: Tuple[float, float, float, float]
 ) -> List[str]:
     """
     Suggest transformations to move from current to target.
@@ -246,20 +236,21 @@ def suggest_transformation(
 
     return suggestions if suggestions else ["move_to_ne"]
 
+
 def calculate_distance(
-    coords1: Tuple[float, float, float, float],
-    coords2: Tuple[float, float, float, float]
+    coords1: Tuple[float, float, float, float], coords2: Tuple[float, float, float, float]
 ) -> float:
     """Calculate Euclidean distance between two positions."""
-    return math.sqrt(sum((a-b)**2 for a, b in zip(coords1, coords2)))
+    return math.sqrt(sum((a - b) ** 2 for a, b in zip(coords1, coords2)))
+
 
 # ============================================================================
 # VISUALIZATION
 # ============================================================================
 
+
 def visualize_transformation(
-    coords: Tuple[float, float, float, float],
-    transformation_name: str
+    coords: Tuple[float, float, float, float], transformation_name: str
 ) -> str:
     """
     Generate a text visualization of a transformation.
@@ -304,6 +295,7 @@ def visualize_transformation(
         output.append(f"  Wisdom (Design):     {W1:.2f} → {W2:.2f} {direction}")
 
     return "\n".join(output)
+
 
 # ============================================================================
 # EXAMPLE USAGE

@@ -9,21 +9,23 @@ Key Innovation:
 - Enables AI reasoning in compressed LJPW space (no token limits)
 """
 
-import math
 import json
-from typing import List, Tuple, Dict, Any, Optional
+import math
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 # ============================================================================
 # SEMANTIC PRIMITIVES: The "Amino Acids" of Code
 # ============================================================================
+
 
 class SemanticPrimitive(Enum):
     """
     Fundamental semantic building blocks
     Like DNA's 20 amino acids, these are the basic units of meaning
     """
+
     # Safety primitives (Love-dominant)
     SAFE_INIT = "safe_initialization"
     ERROR_HANDLE = "error_handling"
@@ -59,9 +61,11 @@ class SemanticPrimitive(Enum):
     STOP_SEQUENCE = "stop"
     SEPARATOR = "separator"
 
+
 # ============================================================================
 # LJPW CODON TABLE: Mapping LJPW patterns to semantic primitives
 # ============================================================================
+
 
 class CodonTable:
     """
@@ -129,9 +133,11 @@ class CodonTable:
                 return pattern
         return None
 
+
 # ============================================================================
 # COMPRESSED REPRESENTATION
 # ============================================================================
+
 
 @dataclass
 class CompressedSemanticUnit:
@@ -139,6 +145,7 @@ class CompressedSemanticUnit:
     A single compressed unit: semantic primitive + context
     Much smaller than raw code
     """
+
     primitive: SemanticPrimitive
     ljpw_state: Tuple[int, int, int, int]  # Quantized levels
     metadata: Dict[str, Any] = field(default_factory=dict)
@@ -154,10 +161,10 @@ class CompressedSemanticUnit:
 
         # Pack LJPW into 1 byte (4 levels, 2 bits each)
         ljpw_byte = (
-            (self.ljpw_state[0] << 6) |
-            (self.ljpw_state[1] << 4) |
-            (self.ljpw_state[2] << 2) |
-            (self.ljpw_state[3])
+            (self.ljpw_state[0] << 6)
+            | (self.ljpw_state[1] << 4)
+            | (self.ljpw_state[2] << 2)
+            | (self.ljpw_state[3])
         )
 
         return bytes([prim_byte, ljpw_byte])
@@ -178,9 +185,11 @@ class CompressedSemanticUnit:
 
         return cls(primitive=primitive, ljpw_state=(L, J, P, W))
 
+
 # ============================================================================
 # ADVANCED SEMANTIC COMPRESSOR
 # ============================================================================
+
 
 class AdvancedSemanticCompressor:
     """
@@ -200,8 +209,9 @@ class AdvancedSemanticCompressor:
     def __init__(self):
         self.codon_table = CodonTable()
 
-    def compress_codebase_analysis(self,
-                                   analysis_results: List[Dict[str, Any]]) -> List[CompressedSemanticUnit]:
+    def compress_codebase_analysis(
+        self, analysis_results: List[Dict[str, Any]]
+    ) -> List[CompressedSemanticUnit]:
         """
         Compress the results of analyzing a codebase
 
@@ -217,7 +227,7 @@ class AdvancedSemanticCompressor:
         compressed = []
 
         for result in analysis_results:
-            L, J, P, W = result['ljpw_scores']
+            L, J, P, W = result["ljpw_scores"]
 
             # Quantize to 0-3 levels
             L_q = self._quantize(L)
@@ -237,7 +247,7 @@ class AdvancedSemanticCompressor:
             unit = CompressedSemanticUnit(
                 primitive=primitive,
                 ljpw_state=pattern,
-                metadata={'original_type': result.get('semantic_type', 'unknown')}
+                metadata={"original_type": result.get("semantic_type", "unknown")},
             )
 
             compressed.append(unit)
@@ -266,22 +276,23 @@ class AdvancedSemanticCompressor:
         else:
             return SemanticPrimitive.ABSTRACTION
 
-    def calculate_compression_ratio(self,
-                                    original_size_bytes: int,
-                                    compressed_units: List[CompressedSemanticUnit]) -> float:
+    def calculate_compression_ratio(
+        self, original_size_bytes: int, compressed_units: List[CompressedSemanticUnit]
+    ) -> float:
         """Calculate achieved compression ratio"""
         compressed_size = len(compressed_units) * 2  # 2 bytes per unit
         return original_size_bytes / compressed_size
+
 
 # ============================================================================
 # DEMONSTRATION: Solving the Token Limit Problem
 # ============================================================================
 
-if __name__ == '__main__':
-    print("="*70)
+if __name__ == "__main__":
+    print("=" * 70)
     print("LJPW SEMANTIC COMPILER v2.0")
     print("Solving the Token Limit Problem via DNA-Inspired Compression")
-    print("="*70)
+    print("=" * 70)
 
     # Simulate analyzing a large codebase
     print("\n1. SIMULATING LARGE CODEBASE ANALYSIS")
@@ -293,11 +304,18 @@ if __name__ == '__main__':
 
     # Generate synthetic analysis results
     import random
+
     random.seed(42)
 
     semantic_types = [
-        'function', 'class', 'module', 'error_handler',
-        'validator', 'algorithm', 'interface', 'utility'
+        "function",
+        "class",
+        "module",
+        "error_handler",
+        "validator",
+        "algorithm",
+        "interface",
+        "utility",
     ]
 
     for i in range(1000):
@@ -308,9 +326,9 @@ if __name__ == '__main__':
         W = random.uniform(0.3, 0.8)
 
         analysis_result = {
-            'ljpw_scores': (L, J, P, W),
-            'semantic_type': random.choice(semantic_types),
-            'metadata': {'function_id': i}
+            "ljpw_scores": (L, J, P, W),
+            "semantic_type": random.choice(semantic_types),
+            "metadata": {"function_id": i},
         }
         large_codebase_analysis.append(analysis_result)
 
@@ -394,9 +412,10 @@ if __name__ == '__main__':
 
     # Real-world application
     print("\n6. REAL-WORLD APPLICATION: THE LJPW CORE LOOP")
-    print("="*70)
+    print("=" * 70)
 
-    print("""
+    print(
+        """
 The LJPW Core Loop for Token-Free AI Reasoning:
 
 1. CONDENSER (This tool):
@@ -418,11 +437,12 @@ The LJPW Core Loop for Token-Free AI Reasoning:
    - Output: Improved, production-ready code
 
 Result: AI can reason about MASSIVE systems without token limits!
-    """)
+    """
+    )
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("COMPRESSION SUCCESSFUL")
-    print("="*70)
+    print("=" * 70)
     print(f"\nAchieved {compression_ratio:.1f}x compression")
     print(f"Token limit problem: SOLVED [YES]")
     print(f"DNA-LJPW correspondence: VALIDATED [YES]")

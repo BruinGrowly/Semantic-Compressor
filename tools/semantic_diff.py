@@ -26,14 +26,14 @@ Usage:
     python semantic_diff.py --history myfile.py --commits 10
 """
 
-import sys
-from pathlib import Path
-import subprocess
 import argparse
 import math
+import subprocess
+import sys
+from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
-from ljpw_standalone import analyze_quick, calculate_distance
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.ljpw.ljpw_standalone import analyze_quick, calculate_distance
 
 # Natural Equilibrium
 NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
@@ -41,10 +41,10 @@ NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
 
 def get_genome(result):
     """Create genome from LJPW result"""
-    L = result['ljpw']['L']
-    J = result['ljpw']['J']
-    P = result['ljpw']['P']
-    W = result['ljpw']['W']
+    L = result["ljpw"]["L"]
+    J = result["ljpw"]["J"]
+    P = result["ljpw"]["P"]
+    W = result["ljpw"]["W"]
 
     L_digit = int(round(L * 10)) % 10
     J_digit = int(round(J * 10)) % 10
@@ -64,7 +64,7 @@ def calculate_health(coords):
 def read_file(filepath):
     """Read file contents"""
     try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             return f.read()
     except FileNotFoundError:
         print(f"Error: File not found: {filepath}")
@@ -75,10 +75,7 @@ def get_git_file_content(commit, filepath):
     """Get file content at specific git commit"""
     try:
         result = subprocess.run(
-            ['git', 'show', f'{commit}:{filepath}'],
-            capture_output=True,
-            text=True,
-            check=True
+            ["git", "show", f"{commit}:{filepath}"], capture_output=True, text=True, check=True
         )
         return result.stdout
     except subprocess.CalledProcessError:
@@ -92,10 +89,10 @@ def analyze_code(code, label):
         return None
 
     result = analyze_quick(code)
-    l = result['ljpw']['L']
-    j = result['ljpw']['J']
-    p = result['ljpw']['P']
-    w = result['ljpw']['W']
+    l = result["ljpw"]["L"]
+    j = result["ljpw"]["J"]
+    p = result["ljpw"]["P"]
+    w = result["ljpw"]["W"]
 
     coords = (l, j, p, w)
     genome = get_genome(result)
@@ -103,19 +100,19 @@ def analyze_code(code, label):
     health = calculate_health(coords)
 
     return {
-        'label': label,
-        'coords': coords,
-        'genome': genome,
-        'dist_to_ne': dist_to_ne,
-        'health': health,
-        'loc': len(code.split('\n'))
+        "label": label,
+        "coords": coords,
+        "genome": genome,
+        "dist_to_ne": dist_to_ne,
+        "health": health,
+        "loc": len(code.split("\n")),
     }
 
 
 def print_dimension_bar(value, dimension_name, max_value=1.0, width=40):
     """Print a horizontal bar chart for a dimension"""
     filled = int((value / max_value) * width)
-    bar = '█' * filled + '░' * (width - filled)
+    bar = "█" * filled + "░" * (width - filled)
     print(f"  {dimension_name:6} [{bar}] {value:.3f}")
 
 
@@ -125,11 +122,11 @@ def visualize_movement(before, after):
     print("SEMANTIC SPACE MOVEMENT")
     print("─" * 70)
 
-    dimensions = ['Love', 'Justice', 'Power', 'Wisdom']
+    dimensions = ["Love", "Justice", "Power", "Wisdom"]
 
     for i, dim in enumerate(dimensions):
-        before_val = before['coords'][i]
-        after_val = after['coords'][i]
+        before_val = before["coords"][i]
+        after_val = after["coords"][i]
         delta = after_val - before_val
 
         # Create arrow visualization
@@ -177,20 +174,24 @@ def semantic_diff(before_code, after_code, before_label="BEFORE", after_label="A
     print(f"  {before['label']:12} {before['genome']}")
     print(f"  {after['label']:12} {after['genome']}")
 
-    genome_changed = before['genome'] != after['genome']
+    genome_changed = before["genome"] != after["genome"]
     print(f"  {'✓ Genome CHANGED' if genome_changed else '✗ Genome UNCHANGED'}")
     print()
 
     # Coordinates
     print("4D Coordinates:")
-    print(f"  {before['label']:12} L={before['coords'][0]:.3f}, J={before['coords'][1]:.3f}, "
-          f"P={before['coords'][2]:.3f}, W={before['coords'][3]:.3f}")
-    print(f"  {after['label']:12} L={after['coords'][0]:.3f}, J={after['coords'][1]:.3f}, "
-          f"P={after['coords'][2]:.3f}, W={after['coords'][3]:.3f}")
+    print(
+        f"  {before['label']:12} L={before['coords'][0]:.3f}, J={before['coords'][1]:.3f}, "
+        f"P={before['coords'][2]:.3f}, W={before['coords'][3]:.3f}"
+    )
+    print(
+        f"  {after['label']:12} L={after['coords'][0]:.3f}, J={after['coords'][1]:.3f}, "
+        f"P={after['coords'][2]:.3f}, W={after['coords'][3]:.3f}"
+    )
     print()
 
     # Semantic distance
-    semantic_dist = calculate_distance(before['coords'], after['coords'])
+    semantic_dist = calculate_distance(before["coords"], after["coords"])
     print(f"Semantic Distance: {semantic_dist:.3f}")
 
     if semantic_dist < 0.1:
@@ -208,7 +209,7 @@ def semantic_diff(before_code, after_code, before_label="BEFORE", after_label="A
     print(f"  {before['label']:12} {before['dist_to_ne']:.3f}")
     print(f"  {after['label']:12} {after['dist_to_ne']:.3f}")
 
-    ne_delta = after['dist_to_ne'] - before['dist_to_ne']
+    ne_delta = after["dist_to_ne"] - before["dist_to_ne"]
     if ne_delta < -0.05:
         ne_movement = f"✓ MOVED TOWARD NE ({ne_delta:+.3f}) — Quality improved!"
     elif ne_delta > 0.05:
@@ -224,7 +225,7 @@ def semantic_diff(before_code, after_code, before_label="BEFORE", after_label="A
     print(f"  {before['label']:12} {before['health']:.1f}/100")
     print(f"  {after['label']:12} {after['health']:.1f}/100")
 
-    health_delta = after['health'] - before['health']
+    health_delta = after["health"] - before["health"]
     if health_delta > 5:
         health_assessment = f"✓ Health IMPROVED ({health_delta:+.1f} points)"
     elif health_delta < -5:
@@ -239,7 +240,7 @@ def semantic_diff(before_code, after_code, before_label="BEFORE", after_label="A
     print("Lines of Code:")
     print(f"  {before['label']:12} {before['loc']} lines")
     print(f"  {after['label']:12} {after['loc']} lines")
-    loc_delta = after['loc'] - before['loc']
+    loc_delta = after["loc"] - before["loc"]
     print(f"  Delta: {loc_delta:+d} lines")
     print()
 
@@ -251,8 +252,8 @@ def semantic_diff(before_code, after_code, before_label="BEFORE", after_label="A
     print("RECOMMENDATIONS")
     print("─" * 70)
 
-    l_before, j_before, p_before, w_before = before['coords']
-    l_after, j_after, p_after, w_after = after['coords']
+    l_before, j_before, p_before, w_before = before["coords"]
+    l_after, j_after, p_after, w_after = after["coords"]
 
     ne_l, ne_j, ne_p, ne_w = NATURAL_EQUILIBRIUM
 
@@ -295,17 +296,17 @@ def analyze_git_history(filepath, num_commits=10):
     # Get commit history for file
     try:
         result = subprocess.run(
-            ['git', 'log', f'-{num_commits}', '--format=%H %s', '--', filepath],
+            ["git", "log", f"-{num_commits}", "--format=%H %s", "--", filepath],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
-        commits = result.stdout.strip().split('\n')
+        commits = result.stdout.strip().split("\n")
     except subprocess.CalledProcessError:
         print(f"Error: Could not get git history for {filepath}")
         return
 
-    if not commits or commits[0] == '':
+    if not commits or commits[0] == "":
         print(f"No commits found for {filepath}")
         return
 
@@ -318,14 +319,14 @@ def analyze_git_history(filepath, num_commits=10):
             continue
 
         commit_hash = commit_line.split()[0]
-        commit_msg = ' '.join(commit_line.split()[1:])
+        commit_msg = " ".join(commit_line.split()[1:])
 
         try:
             code = get_git_file_content(commit_hash[:7], filepath)
             analysis = analyze_code(code, commit_hash[:7])
 
             if analysis:
-                analysis['commit_msg'] = commit_msg
+                analysis["commit_msg"] = commit_msg
                 history.append(analysis)
         except:
             continue
@@ -339,8 +340,10 @@ def analyze_git_history(filepath, num_commits=10):
     print("─" * 100)
 
     for h in history:
-        print(f"{h['label']:<8} {h['genome']:<12} {h['health']:>6.1f}/100  "
-              f"{h['dist_to_ne']:>7.3f}  {h['commit_msg'][:50]}")
+        print(
+            f"{h['label']:<8} {h['genome']:<12} {h['health']:>6.1f}/100  "
+            f"{h['dist_to_ne']:>7.3f}  {h['commit_msg'][:50]}"
+        )
 
     # Evolution summary
     print("\n" + "=" * 70)
@@ -353,15 +356,19 @@ def analyze_git_history(filepath, num_commits=10):
 
         print(f"\nFrom {oldest['label']} to {newest['label']}:")
         print(f"  Genome:  {oldest['genome']} → {newest['genome']}")
-        print(f"  Health:  {oldest['health']:.1f} → {newest['health']:.1f} "
-              f"({newest['health'] - oldest['health']:+.1f})")
-        print(f"  Dist NE: {oldest['dist_to_ne']:.3f} → {newest['dist_to_ne']:.3f} "
-              f"({newest['dist_to_ne'] - oldest['dist_to_ne']:+.3f})")
+        print(
+            f"  Health:  {oldest['health']:.1f} → {newest['health']:.1f} "
+            f"({newest['health'] - oldest['health']:+.1f})"
+        )
+        print(
+            f"  Dist NE: {oldest['dist_to_ne']:.3f} → {newest['dist_to_ne']:.3f} "
+            f"({newest['dist_to_ne'] - oldest['dist_to_ne']:+.3f})"
+        )
 
         # Overall trend
-        if newest['health'] > oldest['health'] + 5:
+        if newest["health"] > oldest["health"] + 5:
             trend = "✓ Overall IMPROVEMENT"
-        elif newest['health'] < oldest['health'] - 5:
+        elif newest["health"] < oldest["health"] - 5:
             trend = "✗ Overall DEGRADATION"
         else:
             trend = "→ Overall STABLE"
@@ -371,13 +378,13 @@ def analyze_git_history(filepath, num_commits=10):
 
 def main():
     """Main entry point"""
-    parser = argparse.ArgumentParser(description='Semantic Diff Tool')
+    parser = argparse.ArgumentParser(description="Semantic Diff Tool")
 
-    parser.add_argument('file1', help='First file or git ref')
-    parser.add_argument('file2', nargs='?', help='Second file or git ref')
-    parser.add_argument('--git', action='store_true', help='Use git comparison mode')
-    parser.add_argument('--history', action='store_true', help='Analyze git history')
-    parser.add_argument('--commits', type=int, default=10, help='Number of commits to analyze')
+    parser.add_argument("file1", help="First file or git ref")
+    parser.add_argument("file2", nargs="?", help="Second file or git ref")
+    parser.add_argument("--git", action="store_true", help="Use git comparison mode")
+    parser.add_argument("--history", action="store_true", help="Analyze git history")
+    parser.add_argument("--commits", type=int, default=10, help="Number of commits to analyze")
 
     args = parser.parse_args()
 

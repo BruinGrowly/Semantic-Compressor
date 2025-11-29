@@ -15,16 +15,19 @@ systems, it provides evidence that LJPW is a universal law of meaning.
 """
 
 import math
-from typing import Tuple, List, Dict
+from typing import Dict, List, Tuple
 
 # ============================================================================
 # MANUAL LJPW MAPPING (Non-Code)
 # ============================================================================
 
-def calculate_distance(pos1: Tuple[float, float, float, float],
-                      pos2: Tuple[float, float, float, float]) -> float:
+
+def calculate_distance(
+    pos1: Tuple[float, float, float, float], pos2: Tuple[float, float, float, float]
+) -> float:
     """Calculate Euclidean distance in LJPW space."""
-    return math.sqrt(sum((a-b)**2 for a, b in zip(pos1, pos2)))
+    return math.sqrt(sum((a - b) ** 2 for a, b in zip(pos1, pos2)))
+
 
 def map_to_ljpw(description: Dict) -> Tuple[float, float, float, float]:
     """
@@ -35,7 +38,8 @@ def map_to_ljpw(description: Dict) -> Tuple[float, float, float, float]:
     P (Power/Performance): Capability, throughput, efficiency, speed
     W (Wisdom/Design): Adaptation, elegance, insight, innovation
     """
-    return (description['L'], description['J'], description['P'], description['W'])
+    return (description["L"], description["J"], description["P"], description["W"])
+
 
 # ============================================================================
 # TEST 1: ORGANIZATIONS
@@ -80,7 +84,7 @@ ORGANIZATIONS = {
     "Military Organization": {
         "description": "Highly structured, disciplined, mission-critical",
         "L": 0.9,  # High safety - mission critical
-        "J": 0.95, # Maximum structure - strict hierarchy
+        "J": 0.95,  # Maximum structure - strict hierarchy
         "P": 0.7,  # Good power - efficient execution
         "W": 0.6,  # Moderate wisdom - proven doctrine
     },
@@ -89,8 +93,8 @@ ORGANIZATIONS = {
         "L": 0.6,  # Moderate safety - careful experimentation
         "J": 0.6,  # Moderate structure - scientific method
         "P": 0.4,  # Lower power - deliberate pace
-        "W": 0.95, # Maximum wisdom - pursuing insight
-    }
+        "W": 0.95,  # Maximum wisdom - pursuing insight
+    },
 }
 
 # ============================================================================
@@ -121,7 +125,7 @@ NARRATIVES = {
     },
     "Horror": {
         "description": "Overwhelming threat, powerlessness, dread",
-        "L": 0.05, # Minimal safety - characters in danger
+        "L": 0.05,  # Minimal safety - characters in danger
         "J": 0.2,  # Low structure - chaos prevails
         "P": 0.1,  # Minimal power - powerlessness
         "W": 0.3,  # Low wisdom - no understanding
@@ -138,15 +142,15 @@ NARRATIVES = {
         "L": 0.7,  # Good safety - protected growth
         "J": 0.6,  # Moderate structure - learning rules
         "P": 0.5,  # Moderate power - developing strength
-        "W": 0.85, # High wisdom - gaining understanding
+        "W": 0.85,  # High wisdom - gaining understanding
     },
     "Epic": {
         "description": "Grand scale, heroic deeds, civilizational stakes",
         "L": 0.7,  # Good safety - heroes protected
-        "J": 0.85, # High structure - cosmic order
+        "J": 0.85,  # High structure - cosmic order
         "P": 0.9,  # High power - legendary feats
         "W": 0.8,  # High wisdom - profound themes
-    }
+    },
 }
 
 # ============================================================================
@@ -158,7 +162,7 @@ BIOLOGICAL_SYSTEMS = {
         "description": "Simple, fast reproduction, adaptable",
         "L": 0.5,  # Moderate safety - survival strategies
         "J": 0.3,  # Low structure - simple organization
-        "P": 0.95, # Maximum power - rapid reproduction
+        "P": 0.95,  # Maximum power - rapid reproduction
         "W": 0.4,  # Moderate wisdom - evolutionary adaptation
     },
     "Virus": {
@@ -187,20 +191,21 @@ BIOLOGICAL_SYSTEMS = {
         "L": 0.7,  # Good safety - cultural protection
         "J": 0.7,  # Good structure - social organization
         "P": 0.7,  # Good power - tool use
-        "W": 0.95, # Maximum wisdom - abstract reasoning
+        "W": 0.95,  # Maximum wisdom - abstract reasoning
     },
     "Forest Ecosystem": {
         "description": "Interconnected, self-regulating, resilient",
         "L": 0.8,  # High safety - redundancy, resilience
         "J": 0.5,  # Moderate structure - emergent order
         "P": 0.6,  # Moderate power - sustainable throughput
-        "W": 0.85, # High wisdom - complex adaptation
-    }
+        "W": 0.85,  # High wisdom - complex adaptation
+    },
 }
 
 # ============================================================================
 # ANALYSIS FUNCTIONS
 # ============================================================================
+
 
 def analyze_system(systems: Dict[str, Dict], system_type: str):
     """Analyze a category of systems in LJPW space."""
@@ -225,7 +230,7 @@ def analyze_system(systems: Dict[str, Dict], system_type: str):
 
     names = list(systems.keys())
     for i in range(len(names)):
-        for j in range(i+1, len(names)):
+        for j in range(i + 1, len(names)):
             name1, name2 = names[i], names[j]
             dist = calculate_distance(positions[name1], positions[name2])
 
@@ -245,11 +250,11 @@ def analyze_system(systems: Dict[str, Dict], system_type: str):
     print("EXTREMES")
     print(f"{'─' * 70}\n")
 
-    min_dist, max_dist = float('inf'), 0
+    min_dist, max_dist = float("inf"), 0
     min_pair, max_pair = None, None
 
     for i in range(len(names)):
-        for j in range(i+1, len(names)):
+        for j in range(i + 1, len(names)):
             dist = calculate_distance(positions[names[i]], positions[names[j]])
             if dist < min_dist:
                 min_dist = dist
@@ -266,15 +271,18 @@ def analyze_system(systems: Dict[str, Dict], system_type: str):
     print(f"  Distance: {max_dist:.3f}")
     print(f"  Interpretation: These systems are fundamentally opposite in nature")
 
+
 # ============================================================================
 # MAIN TEST
 # ============================================================================
+
 
 def main():
     print("\n" + "=" * 70)
     print("UNIVERSAL LJPW TEST: Non-Code Systems")
     print("=" * 70)
-    print("""
+    print(
+        """
 Hypothesis: If LJPW captures fundamental semantic structure, it should
 apply to ANY complex adaptive system, not just code.
 
@@ -284,7 +292,8 @@ correlate with intuitive semantic similarity.
 
 If distances make sense (similar systems close, different systems far),
 this supports the "Deep" interpretation: LJPW is a universal law.
-    """)
+    """
+    )
 
     # Test each category
     analyze_system(ORGANIZATIONS, "Organizations")
@@ -316,7 +325,8 @@ this supports the "Deep" interpretation: LJPW is a universal law.
     print("\n" + "=" * 70)
     print("CONCLUSIONS")
     print("=" * 70)
-    print("""
+    print(
+        """
 If LJPW distances correlate with semantic similarity across domains:
 
 EVIDENCE FOR:
@@ -335,8 +345,10 @@ The fact that we can meaningfully compare:
 
 ...suggests LJPW is operating at a deeper level than domain-specific
 analysis. It may be capturing the intrinsic geometry of meaning itself.
-    """)
+    """
+    )
     print("=" * 70 + "\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

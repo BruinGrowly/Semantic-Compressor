@@ -12,7 +12,7 @@ arbitrary measurements.
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ljpw"))
 from ljpw_standalone import analyze_quick, calculate_distance
 
 # Natural Equilibrium coordinates
@@ -104,6 +104,7 @@ def f(x):
 # TEST FUNCTION
 # ============================================================================
 
+
 def test_beauty_hypothesis():
     print("\n" + "=" * 70)
     print("BOLD PREDICTION TEST: Beautiful Code Near Natural Equilibrium")
@@ -121,15 +122,19 @@ def test_beauty_hypothesis():
         ("Quicksort (elegant recursion)", beautiful_python),
         ("Function composition", beautiful_minimal),
         ("Memoization decorator", beautiful_balanced),
-        ("Flatten with generators", beautiful_pythonic)
+        ("Flatten with generators", beautiful_pythonic),
     ]
 
     beautiful_distances = []
 
     for name, code in beautiful_examples:
         result = analyze_quick(code)
-        coords = (result['ljpw']['L'], result['ljpw']['J'],
-                 result['ljpw']['P'], result['ljpw']['W'])
+        coords = (
+            result["ljpw"]["L"],
+            result["ljpw"]["J"],
+            result["ljpw"]["P"],
+            result["ljpw"]["W"],
+        )
 
         dist = calculate_distance(coords, NE)
         beautiful_distances.append(dist)
@@ -142,7 +147,9 @@ def test_beauty_hypothesis():
 
         print(f"\n{name}:")
         print(f"  Genome: {genome}")
-        print(f"  Position: L={coords[0]:.2f}, J={coords[1]:.2f}, P={coords[2]:.2f}, W={coords[3]:.2f}")
+        print(
+            f"  Position: L={coords[0]:.2f}, J={coords[1]:.2f}, P={coords[2]:.2f}, W={coords[3]:.2f}"
+        )
         print(f"  Distance from NE: {dist:.3f}", end="")
 
         if dist < 0.4:
@@ -159,15 +166,19 @@ def test_beauty_hypothesis():
 
     ugly_examples = [
         ("Ugly quicksort (no spacing)", ugly_code_1),
-        ("Ugly counter (inefficient)", ugly_code_2)
+        ("Ugly counter (inefficient)", ugly_code_2),
     ]
 
     ugly_distances = []
 
     for name, code in ugly_examples:
         result = analyze_quick(code)
-        coords = (result['ljpw']['L'], result['ljpw']['J'],
-                 result['ljpw']['P'], result['ljpw']['W'])
+        coords = (
+            result["ljpw"]["L"],
+            result["ljpw"]["J"],
+            result["ljpw"]["P"],
+            result["ljpw"]["W"],
+        )
 
         dist = calculate_distance(coords, NE)
         ugly_distances.append(dist)
@@ -180,7 +191,9 @@ def test_beauty_hypothesis():
 
         print(f"\n{name}:")
         print(f"  Genome: {genome}")
-        print(f"  Position: L={coords[0]:.2f}, J={coords[1]:.2f}, P={coords[2]:.2f}, W={coords[3]:.2f}")
+        print(
+            f"  Position: L={coords[0]:.2f}, J={coords[1]:.2f}, P={coords[2]:.2f}, W={coords[3]:.2f}"
+        )
         print(f"  Distance from NE: {dist:.3f}", end="")
 
         if dist < 0.4:
@@ -214,7 +227,8 @@ def test_beauty_hypothesis():
     print("CONCLUSIONS")
     print("=" * 70)
 
-    print("""
+    print(
+        """
 If beautiful code clusters near Natural Equilibrium, this suggests:
 
 1. LJPW captures aesthetic/quality judgments (not just syntax)
@@ -224,8 +238,10 @@ If beautiful code clusters near Natural Equilibrium, this suggests:
 
 This would be strong evidence that LJPW captures something
 fundamental about code quality, not just arbitrary measurements.
-    """)
+    """
+    )
     print("=" * 70 + "\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_beauty_hypothesis()

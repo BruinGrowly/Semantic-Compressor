@@ -11,18 +11,19 @@ import sys
 from pathlib import Path
 
 # Import from ljpw_standalone
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ljpw"))
 from ljpw_standalone import (
+    calculate_batch_distance,
     calculate_distance,
     calculate_file_distance,
-    calculate_batch_distance,
+    format_batch_distance_result_json,
     format_distance_result_json,
-    format_batch_distance_result_json
 )
 
 # ============================================================================
 # TEST SUITE
 # ============================================================================
+
 
 class DistanceTestRunner:
     def __init__(self):
@@ -38,7 +39,9 @@ class DistanceTestRunner:
             return True
         else:
             self.failed += 1
-            self.tests.append((test_name, False, f"✗ {test_name}: expected {expected}, got {actual}"))
+            self.tests.append(
+                (test_name, False, f"✗ {test_name}: expected {expected}, got {actual}")
+            )
             return False
 
     def assert_true(self, condition, test_name):
@@ -73,6 +76,7 @@ class DistanceTestRunner:
         else:
             print(f"\n❌ {self.failed} TESTS FAILED")
             return 1
+
 
 def main():
     test = DistanceTestRunner()
@@ -113,8 +117,7 @@ def main():
     d13 = calculate_distance(coords1, coords3)
 
     # Triangle inequality: d13 <= d12 + d23
-    test.assert_true(d13 <= d12 + d23 + 0.001,
-                    "Triangle inequality holds")
+    test.assert_true(d13 <= d12 + d23 + 0.001, "Triangle inequality holds")
 
     # ========================================================================
     # Test 5: Symmetry
@@ -149,15 +152,15 @@ def main():
     if Path(file1).exists() and Path(file2).exists():
         result = calculate_file_distance(file1, file2)
 
-        test.assert_true('error' not in result, "File distance calculation succeeds")
-        test.assert_true('distance' in result, "Result contains distance")
-        test.assert_true('similarity' in result, "Result contains similarity")
-        test.assert_true('interpretation' in result, "Result contains interpretation")
-        test.assert_true(result['distance'] >= 0, "Distance is non-negative")
+        test.assert_true("error" not in result, "File distance calculation succeeds")
+        test.assert_true("distance" in result, "Result contains distance")
+        test.assert_true("similarity" in result, "Result contains similarity")
+        test.assert_true("interpretation" in result, "Result contains interpretation")
+        test.assert_true(result["distance"] >= 0, "Distance is non-negative")
 
         # Check coordinates are tuples of 4 floats
-        test.assert_true(len(result['coords1']) == 4, "Coords1 has 4 dimensions")
-        test.assert_true(len(result['coords2']) == 4, "Coords2 has 4 dimensions")
+        test.assert_true(len(result["coords1"]) == 4, "Coords1 has 4 dimensions")
+        test.assert_true(len(result["coords2"]) == 4, "Coords2 has 4 dimensions")
     else:
         print(f"\n⚠ Skipping file distance test (files not found)")
 
@@ -205,11 +208,11 @@ def main():
         # Parse JSON to verify it's valid
         try:
             parsed = json.loads(json_output)
-            test.assert_true('file1' in parsed, "JSON contains file1")
-            test.assert_true('file2' in parsed, "JSON contains file2")
-            test.assert_true('coordinates' in parsed, "JSON contains coordinates")
-            test.assert_true('distance' in parsed, "JSON contains distance")
-            test.assert_true('similarity' in parsed, "JSON contains similarity")
+            test.assert_true("file1" in parsed, "JSON contains file1")
+            test.assert_true("file2" in parsed, "JSON contains file2")
+            test.assert_true("coordinates" in parsed, "JSON contains coordinates")
+            test.assert_true("distance" in parsed, "JSON contains distance")
+            test.assert_true("similarity" in parsed, "JSON contains similarity")
         except json.JSONDecodeError:
             test.assert_true(False, "JSON output is valid JSON")
     else:
@@ -227,15 +230,15 @@ def main():
     if len(test_files) >= 3:
         batch_result = calculate_batch_distance(test_files)
 
-        test.assert_true('error' not in batch_result, "Batch calculation succeeds")
-        test.assert_true('files' in batch_result, "Batch result contains files")
-        test.assert_true('distance_matrix' in batch_result, "Batch result contains distance matrix")
-        test.assert_true('most_similar' in batch_result, "Batch result contains most_similar")
-        test.assert_true('most_different' in batch_result, "Batch result contains most_different")
+        test.assert_true("error" not in batch_result, "Batch calculation succeeds")
+        test.assert_true("files" in batch_result, "Batch result contains files")
+        test.assert_true("distance_matrix" in batch_result, "Batch result contains distance matrix")
+        test.assert_true("most_similar" in batch_result, "Batch result contains most_similar")
+        test.assert_true("most_different" in batch_result, "Batch result contains most_different")
 
         # Verify distance matrix dimensions
         n = len(test_files)
-        matrix = batch_result['distance_matrix']
+        matrix = batch_result["distance_matrix"]
         test.assert_true(len(matrix) == n, f"Distance matrix has {n} rows")
         test.assert_true(len(matrix[0]) == n, f"Distance matrix has {n} columns")
 
@@ -259,11 +262,11 @@ def main():
         # Parse JSON to verify it's valid
         try:
             parsed = json.loads(json_output)
-            test.assert_true('files' in parsed, "Batch JSON contains files")
-            test.assert_true('coordinates' in parsed, "Batch JSON contains coordinates")
-            test.assert_true('distance_matrix' in parsed, "Batch JSON contains distance_matrix")
-            test.assert_true('most_similar' in parsed, "Batch JSON contains most_similar")
-            test.assert_true('most_different' in parsed, "Batch JSON contains most_different")
+            test.assert_true("files" in parsed, "Batch JSON contains files")
+            test.assert_true("coordinates" in parsed, "Batch JSON contains coordinates")
+            test.assert_true("distance_matrix" in parsed, "Batch JSON contains distance_matrix")
+            test.assert_true("most_similar" in parsed, "Batch JSON contains most_similar")
+            test.assert_true("most_different" in parsed, "Batch JSON contains most_different")
         except json.JSONDecodeError:
             test.assert_true(False, "Batch JSON output is valid JSON")
     else:
@@ -275,16 +278,17 @@ def main():
     if len(test_files) >= 3:
         batch_result = calculate_batch_distance(test_files)
 
-        most_sim = batch_result['most_similar']
-        most_diff = batch_result['most_different']
+        most_sim = batch_result["most_similar"]
+        most_diff = batch_result["most_different"]
 
         test.assert_true(most_sim is not None, "Most similar pair found")
         test.assert_true(most_diff is not None, "Most different pair found")
 
         # Most similar should have smaller distance than most different
         if most_sim and most_diff:
-            test.assert_true(most_sim[2] <= most_diff[2],
-                           "Most similar distance <= most different distance")
+            test.assert_true(
+                most_sim[2] <= most_diff[2], "Most similar distance <= most different distance"
+            )
     else:
         print(f"\n⚠ Skipping most similar/different test (need at least 3 files)")
 
@@ -292,9 +296,10 @@ def main():
     # Test 15: Batch Error Handling (< 2 files)
     # ========================================================================
     batch_result = calculate_batch_distance(["single_file.py"])
-    test.assert_true('error' in batch_result, "Batch with <2 files returns error")
+    test.assert_true("error" in batch_result, "Batch with <2 files returns error")
 
     return test.print_results()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sys.exit(main())

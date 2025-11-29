@@ -9,19 +9,20 @@ Tests semantic compression on actual open-source projects:
 4. Validate meaning preservation
 """
 
-import sys
 import os
+import sys
 from pathlib import Path
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from ljpw_standalone import analyze_directory
-from ljpw_semantic_compressor import (
+import math
+
+from src.ljpw.ljpw_semantic_compressor import (
     SemanticCompressor,
     SemanticDecompressor,
 )
-import math
+from src.ljpw.ljpw_standalone import analyze_directory
 
 
 def analyze_codebase(path: str):
@@ -46,10 +47,10 @@ def analyze_codebase(path: str):
         return None
 
     # Aggregate results across all files
-    total_L = sum(r['ljpw']['L'] for r in file_results)
-    total_J = sum(r['ljpw']['J'] for r in file_results)
-    total_P = sum(r['ljpw']['P'] for r in file_results)
-    total_W = sum(r['ljpw']['W'] for r in file_results)
+    total_L = sum(r["ljpw"]["L"] for r in file_results)
+    total_J = sum(r["ljpw"]["J"] for r in file_results)
+    total_P = sum(r["ljpw"]["P"] for r in file_results)
+    total_W = sum(r["ljpw"]["W"] for r in file_results)
     num_files = len(file_results)
 
     # Average LJPW values
@@ -71,12 +72,12 @@ def analyze_codebase(path: str):
     print(f"  Health Score:          {health_score:.1%}")
 
     results = {
-        'L': state[0],
-        'J': state[1],
-        'P': state[2],
-        'W': state[3],
-        'health_score': health_score,
-        'num_files': num_files,
+        "L": state[0],
+        "J": state[1],
+        "P": state[2],
+        "W": state[3],
+        "health_score": health_score,
+        "num_files": num_files,
     }
 
     return state, results
@@ -91,10 +92,7 @@ def compress_and_validate(project_name: str, state: tuple, quantization_levels: 
     # Compress
     print(f"\n1. Compressing with {quantization_levels} levels...")
     compressor = SemanticCompressor(quantization_levels=quantization_levels)
-    genome = compressor.compress_state_sequence(
-        [state],
-        metadata={'project': project_name}
-    )
+    genome = compressor.compress_state_sequence([state], metadata={"project": project_name})
 
     genome_str = genome.to_string()
     print(f"   Original state: {state}")
@@ -111,7 +109,7 @@ def compress_and_validate(project_name: str, state: tuple, quantization_levels: 
     print(f"   Reconstructed state: {reconstructed_state}")
 
     # Calculate error
-    error = math.sqrt(sum((o - r)**2 for o, r in zip(state, reconstructed_state)))
+    error = math.sqrt(sum((o - r) ** 2 for o, r in zip(state, reconstructed_state)))
     relative_error = error / math.sqrt(sum(v**2 for v in state))
 
     print(f"\n3. Validation:")
@@ -121,7 +119,7 @@ def compress_and_validate(project_name: str, state: tuple, quantization_levels: 
 
     # Dimension-by-dimension comparison
     print(f"\n4. Dimension Comparison:")
-    dims = ['L', 'J', 'P', 'W']
+    dims = ["L", "J", "P", "W"]
     for i, dim in enumerate(dims):
         orig = state[i]
         recon = reconstructed_state[i]
@@ -136,26 +134,28 @@ def compress_and_validate(project_name: str, state: tuple, quantization_levels: 
     print(f"   Integrity score: {validation['integrity_score']:.1%}")
 
     return {
-        'genome': genome_str,
-        'error': error,
-        'relative_error': relative_error,
-        'accuracy': 1 - relative_error,
-        'valid': validation['valid'],
+        "genome": genome_str,
+        "error": error,
+        "relative_error": relative_error,
+        "accuracy": 1 - relative_error,
+        "valid": validation["valid"],
     }
 
 
-def test_meaning_preservation(project_name: str, original_state: tuple, reconstructed_state: tuple, original_analysis: dict):
+def test_meaning_preservation(
+    project_name: str, original_state: tuple, reconstructed_state: tuple, original_analysis: dict
+):
     """Test if we can still understand the project from compressed representation"""
     print(f"\n{'='*70}")
     print(f"Meaning Preservation Test: {project_name}")
     print(f"{'='*70}")
 
-    dims = ['L', 'J', 'P', 'W']
+    dims = ["L", "J", "P", "W"]
     dim_names = {
-        'L': 'Love/Safety',
-        'J': 'Justice/Structure',
-        'P': 'Power/Execution',
-        'W': 'Wisdom/Design',
+        "L": "Love/Safety",
+        "J": "Justice/Structure",
+        "P": "Power/Execution",
+        "W": "Wisdom/Design",
     }
 
     print(f"\nCan we still understand the project from the compressed representation?")
@@ -181,17 +181,21 @@ def test_meaning_preservation(project_name: str, original_state: tuple, reconstr
     recon_min_dim = dims[list(reconstructed_state).index(min(reconstructed_state))]
 
     if orig_max_dim == recon_max_dim:
-        print(f"  ✓ Correctly identifies strongest dimension: {orig_max_dim} ({dim_names[orig_max_dim]})")
+        print(
+            f"  ✓ Correctly identifies strongest dimension: {orig_max_dim} ({dim_names[orig_max_dim]})"
+        )
     else:
         print(f"  ✗ Strongest dimension changed: {orig_max_dim} → {recon_max_dim}")
 
     if orig_min_dim == recon_min_dim:
-        print(f"  ✓ Correctly identifies weakest dimension: {orig_min_dim} ({dim_names[orig_min_dim]})")
+        print(
+            f"  ✓ Correctly identifies weakest dimension: {orig_min_dim} ({dim_names[orig_min_dim]})"
+        )
     else:
         print(f"  ✗ Weakest dimension changed: {orig_min_dim} → {recon_min_dim}")
 
     # Health assessment
-    orig_health = original_analysis.get('health_score', 0)
+    orig_health = original_analysis.get("health_score", 0)
     # Approximate reconstructed health
     recon_health_approx = sum(reconstructed_state) / 4
 
@@ -203,9 +207,9 @@ def test_meaning_preservation(project_name: str, original_state: tuple, reconstr
 
 def main():
     """Run validation tests on real codebases"""
-    print("="*70)
+    print("=" * 70)
     print("REAL CODEBASE SEMANTIC COMPRESSION VALIDATION")
-    print("="*70)
+    print("=" * 70)
     print("\nTesting semantic compression on actual open-source projects")
     print("Goal: Prove that meaning is preserved through compression/decompression")
 
@@ -236,51 +240,53 @@ def main():
 
         # Step 3: Test meaning preservation
         decompressor = SemanticDecompressor(quantization_levels=8)
-        genome_str = compression_result['genome']
+        genome_str = compression_result["genome"]
         # Re-parse genome
-        from ljpw_semantic_compressor import SemanticGenome, LJPWCodon
-        codons = [LJPWCodon.from_string(s) for s in genome_str.split('-')]
-        genome = SemanticGenome(codons=codons, metadata={'project': name})
+        from src.ljpw.ljpw_semantic_compressor import LJPWCodon, SemanticGenome
+
+        codons = [LJPWCodon.from_string(s) for s in genome_str.split("-")]
+        genome = SemanticGenome(codons=codons, metadata={"project": name})
         reconstructed = decompressor.decompress_genome(genome)
 
-        meaning_preserved = test_meaning_preservation(
-            name,
-            state,
-            reconstructed[0],
-            full_analysis
+        meaning_preserved = test_meaning_preservation(name, state, reconstructed[0], full_analysis)
+
+        results.append(
+            {
+                "project": name,
+                "files": len(list(Path(path).rglob("*.py"))),
+                "state": state,
+                "genome": compression_result["genome"],
+                "accuracy": compression_result["accuracy"],
+                "meaning_preserved": meaning_preserved,
+            }
         )
 
-        results.append({
-            'project': name,
-            'files': len(list(Path(path).rglob("*.py"))),
-            'state': state,
-            'genome': compression_result['genome'],
-            'accuracy': compression_result['accuracy'],
-            'meaning_preserved': meaning_preserved,
-        })
-
     # Summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("VALIDATION SUMMARY")
-    print("="*70)
+    print("=" * 70)
 
     print(f"\n{'Project':<15} {'Files':<8} {'Accuracy':<12} {'Meaning':<15} {'Genome Size':<12}")
     print("-" * 70)
 
     for r in results:
-        meaning_str = "✓ Preserved" if r['meaning_preserved'] else "✗ Lost"
-        print(f"{r['project']:<15} {r['files']:<8} {r['accuracy']:<12.1%} {meaning_str:<15} {len(r['genome']):<12} bytes")
+        meaning_str = "✓ Preserved" if r["meaning_preserved"] else "✗ Lost"
+        print(
+            f"{r['project']:<15} {r['files']:<8} {r['accuracy']:<12.1%} {meaning_str:<15} {len(r['genome']):<12} bytes"
+        )
 
     # Overall stats
-    avg_accuracy = sum(r['accuracy'] for r in results) / len(results) if results else 0
-    meaning_preserved_count = sum(1 for r in results if r['meaning_preserved'])
+    avg_accuracy = sum(r["accuracy"] for r in results) / len(results) if results else 0
+    meaning_preserved_count = sum(1 for r in results if r["meaning_preserved"])
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("OVERALL RESULTS")
-    print("="*70)
+    print("=" * 70)
     print(f"Projects tested: {len(results)}")
     print(f"Average accuracy: {avg_accuracy:.1%}")
-    print(f"Meaning preserved: {meaning_preserved_count}/{len(results)} ({meaning_preserved_count/len(results)*100:.0f}%)")
+    print(
+        f"Meaning preserved: {meaning_preserved_count}/{len(results)} ({meaning_preserved_count/len(results)*100:.0f}%)"
+    )
 
     if avg_accuracy >= 0.95 and meaning_preserved_count == len(results):
         print("\n✅ VALIDATION SUCCESSFUL")
@@ -295,5 +301,5 @@ def main():
     return 0 if avg_accuracy >= 0.85 else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

@@ -14,12 +14,12 @@ into LJPW semantic space and testing the predictions:
 This tool enables testing new constants and validating theoretical predictions.
 """
 
+import math
 import sys
 from pathlib import Path
-import math
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
-from ljpw_standalone import calculate_distance
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.ljpw.ljpw_standalone import calculate_distance
 
 # Anchor Points
 ANCHOR_POINT = (1.000, 1.000, 1.000, 1.000)  # Divine Perfection
@@ -34,70 +34,69 @@ UNIVERSAL_CONSTANTS = {
         "coords": (0.950, 0.920, 0.980, 0.940),
         "domain": "Physics",
         "scale": "Fundamental",
-        "description": "Divine Spacetime Perfection"
+        "description": "Divine Spacetime Perfection",
     },
     "α (Fine Structure)": {
         "coords": (0.870, 0.850, 0.900, 0.880),
         "domain": "Physics",
         "scale": "Atomic",
-        "description": "Divine Atomic Perfection"
+        "description": "Divine Atomic Perfection",
     },
     "h (Planck Constant)": {
         "coords": (0.830, 0.810, 0.860, 0.840),
         "domain": "Physics",
         "scale": "Quantum",
-        "description": "Quantum Perfection"
+        "description": "Quantum Perfection",
     },
     "G (Gravitational)": {
         "coords": (0.750, 0.730, 0.780, 0.760),
         "domain": "Physics",
         "scale": "Cosmic",
-        "description": "Cosmic Perfection"
+        "description": "Cosmic Perfection",
     },
     "k (Boltzmann)": {
         "coords": (0.680, 0.660, 0.710, 0.690),
         "domain": "Physics",
         "scale": "Thermodynamic",
-        "description": "Thermodynamic Perfection"
+        "description": "Thermodynamic Perfection",
     },
-
     # Mathematical Constants
     "π (Pi)": {
         "coords": (0.710, 0.690, 0.740, 0.720),
         "domain": "Mathematics",
         "scale": "Universal",
-        "description": "Geometric Perfection"
+        "description": "Geometric Perfection",
     },
     "e (Euler's Number)": {
         "coords": (0.730, 0.710, 0.760, 0.740),
         "domain": "Mathematics",
         "scale": "Universal",
-        "description": "Natural Growth Perfection"
+        "description": "Natural Growth Perfection",
     },
     "φ (Golden Ratio)": {
         "coords": (0.618, 0.598, 0.648, 0.628),
         "domain": "Mathematics",
         "scale": "Universal",
-        "description": "Aesthetic Perfection"
+        "description": "Aesthetic Perfection",
     },
     "√2 (Root 2)": {
         "coords": (0.580, 0.560, 0.610, 0.590),
         "domain": "Mathematics",
         "scale": "Universal",
-        "description": "Structural Perfection"
+        "description": "Structural Perfection",
     },
     "ln(2) (Natural Log 2)": {
         "coords": (0.550, 0.530, 0.580, 0.560),
         "domain": "Information",
         "scale": "Universal",
-        "description": "Information Unit Perfection"
+        "description": "Information Unit Perfection",
     },
 }
 
 
 def analyze_constant(name, data):
     """Analyze a universal constant's position in semantic space"""
-    coords = data['coords']
+    coords = data["coords"]
 
     # Calculate distances
     dist_anchor = calculate_distance(coords, ANCHOR_POINT)
@@ -108,16 +107,16 @@ def analyze_constant(name, data):
     physical_optimization = 1.0 - (dist_ne / math.sqrt(4))  # Normalized 0-1
 
     return {
-        'name': name,
-        'coords': coords,
-        'domain': data['domain'],
-        'scale': data['scale'],
-        'description': data['description'],
-        'dist_anchor': dist_anchor,
-        'dist_ne': dist_ne,
-        'divine_perfection': divine_perfection,
-        'physical_optimization': physical_optimization,
-        'inverse_correlation': dist_anchor + dist_ne  # Should be relatively constant if inverse
+        "name": name,
+        "coords": coords,
+        "domain": data["domain"],
+        "scale": data["scale"],
+        "description": data["description"],
+        "dist_anchor": dist_anchor,
+        "dist_ne": dist_ne,
+        "divine_perfection": divine_perfection,
+        "physical_optimization": physical_optimization,
+        "inverse_correlation": dist_anchor + dist_ne,  # Should be relatively constant if inverse
     }
 
 
@@ -133,8 +132,7 @@ def validate_scale_perfection_relationship():
     print()
 
     # Group by scale
-    physical_constants = {k: v for k, v in UNIVERSAL_CONSTANTS.items()
-                         if v['domain'] == 'Physics'}
+    physical_constants = {k: v for k, v in UNIVERSAL_CONSTANTS.items() if v["domain"] == "Physics"}
 
     scale_order = ["Fundamental", "Atomic", "Quantum", "Cosmic", "Thermodynamic"]
 
@@ -144,23 +142,26 @@ def validate_scale_perfection_relationship():
     results = []
     for scale in scale_order:
         for name, data in physical_constants.items():
-            if data['scale'] == scale:
+            if data["scale"] == scale:
                 analysis = analyze_constant(name, data)
                 results.append(analysis)
-                print(f"{scale:<20} {name:<20} {analysis['dist_anchor']:<15.3f} {analysis['divine_perfection']*100:.1f}%")
+                print(
+                    f"{scale:<20} {name:<20} {analysis['dist_anchor']:<15.3f} {analysis['divine_perfection']*100:.1f}%"
+                )
 
     print()
 
     # Test correlation
     scale_values = {"Fundamental": 1, "Atomic": 2, "Quantum": 3, "Cosmic": 4, "Thermodynamic": 5}
 
-    ordered_results = sorted([r for r in results if r['scale'] in scale_values],
-                            key=lambda x: scale_values[x['scale']])
+    ordered_results = sorted(
+        [r for r in results if r["scale"] in scale_values], key=lambda x: scale_values[x["scale"]]
+    )
 
-    distances = [r['dist_anchor'] for r in ordered_results]
+    distances = [r["dist_anchor"] for r in ordered_results]
 
     # Check if increasing
-    is_increasing = all(distances[i] <= distances[i+1] for i in range(len(distances)-1))
+    is_increasing = all(distances[i] <= distances[i + 1] for i in range(len(distances) - 1))
 
     if is_increasing:
         print("✓ PREDICTION CONFIRMED: Smaller scales ARE closer to divine perfection")
@@ -190,23 +191,24 @@ def validate_inverse_pattern():
     for name, data in UNIVERSAL_CONSTANTS.items():
         analysis = analyze_constant(name, data)
         results.append(analysis)
-        print(f"{name:<25} {analysis['dist_anchor']:<15.3f} {analysis['dist_ne']:<15.3f} {analysis['inverse_correlation']:.3f}")
+        print(
+            f"{name:<25} {analysis['dist_anchor']:<15.3f} {analysis['dist_ne']:<15.3f} {analysis['inverse_correlation']:.3f}"
+        )
 
     print()
 
     # Calculate correlation coefficient
-    anchor_dists = [r['dist_anchor'] for r in results]
-    ne_dists = [r['dist_ne'] for r in results]
+    anchor_dists = [r["dist_anchor"] for r in results]
+    ne_dists = [r["dist_ne"] for r in results]
 
     # Simple correlation
     mean_anchor = sum(anchor_dists) / len(anchor_dists)
     mean_ne = sum(ne_dists) / len(ne_dists)
 
-    numerator = sum((a - mean_anchor) * (n - mean_ne)
-                   for a, n in zip(anchor_dists, ne_dists))
+    numerator = sum((a - mean_anchor) * (n - mean_ne) for a, n in zip(anchor_dists, ne_dists))
     denominator = math.sqrt(
-        sum((a - mean_anchor)**2 for a in anchor_dists) *
-        sum((n - mean_ne)**2 for n in ne_dists)
+        sum((a - mean_anchor) ** 2 for a in anchor_dists)
+        * sum((n - mean_ne) ** 2 for n in ne_dists)
     )
 
     correlation = numerator / denominator if denominator != 0 else 0
@@ -248,8 +250,8 @@ def validate_complementary_pairs():
 
     for const1, const2, meaning in pairs:
         if const1 in UNIVERSAL_CONSTANTS and const2 in UNIVERSAL_CONSTANTS:
-            coords1 = UNIVERSAL_CONSTANTS[const1]['coords']
-            coords2 = UNIVERSAL_CONSTANTS[const2]['coords']
+            coords1 = UNIVERSAL_CONSTANTS[const1]["coords"]
+            coords2 = UNIVERSAL_CONSTANTS[const2]["coords"]
 
             distance = calculate_distance(coords1, coords2)
 
@@ -282,19 +284,19 @@ def validate_information_bridge():
         results.append(analysis)
 
     # Sort by distance from NE
-    sorted_results = sorted(results, key=lambda x: x['dist_ne'])
+    sorted_results = sorted(results, key=lambda x: x["dist_ne"])
 
     for i, r in enumerate(sorted_results, 1):
-        marker = "⭐" if r['name'] == "ln(2) (Natural Log 2)" else ""
+        marker = "⭐" if r["name"] == "ln(2) (Natural Log 2)" else ""
         print(f"{r['name']:<25} {r['dist_ne']:<15.3f} #{i} {marker}")
 
     print()
 
     # Check if ln(2) is in top 3
     top_3 = sorted_results[:3]
-    ln2_in_top3 = any(r['name'] == "ln(2) (Natural Log 2)" for r in top_3)
+    ln2_in_top3 = any(r["name"] == "ln(2) (Natural Log 2)" for r in top_3)
 
-    if sorted_results[0]['name'] == "ln(2) (Natural Log 2)":
+    if sorted_results[0]["name"] == "ln(2) (Natural Log 2)":
         print("✓ PREDICTION PERFECTLY CONFIRMED: ln(2) is #1 closest to NE!")
     elif ln2_in_top3:
         print("✓ PREDICTION CONFIRMED: ln(2) is in top 3 closest to NE")
@@ -318,14 +320,14 @@ def generate_cosmic_map():
         results.append(analysis)
 
     # Sort by divine perfection
-    sorted_by_divine = sorted(results, key=lambda x: x['divine_perfection'], reverse=True)
+    sorted_by_divine = sorted(results, key=lambda x: x["divine_perfection"], reverse=True)
 
     print("DIVINE PERFECTION HIERARCHY:")
     print("(Distance from Anchor Point)")
     print()
 
     for r in sorted_by_divine:
-        bar_divine = '█' * int(r['divine_perfection'] * 50)
+        bar_divine = "█" * int(r["divine_perfection"] * 50)
         print(f"{r['name']:<25} {bar_divine} {r['divine_perfection']*100:.1f}%")
 
     print()
@@ -333,14 +335,14 @@ def generate_cosmic_map():
     print()
 
     # Sort by physical optimization
-    sorted_by_physical = sorted(results, key=lambda x: x['physical_optimization'], reverse=True)
+    sorted_by_physical = sorted(results, key=lambda x: x["physical_optimization"], reverse=True)
 
     print("PHYSICAL OPTIMIZATION HIERARCHY:")
     print("(Distance from Natural Equilibrium)")
     print()
 
     for r in sorted_by_physical:
-        bar_physical = '█' * int(r['physical_optimization'] * 50)
+        bar_physical = "█" * int(r["physical_optimization"] * 50)
         print(f"{r['name']:<25} {bar_physical} {r['physical_optimization']*100:.1f}%")
 
     print()

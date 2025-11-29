@@ -11,7 +11,7 @@ This tests whether LJPW captures language-independent meaning.
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ljpw"))
 from ljpw_standalone import analyze_quick, calculate_distance
 
 # ============================================================================
@@ -139,6 +139,7 @@ public class Calculator {
 # RUN TESTS
 # ============================================================================
 
+
 def test_cross_language():
     print("\n" + "=" * 70)
     print("CROSS-LANGUAGE SEMANTIC CONSISTENCY TEST")
@@ -147,42 +148,47 @@ def test_cross_language():
     print()
 
     test_cases = [
-        ("Simple Addition", [
-            ("Python", python_add),
-            ("JavaScript", javascript_add),
-            ("Rust", rust_add),
-            ("C++", cpp_add),
-            ("Go", go_add),
-            ("Ruby", ruby_add),
-            ("Swift", swift_add),
-            ("Kotlin", kotlin_add)
-        ]),
-        ("Input Validation", [
-            ("Python", python_validate),
-            ("JavaScript", javascript_validate),
-            ("TypeScript", typescript_validate)
-        ]),
-        ("Class/OOP", [
-            ("Python", python_class),
-            ("JavaScript", javascript_class),
-            ("Java", java_class)
-        ])
+        (
+            "Simple Addition",
+            [
+                ("Python", python_add),
+                ("JavaScript", javascript_add),
+                ("Rust", rust_add),
+                ("C++", cpp_add),
+                ("Go", go_add),
+                ("Ruby", ruby_add),
+                ("Swift", swift_add),
+                ("Kotlin", kotlin_add),
+            ],
+        ),
+        (
+            "Input Validation",
+            [
+                ("Python", python_validate),
+                ("JavaScript", javascript_validate),
+                ("TypeScript", typescript_validate),
+            ],
+        ),
+        (
+            "Class/OOP",
+            [("Python", python_class), ("JavaScript", javascript_class), ("Java", java_class)],
+        ),
     ]
 
     for test_name, cases in test_cases:
         print(f"\n{'─' * 70}")
         print(f"Test: {test_name}")
-        print('─' * 70)
+        print("─" * 70)
 
         results = []
         for lang, code in cases:
             result = analyze_quick(code)
             results.append((lang, result))
 
-            L = result['ljpw']['L']
-            J = result['ljpw']['J']
-            P = result['ljpw']['P']
-            W = result['ljpw']['W']
+            L = result["ljpw"]["L"]
+            J = result["ljpw"]["J"]
+            P = result["ljpw"]["P"]
+            W = result["ljpw"]["W"]
 
             # Create genome from coordinates (quantize to 0-9)
             L_digit = int(round(L * 10)) % 10
@@ -199,14 +205,12 @@ def test_cross_language():
         print(f"\nPairwise Semantic Distances:")
         n = len(results)
         for i in range(n):
-            for j in range(i+1, n):
+            for j in range(i + 1, n):
                 lang1, r1 = results[i]
                 lang2, r2 = results[j]
 
-                coords1 = (r1['ljpw']['L'], r1['ljpw']['J'],
-                          r1['ljpw']['P'], r1['ljpw']['W'])
-                coords2 = (r2['ljpw']['L'], r2['ljpw']['J'],
-                          r2['ljpw']['P'], r2['ljpw']['W'])
+                coords1 = (r1["ljpw"]["L"], r1["ljpw"]["J"], r1["ljpw"]["P"], r1["ljpw"]["W"])
+                coords2 = (r2["ljpw"]["L"], r2["ljpw"]["J"], r2["ljpw"]["P"], r2["ljpw"]["W"])
 
                 distance = calculate_distance(coords1, coords2)
 
@@ -222,7 +226,8 @@ def test_cross_language():
     print("\n" + "=" * 70)
     print("CONCLUSION")
     print("=" * 70)
-    print("""
+    print(
+        """
 If distances are consistently low (<0.3), this provides evidence that:
 
 1. LJPW captures language-independent semantic meaning
@@ -231,8 +236,10 @@ If distances are consistently low (<0.3), this provides evidence that:
 
 This would support the "Medium" or "Deep" interpretation in
 SEMANTIC_COMPRESSION_DEEP_MECHANICS.md
-    """)
+    """
+    )
     print("=" * 70 + "\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_cross_language()

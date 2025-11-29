@@ -13,17 +13,18 @@ import sys
 from pathlib import Path
 
 # Add tools to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'tools'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "tools"))
 
-from multi_language_analyzer import compare_implementations, analyze_code
 import json
+
+from multi_language_analyzer import analyze_code, compare_implementations
 
 
 def print_header(title):
     """Print formatted header"""
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print(f"{title:^80}")
-    print("="*80 + "\n")
+    print("=" * 80 + "\n")
 
 
 def main():
@@ -34,14 +35,14 @@ def main():
     print("Hypothesis: Same algorithm in different languages → Similar LJPW coordinates")
     print("Algorithm: QuickSort (divide-and-conquer sorting)")
     print("Languages: Python, JavaScript, Go")
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
 
     # File paths
-    base_path = Path(__file__).parent / 'cross_language' / 'quicksort'
+    base_path = Path(__file__).parent / "cross_language" / "quicksort"
     files = {
-        'python': str(base_path / 'quicksort.py'),
-        'javascript': str(base_path / 'quicksort.js'),
-        'go': str(base_path / 'quicksort.go'),
+        "python": str(base_path / "quicksort.py"),
+        "javascript": str(base_path / "quicksort.js"),
+        "go": str(base_path / "quicksort.go"),
     }
 
     # Analyze
@@ -52,32 +53,34 @@ def main():
     print_header("INDIVIDUAL LJPW COORDINATES")
 
     print(f"{'Language':<15} {'L':<10} {'J':<10} {'P':<10} {'W':<10} {'Health':<10}")
-    print("-"*80)
+    print("-" * 80)
 
-    for lang, data in results['implementations'].items():
-        if 'error' not in data:
-            print(f"{lang.capitalize():<15} "
-                  f"{data['L']:.3f}      "
-                  f"{data['J']:.3f}      "
-                  f"{data['P']:.3f}      "
-                  f"{data['W']:.3f}      "
-                  f"{data['health_score']:.1f}%")
+    for lang, data in results["implementations"].items():
+        if "error" not in data:
+            print(
+                f"{lang.capitalize():<15} "
+                f"{data['L']:.3f}      "
+                f"{data['J']:.3f}      "
+                f"{data['P']:.3f}      "
+                f"{data['W']:.3f}      "
+                f"{data['health_score']:.1f}%"
+            )
 
     # Display statistics
     print_header("CROSS-LANGUAGE STATISTICS")
 
-    if 'statistics' in results and results['statistics']:
-        stats = results['statistics']
+    if "statistics" in results and results["statistics"]:
+        stats = results["statistics"]
 
         print("Mean LJPW Coordinates:")
-        mean = stats['mean']
+        mean = stats["mean"]
         print(f"  L (Love/Safety):       {mean['L']:.3f}")
         print(f"  J (Justice/Structure): {mean['J']:.3f}")
         print(f"  P (Power/Performance): {mean['P']:.3f}")
         print(f"  W (Wisdom/Design):     {mean['W']:.3f}")
 
         print("\nStandard Deviation (σ):")
-        std = stats['std_dev']
+        std = stats["std_dev"]
         print(f"  L: {std['L']:.3f}")
         print(f"  J: {std['J']:.3f}")
         print(f"  P: {std['P']:.3f}")
@@ -85,11 +88,11 @@ def main():
         print(f"  Average σ: {sum(std.values())/4:.3f}")
 
         print("\nCross-Language Variance:")
-        variance = stats['cross_language_variance']
+        variance = stats["cross_language_variance"]
         print(f"  Total Variance: {variance:.4f}")
 
         # Invariance score
-        invariance = results.get('cross_language_invariance_score', 0)
+        invariance = results.get("cross_language_invariance_score", 0)
         print(f"  Invariance Score: {invariance:.2f}")
 
         if invariance > 0.90:
@@ -104,15 +107,19 @@ def main():
     # Display pairwise distances
     print_header("PAIRWISE SEMANTIC DISTANCES")
 
-    if 'pairwise_distances' in results:
-        distances = results['pairwise_distances']
+    if "pairwise_distances" in results:
+        distances = results["pairwise_distances"]
 
         print("Euclidean distance in 4D LJPW space:")
         print("(Lower = more semantically similar)\n")
 
         for pair, distance in sorted(distances.items(), key=lambda x: x[1]):
-            lang1, lang2 = pair.split('_vs_')
-            status = "✓ SIMILAR" if distance < 0.15 else ("⚠ MODERATE" if distance < 0.30 else "✗ DIFFERENT")
+            lang1, lang2 = pair.split("_vs_")
+            status = (
+                "✓ SIMILAR"
+                if distance < 0.15
+                else ("⚠ MODERATE" if distance < 0.30 else "✗ DIFFERENT")
+            )
             print(f"  {lang1.capitalize()} ↔ {lang2.capitalize():<15} {distance:.4f}  {status}")
 
         avg_distance = sum(distances.values()) / len(distances)
@@ -128,7 +135,8 @@ def main():
     # Interpretation
     print_header("INTERPRETATION")
 
-    print("""
+    print(
+        """
 What This Demonstrates:
 
 1. **Semantic Invariance**: The same algorithm (quicksort) maps to similar
@@ -153,13 +161,14 @@ Expected Results:
 - Invariance score > 0.80 (80%+ of meaning preserved)
 
 If these hold → LJPW captures true semantic invariants ✓
-""")
+"""
+    )
 
     # Save results
-    output_file = Path(__file__).parent.parent / 'results' / 'cross_language_quicksort.json'
+    output_file = Path(__file__).parent.parent / "results" / "cross_language_quicksort.json"
     output_file.parent.mkdir(exist_ok=True)
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
 
     print(f"\nResults saved to: {output_file}")
@@ -167,9 +176,9 @@ If these hold → LJPW captures true semantic invariants ✓
     # Verdict
     print_header("VERDICT")
 
-    if 'statistics' in results and results['statistics']:
-        variance = results['statistics']['cross_language_variance']
-        invariance = results.get('cross_language_invariance_score', 0)
+    if "statistics" in results and results["statistics"]:
+        variance = results["statistics"]["cross_language_variance"]
+        invariance = results.get("cross_language_invariance_score", 0)
 
         if invariance > 0.80 and variance < 0.10:
             print("✅ HYPOTHESIS CONFIRMED")
@@ -184,8 +193,8 @@ If these hold → LJPW captures true semantic invariants ✓
             print("   LJPW coordinates vary significantly across languages")
             print("   May not capture language-independent semantics")
 
-    print("\n" + "="*80 + "\n")
+    print("\n" + "=" * 80 + "\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

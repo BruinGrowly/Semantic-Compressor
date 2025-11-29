@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-15T18:46:53.084802",
+  "timestamp": "2025-11-29T20:03:42.889044",
   "version": "1.0",
   "benchmarks": {
     "compression_ratio": {
       "status": "PASS",
-      "duration": 0.04442000389099121,
+      "duration": 0.0009584426879882812,
       "results": {
         "simple_script": {
           "original_bytes": 24,
@@ -19,50 +19,43 @@
           "ratio": 88.92307692307692,
           "expected_ratio": 500,
           "passes": false
-        },
-        "django_orm": {
-          "original_bytes": 111746,
-          "compressed_bytes": 13,
-          "ratio": 8595.846153846154,
-          "expected_ratio": 50000,
-          "passes": false
         }
       }
     },
     "performance": {
       "status": "PASS",
-      "duration": 0.06415891647338867,
+      "duration": 0.004261016845703125,
       "results": {
         "small": {
-          "avg_time_ms": 0.014190780000831182,
-          "iterations": 100,
-          "throughput": 70468.28997006705
+          "avg_time_ms": 0.01110658049583435,
+          "iterations": 10,
+          "throughput": 90036.71295364594
         },
         "medium": {
-          "avg_time_ms": 0.4236111799991704,
-          "iterations": 50,
-          "throughput": 2360.6553538128014
+          "avg_time_ms": 0.2822446636855602,
+          "iterations": 5,
+          "throughput": 3543.0253558808395
         },
         "large": {
-          "avg_time_ms": 4.150386099999537,
-          "iterations": 10,
-          "throughput": 240.9414391591451
+          "avg_time_ms": 2.7257688343524933,
+          "iterations": 1,
+          "throughput": 366.8689682694791
         }
       }
     },
     "accuracy": {
       "status": "PASS",
-      "duration": 7.033348083496094e-05,
+      "duration": 4.982948303222656e-05,
       "results": {
         "round_trip_tests": 3,
-        "avg_reconstruction_error": 0.24146628760559694,
+        "avg_reconstruction_error": 0.24146628760559696,
         "max_error": 0.25757134933839204,
         "accuracy_percent": 75.8533712394403
       }
     },
     "edge_cases": {
       "status": "PASS",
-      "duration": 0.0003802776336669922,
+      "duration": 0.00027871131896972656,
       "results": {
         "empty": {
           "status": "handled",
@@ -81,28 +74,28 @@
         },
         "unicode": {
           "status": "handled",
-          "health": 0.3792087699787875,
+          "health": 0.43707367273339787,
           "has_insights": true
         },
         "very_long_line": {
           "status": "handled",
-          "health": 0.3775208722204013,
+          "health": 0.4095097403695206,
           "has_insights": true
         }
       }
     },
     "multi_language": {
       "status": "PASS",
-      "duration": 0.00010085105895996094,
+      "duration": 7.724761962890625e-05,
       "results": {
         "python": {
           "ljpw": {
             "L": 0.0,
-            "J": 0.006,
+            "J": 0.08839999999999999,
             "P": 0.0,
-            "W": 0.0025000000000000005
+            "W": 0.041600000000000005
           },
-          "health": 0.3792087699787875,
+          "health": 0.43707367273339787,
           "analyzed": true
         },
         "javascript": {
@@ -112,7 +105,7 @@
             "P": 0.0,
             "W": 0.0
           },
-          "health": 0.3775208722204013,
+          "health": 0.4095097403695206,
           "analyzed": true
         },
         "rust": {
@@ -122,7 +115,7 @@
             "P": 0.0,
             "W": 0.0
           },
-          "health": 0.3775208722204013,
+          "health": 0.4095097403695206,
           "analyzed": true
         },
         "java": {
@@ -130,9 +123,9 @@
             "L": 0.0,
             "J": 0.0,
             "P": 0.0,
-            "W": 0.0025000000000000005
+            "W": 0.041600000000000005
           },
-          "health": 0.37821595929836704,
+          "health": 0.4199071132580034,
           "analyzed": true
         }
       }

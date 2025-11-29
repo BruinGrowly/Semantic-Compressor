@@ -4,13 +4,15 @@ Medium-complexity module for benchmarking
 Expected LJPW: Balanced across dimensions
 """
 
-from typing import List, Optional, Dict, Any
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
+
 
 @dataclass
 class User:
     """User data model with validation"""
+
     id: int
     name: str
     email: str
@@ -20,10 +22,11 @@ class User:
         """Validate user data"""
         if not self.name:
             raise ValueError("Name cannot be empty")
-        if '@' not in self.email:
+        if "@" not in self.email:
             raise ValueError("Invalid email format")
         if self.id < 0:
             raise ValueError("ID must be positive")
+
 
 class UserRepository:
     """Repository for user management with error handling"""
@@ -102,6 +105,7 @@ class UserRepository:
                 return False
         return False
 
+
 def validate_email(email: str) -> bool:
     """
     Validate email format.
@@ -115,7 +119,8 @@ def validate_email(email: str) -> bool:
     if not email:
         return False
 
-    return '@' in email and '.' in email.split('@')[1]
+    return "@" in email and "." in email.split("@")[1]
+
 
 def process_users(users: List[Dict[str, Any]]) -> List[User]:
     """
@@ -137,10 +142,10 @@ def process_users(users: List[Dict[str, Any]]) -> List[User]:
     for user_data in users:
         try:
             user = User(
-                id=user_data['id'],
-                name=user_data['name'],
-                email=user_data['email'],
-                active=user_data.get('active', True)
+                id=user_data["id"],
+                name=user_data["name"],
+                email=user_data["email"],
+                active=user_data.get("active", True),
             )
             result.append(user)
         except KeyError as e:
