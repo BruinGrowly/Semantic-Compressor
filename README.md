@@ -5,6 +5,10 @@
 [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/BruinGrowly/Semantic-Compressor)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/BruinGrowly/Semantic-Compressor/actions)
+[![Code Quality](https://img.shields.io/badge/code%20quality-B+-blue.svg)](CODEBASE_REVIEW_AND_RECOMMENDATIONS.md)
+
+[📖 Documentation](docs/) | [🗺️ Roadmap](ROADMAP.md) | [🤝 Contributing](CONTRIBUTING.md) | [📊 Review](CODEBASE_REVIEW_AND_RECOMMENDATIONS.md)
 
 ---
 
@@ -244,8 +248,16 @@ The LJPW framework also enables interesting research:
 git clone https://github.com/BruinGrowly/Semantic-Compressor.git
 cd Semantic-Compressor
 
-# No dependencies needed! Zero-dependency compression
+# Install in development mode (recommended)
+pip install -e .
+
+# Or install with optional dependencies
+pip install -e ".[dev]"      # Development tools (pytest, black, etc.)
+pip install -e ".[viz]"       # Visualization tools (matplotlib, plotly)
+pip install -e ".[server]"    # API server mode (flask, fastapi)
 ```
+
+**Note:** Package will be available on PyPI soon. See [ROADMAP.md](ROADMAP.md) for planned features.
 
 ---
 

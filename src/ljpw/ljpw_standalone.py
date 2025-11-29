@@ -15,17 +15,17 @@ import re
 import json
 import sys
 from pathlib import Path
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Optional
 
 # ============================================================================
 # CORE CONSTANTS
 # ============================================================================
 
-NATURAL_EQUILIBRIUM = {
-    'L': 0.618034,  # Love (Safety)
-    'J': 0.414214,  # Justice (Structure)
-    'P': 0.718282,  # Power (Performance)
-    'W': 0.693147,  # Wisdom (Design)
+NATURAL_EQUILIBRIUM: Dict[str, float] = {
+    'L': 0.618034,  # Love (Safety) - φ⁻¹ (golden ratio inverse)
+    'J': 0.414214,  # Justice (Structure) - √2-1
+    'P': 0.718282,  # Power (Performance) - e-2
+    'W': 0.693147,  # Wisdom (Design) - ln(2)
 }
 
 # ============================================================================
@@ -35,8 +35,8 @@ NATURAL_EQUILIBRIUM = {
 class SimpleCodeAnalyzer:
     """Lightweight code analyzer for LJPW scoring"""
 
-    def __init__(self):
-        self.patterns = {
+    def __init__(self) -> None:
+        self.patterns: Dict[str, str] = {
             # Love (Safety)
             'error_handling': r'(try|except|catch|Result|Option|error|Error)',
             'validation': r'(validate|check|verify|assert|require)',
@@ -299,7 +299,7 @@ class SimpleCodeAnalyzer:
 # COMMAND LINE INTERFACE
 # ============================================================================
 
-def format_result(result: Dict) -> str:
+def format_result(result: Dict[str, Any]) -> str:
     """Format analysis result for display"""
     output = []
     output.append("=" * 70)
@@ -338,7 +338,7 @@ def format_result(result: Dict) -> str:
 
     return '\n'.join(output)
 
-def analyze_file(filepath: str) -> Dict:
+def analyze_file(filepath: str) -> Dict[str, Any]:
     """
     Analyze a single file with comprehensive error handling.
 
@@ -357,16 +357,48 @@ def analyze_file(filepath: str) -> Dict:
     """
     # Check file exists
     from pathlib import Path
-    path = Path(filepath)
+    from difflib import get_close_matches
+    
+    # Security: Resolve path to prevent traversal attacks
+    try:
+        path = Path(filepath).resolve()
+    except (OSError, RuntimeError) as e:
+        return {
+            'filename': filepath,
+            'error': 'Invalid path',
+            'lines': 0,
+            'ljpw': {'L': 0, 'J': 0, 'P': 0, 'W': 0},
+            'health': 0,
+            'insights': [f'ERROR: Invalid file path: {str(e)}'],
+            'distance_from_ne': 0
+        }
 
     if not path.exists():
+        # Provide helpful suggestions for similar files
+        parent = path.parent
+        similar = []
+        if parent.exists():
+            try:
+                similar = get_close_matches(
+                    path.name,
+                    [f.name for f in parent.iterdir() if f.is_file()],
+                    n=3,
+                    cutoff=0.6
+                )
+            except (OSError, PermissionError):
+                pass
+        
+        error_msg = f'ERROR: File not found: {filepath}'
+        if similar:
+            error_msg += f'\n  Did you mean: {", ".join(similar)}?'
+        
         return {
             'filename': filepath,
             'error': 'File not found',
             'lines': 0,
             'ljpw': {'L': 0, 'J': 0, 'P': 0, 'W': 0},
             'health': 0,
-            'insights': [f'ERROR: File not found: {filepath}'],
+            'insights': [error_msg],
             'distance_from_ne': 0
         }
 
@@ -377,7 +409,7 @@ def analyze_file(filepath: str) -> Dict:
             'lines': 0,
             'ljpw': {'L': 0, 'J': 0, 'P': 0, 'W': 0},
             'health': 0,
-            'insights': [f'ERROR: Not a file: {filepath}'],
+            'insights': [f'ERROR: Not a file (possibly a directory): {filepath}'],
             'distance_from_ne': 0
         }
 
@@ -438,25 +470,83 @@ def analyze_file(filepath: str) -> Dict:
 
     return result
 
-def analyze_directory(dirpath: str) -> List[Dict]:
-    """Analyze all code files in directory"""
+def analyze_directory(dirpath: str, show_progress: bool = True) -> List[Dict[str, Any]]:
+    """
+    Analyze all code files in directory with optional progress indicator.
+    
+    Args:
+        dirpath: Path to directory to analyze
+        show_progress: Whether to show progress bar (default: True)
+    
+    Returns:
+        List of analysis results for each file
+    """
     results = []
     extensions = {'.py', '.js', '.java', '.rs', '.cpp', '.c', '.go', '.rb', '.php', '.ts'}
 
-    path = Path(dirpath)
-    for file in path.rglob('*'):
-        if file.is_file() and file.suffix in extensions:
-            result = analyze_file(str(file))
-            results.append(result)
-
+    # Security: Validate and resolve path
+    try:
+        path = Path(dirpath).resolve()
+    except (OSError, RuntimeError) as e:
+        print(f"❌ Error: Invalid directory path: {e}")
+        return []
+    
+    if not path.exists():
+        print(f"❌ Error: Directory not found: {dirpath}")
+        return []
+    
+    if not path.is_dir():
+        print(f"❌ Error: Not a directory: {dirpath}")
+        return []
+    
+    # Collect all files first
+    try:
+        files = [f for f in path.rglob('*') if f.is_file() and f.suffix in extensions]
+    except (OSError, PermissionError) as e:
+        print(f"❌ Error accessing directory: {e}")
+        return []
+    
+    total = len(files)
+    
+    if total == 0:
+        print(f"⚠️  No code files found in {dirpath}")
+        return []
+    
+    if show_progress:
+        print(f"\n📊 Analyzing {total} files in {dirpath}...")
+        print("─" * 70)
+    
+    # Analyze files with progress indicator
+    for i, file in enumerate(files, 1):
+        result = analyze_file(str(file))
+        results.append(result)
+        
+        if show_progress:
+            # Calculate progress
+            percent = (i / total) * 100
+            bar_length = 40
+            filled = int(bar_length * i / total)
+            bar = '█' * filled + '░' * (bar_length - filled)
+            
+            # Truncate filename for display
+            display_name = file.name[:30] + '...' if len(file.name) > 30 else file.name
+            
+            # Print progress bar
+            print(f"\r  [{bar}] {percent:5.1f}% ({i:>4}/{total}) - {display_name}", 
+                  end='', flush=True)
+    
+    if show_progress:
+        print("\n" + "─" * 70)
+        print(f"✅ Analysis complete: {total} files processed\n")
+    
     return results
 
-def analyze_quick(code: str) -> Dict:
+def analyze_quick(code: str) -> Dict[str, Any]:
     """Quick analysis of code snippet"""
     analyzer = SimpleCodeAnalyzer()
     return analyzer.analyze(code, 'snippet')
 
-def print_summary(results: List[Dict]):
+def print_summary(results: List[Dict[str, Any]]) -> None:
     """Print summary of multiple files"""
     if not results:
         print("No files analyzed")
@@ -502,7 +592,7 @@ def calculate_distance(coords1: Tuple[float, float, float, float],
     L2, J2, P2, W2 = coords2
     return math.sqrt((L1-L2)**2 + (J1-J2)**2 + (P1-P2)**2 + (W1-W2)**2)
 
-def calculate_file_distance(file1: str, file2: str) -> Dict:
+def calculate_file_distance(file1: str, file2: str) -> Dict[str, Any]:
     """Calculate semantic distance between two files"""
     # Analyze both files
     result1 = analyze_file(file1)
@@ -552,7 +642,7 @@ def calculate_file_distance(file1: str, file2: str) -> Dict:
         'result2': result2
     }
 
-def format_distance_result(result: Dict) -> str:
+def format_distance_result(result: Dict[str, Any]) -> str:
     """Format distance calculation result for display"""
     if 'error' in result:
         return f"\nError: {result['error']}\n"
@@ -608,7 +698,7 @@ def format_distance_result(result: Dict) -> str:
 
     return "\n".join(output)
 
-def format_distance_result_json(result: Dict) -> str:
+def format_distance_result_json(result: Dict[str, Any]) -> str:
     """Format distance calculation result as JSON"""
     # Create clean JSON output (remove full analysis results, keep key info)
     json_result = {
@@ -648,7 +738,7 @@ def format_distance_result_json(result: Dict) -> str:
 
     return json.dumps(json_result, indent=2)
 
-def calculate_batch_distance(files: List[str]) -> Dict:
+def calculate_batch_distance(files: List[str]) -> Dict[str, Any]:
     """
     Calculate distances between multiple files.
     Returns a distance matrix and analysis for all pairs.
@@ -699,7 +789,7 @@ def calculate_batch_distance(files: List[str]) -> Dict:
         'all_pairs': pairs
     }
 
-def format_batch_distance_result(result: Dict) -> str:
+def format_batch_distance_result(result: Dict[str, Any]) -> str:
     """Format batch distance calculation result for display"""
     if 'error' in result:
         return f"\nError: {result['error']}\n"
@@ -758,7 +848,7 @@ def format_batch_distance_result(result: Dict) -> str:
 
     return "\n".join(output)
 
-def format_batch_distance_result_json(result: Dict) -> str:
+def format_batch_distance_result_json(result: Dict[str, Any]) -> str:
     """Format batch distance calculation result as JSON"""
     if 'error' in result:
         return json.dumps({'error': result['error']}, indent=2)
@@ -798,7 +888,7 @@ def format_batch_distance_result_json(result: Dict) -> str:
 # MAIN
 # ============================================================================
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         print("""
 LJPW Semantic Analyzer - DNA-Inspired Code Quality Analysis
