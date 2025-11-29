@@ -17,31 +17,32 @@ Test Cases:
 - Cross-language equivalence (only LJPW should handle this)
 """
 
-import sys
-from pathlib import Path
 import math
 import re
+import sys
+from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
-from ljpw_standalone import analyze_quick, calculate_distance
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.ljpw.ljpw_standalone import analyze_quick, calculate_distance
 
 # =============================================================================
 # ALTERNATIVE METRICS IMPLEMENTATIONS
 # =============================================================================
 
+
 def calculate_cyclomatic_complexity(code):
     """Calculate McCabe cyclomatic complexity (simple approximation)"""
-    decision_points = len(re.findall(r'\b(if|elif|else|for|while|and|or|except|case)\b', code))
+    decision_points = len(re.findall(r"\b(if|elif|else|for|while|and|or|except|case)\b", code))
     return decision_points + 1
 
 
 def calculate_loc(code):
     """Calculate lines of code (non-empty, non-comment)"""
-    lines = code.split('\n')
+    lines = code.split("\n")
     loc = 0
     for line in lines:
         stripped = line.strip()
-        if stripped and not stripped.startswith('#') and not stripped.startswith('//'):
+        if stripped and not stripped.startswith("#") and not stripped.startswith("//"):
             loc += 1
     return loc
 
@@ -49,8 +50,8 @@ def calculate_loc(code):
 def levenshtein_distance(s1, s2):
     """Calculate Levenshtein distance between two strings"""
     # Normalize whitespace for fairer comparison
-    s1 = ' '.join(s1.split())
-    s2 = ' '.join(s2.split())
+    s1 = " ".join(s1.split())
+    s2 = " ".join(s2.split())
 
     if len(s1) < len(s2):
         return levenshtein_distance(s2, s1)
@@ -82,12 +83,12 @@ def normalized_levenshtein(s1, s2):
 def simple_ast_features(code):
     """Extract simple AST-like features"""
     features = {
-        'functions': len(re.findall(r'\b(def|function|func)\b', code)),
-        'classes': len(re.findall(r'\bclass\b', code)),
-        'loops': len(re.findall(r'\b(for|while)\b', code)),
-        'conditionals': len(re.findall(r'\bif\b', code)),
-        'returns': len(re.findall(r'\breturn\b', code)),
-        'variables': len(re.findall(r'[a-z_][a-z0-9_]*\s*=', code, re.I)),
+        "functions": len(re.findall(r"\b(def|function|func)\b", code)),
+        "classes": len(re.findall(r"\bclass\b", code)),
+        "loops": len(re.findall(r"\b(for|while)\b", code)),
+        "conditionals": len(re.findall(r"\bif\b", code)),
+        "returns": len(re.findall(r"\breturn\b", code)),
+        "variables": len(re.findall(r"[a-z_][a-z0-9_]*\s*=", code, re.I)),
     }
     return features
 
@@ -105,26 +106,24 @@ def ast_feature_distance(code1, code2):
 def halstead_metrics(code):
     """Calculate Halstead complexity metrics (simplified)"""
     # Operators and operands (simplified)
-    operators = re.findall(r'[+\-*/%=<>!&|^~]|[\(\)\[\]\{\}]|\b(if|else|for|while|return|def|class)\b', code)
-    operands = re.findall(r'\b[a-zA-Z_][a-zA-Z0-9_]*\b|\b\d+\b', code)
+    operators = re.findall(
+        r"[+\-*/%=<>!&|^~]|[\(\)\[\]\{\}]|\b(if|else|for|while|return|def|class)\b", code
+    )
+    operands = re.findall(r"\b[a-zA-Z_][a-zA-Z0-9_]*\b|\b\d+\b", code)
 
     n1 = len(set(operators))  # Unique operators
-    n2 = len(set(operands))   # Unique operands
-    N1 = len(operators)       # Total operators
-    N2 = len(operands)        # Total operands
+    n2 = len(set(operands))  # Unique operands
+    N1 = len(operators)  # Total operators
+    N2 = len(operands)  # Total operands
 
     if n1 == 0 or n2 == 0:
-        return {'vocabulary': 0, 'length': 0, 'volume': 0}
+        return {"vocabulary": 0, "length": 0, "volume": 0}
 
     vocabulary = n1 + n2
     length = N1 + N2
     volume = length * math.log2(vocabulary) if vocabulary > 0 else 0
 
-    return {
-        'vocabulary': vocabulary,
-        'length': length,
-        'volume': volume
-    }
+    return {"vocabulary": vocabulary, "length": length, "volume": volume}
 
 
 # =============================================================================
@@ -133,53 +132,76 @@ def halstead_metrics(code):
 
 # Test 1: Semantic Equivalence (different syntax, same meaning)
 semantic_equiv_tests = [
-    ("Python list comprehension", """
+    (
+        "Python list comprehension",
+        """
 result = [x * 2 for x in range(10)]
-"""),
-    ("Python traditional loop", """
+""",
+    ),
+    (
+        "Python traditional loop",
+        """
 result = []
 for x in range(10):
     result.append(x * 2)
-"""),
+""",
+    ),
 ]
 
 # Test 2: Syntactic Variation (same meaning, different style)
 syntactic_variation_tests = [
-    ("Compact style", """
+    (
+        "Compact style",
+        """
 def add(a,b):return a+b
-"""),
-    ("Expanded style", """
+""",
+    ),
+    (
+        "Expanded style",
+        """
 def add(a, b):
     result = a + b
     return result
-"""),
+""",
+    ),
 ]
 
 # Test 3: Cross-Language Equivalence (only LJPW should detect)
 cross_language_tests = [
-    ("Python", """
+    (
+        "Python",
+        """
 def factorial(n):
     if n <= 1:
         return 1
     return n * factorial(n - 1)
-"""),
-    ("JavaScript", """
+""",
+    ),
+    (
+        "JavaScript",
+        """
 function factorial(n) {
     if (n <= 1) {
         return 1;
     }
     return n * factorial(n - 1);
 }
-"""),
+""",
+    ),
 ]
 
 # Test 4: Quality Degradation (adding code smell)
 quality_degradation_tests = [
-    ("Clean code", """
+    (
+        "Clean code",
+        """
 def calculate_total(items):
     return sum(item.price for item in items)
-"""),
-    ("Code smell (god function)", """
+""",
+    ),
+    (
+        "Code smell (god function)",
+        """
 def calculate_total(items):
     total = 0
     for item in items:
@@ -189,7 +211,8 @@ def calculate_total(items):
                     if item.price > 0:
                         total = total + item.price
     return total
-"""),
+""",
+    ),
 ]
 
 
@@ -197,13 +220,14 @@ def calculate_total(items):
 # BENCHMARK EXECUTION
 # =============================================================================
 
+
 def ljpw_distance(code1, code2):
     """Calculate LJPW semantic distance"""
     r1 = analyze_quick(code1)
     r2 = analyze_quick(code2)
 
-    coords1 = (r1['ljpw']['L'], r1['ljpw']['J'], r1['ljpw']['P'], r1['ljpw']['W'])
-    coords2 = (r2['ljpw']['L'], r2['ljpw']['J'], r2['ljpw']['P'], r2['ljpw']['W'])
+    coords1 = (r1["ljpw"]["L"], r1["ljpw"]["J"], r1["ljpw"]["P"], r1["ljpw"]["W"])
+    coords2 = (r2["ljpw"]["L"], r2["ljpw"]["J"], r2["ljpw"]["P"], r2["ljpw"]["W"])
 
     return calculate_distance(coords1, coords2)
 
@@ -213,7 +237,7 @@ def benchmark_test_case(name, code1, code2, expected_similar=True):
     print(f"\n{'─' * 70}")
     print(f"Test: {name}")
     print(f"Expected: {'Similar' if expected_similar else 'Different'}")
-    print('─' * 70)
+    print("─" * 70)
 
     # LJPW
     ljpw_dist = ljpw_distance(code1, code2)
@@ -233,24 +257,36 @@ def benchmark_test_case(name, code1, code2, expected_similar=True):
 
     hal1 = halstead_metrics(code1)
     hal2 = halstead_metrics(code2)
-    hal_volume_diff = abs(hal1['volume'] - hal2['volume'])
+    hal_volume_diff = abs(hal1["volume"] - hal2["volume"])
 
     # Display results
-    print(f"\nLJPW Distance:          {ljpw_dist:.3f} {'✓ Correct' if (ljpw_dist < 0.2) == expected_similar else '✗ Wrong'}")
-    print(f"Cyclomatic Diff:        {cyclo_diff} {'✓ Correct' if (cyclo_diff < 2) == expected_similar else '✗ Wrong'}")
-    print(f"LOC Diff:               {loc_diff} {'✓ Correct' if (loc_diff < 3) == expected_similar else '✗ Wrong'}")
-    print(f"Levenshtein (norm):     {lev_dist:.3f} {'✓ Correct' if (lev_dist < 0.3) == expected_similar else '✗ Wrong'}")
-    print(f"AST Feature Distance:   {ast_dist:.3f} {'✓ Correct' if (ast_dist < 2.0) == expected_similar else '✗ Wrong'}")
-    print(f"Halstead Volume Diff:   {hal_volume_diff:.1f} {'✓ Correct' if (hal_volume_diff < 20) == expected_similar else '✗ Wrong'}")
+    print(
+        f"\nLJPW Distance:          {ljpw_dist:.3f} {'✓ Correct' if (ljpw_dist < 0.2) == expected_similar else '✗ Wrong'}"
+    )
+    print(
+        f"Cyclomatic Diff:        {cyclo_diff} {'✓ Correct' if (cyclo_diff < 2) == expected_similar else '✗ Wrong'}"
+    )
+    print(
+        f"LOC Diff:               {loc_diff} {'✓ Correct' if (loc_diff < 3) == expected_similar else '✗ Wrong'}"
+    )
+    print(
+        f"Levenshtein (norm):     {lev_dist:.3f} {'✓ Correct' if (lev_dist < 0.3) == expected_similar else '✗ Wrong'}"
+    )
+    print(
+        f"AST Feature Distance:   {ast_dist:.3f} {'✓ Correct' if (ast_dist < 2.0) == expected_similar else '✗ Wrong'}"
+    )
+    print(
+        f"Halstead Volume Diff:   {hal_volume_diff:.1f} {'✓ Correct' if (hal_volume_diff < 20) == expected_similar else '✗ Wrong'}"
+    )
 
     # Score each metric
     scores = {
-        'LJPW': 1 if (ljpw_dist < 0.2) == expected_similar else 0,
-        'Cyclomatic': 1 if (cyclo_diff < 2) == expected_similar else 0,
-        'LOC': 1 if (loc_diff < 3) == expected_similar else 0,
-        'Levenshtein': 1 if (lev_dist < 0.3) == expected_similar else 0,
-        'AST': 1 if (ast_dist < 2.0) == expected_similar else 0,
-        'Halstead': 1 if (hal_volume_diff < 20) == expected_similar else 0,
+        "LJPW": 1 if (ljpw_dist < 0.2) == expected_similar else 0,
+        "Cyclomatic": 1 if (cyclo_diff < 2) == expected_similar else 0,
+        "LOC": 1 if (loc_diff < 3) == expected_similar else 0,
+        "Levenshtein": 1 if (lev_dist < 0.3) == expected_similar else 0,
+        "AST": 1 if (ast_dist < 2.0) == expected_similar else 0,
+        "Halstead": 1 if (hal_volume_diff < 20) == expected_similar else 0,
     }
 
     return scores
@@ -272,12 +308,12 @@ def main():
     print()
 
     all_scores = {
-        'LJPW': 0,
-        'Cyclomatic': 0,
-        'LOC': 0,
-        'Levenshtein': 0,
-        'AST': 0,
-        'Halstead': 0,
+        "LJPW": 0,
+        "Cyclomatic": 0,
+        "LOC": 0,
+        "Levenshtein": 0,
+        "AST": 0,
+        "Halstead": 0,
     }
 
     total_tests = 0
@@ -342,7 +378,7 @@ def main():
 
     for metric, score in sorted_metrics:
         accuracy = (score / total_tests) * 100
-        bar = '█' * int(accuracy / 5)
+        bar = "█" * int(accuracy / 5)
         print(f"{metric:<20} {score}/{total_tests:<9} {accuracy:>5.1f}% {bar}")
 
     print()
@@ -350,9 +386,9 @@ def main():
     print(f"{'🏆 WINNER: ' + winner if winner == 'LJPW' else '⚠ WINNER: ' + winner}")
     print()
 
-    if all_scores['LJPW'] == total_tests:
+    if all_scores["LJPW"] == total_tests:
         print("✓ LJPW correctly classified ALL test cases!")
-    elif all_scores['LJPW'] >= total_tests * 0.75:
+    elif all_scores["LJPW"] >= total_tests * 0.75:
         print("✓ LJPW performed well (>75% accuracy)")
     else:
         print("⚠ LJPW needs improvement")

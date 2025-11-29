@@ -11,21 +11,21 @@ Takes compressed LJPW genomes and expands them into:
 Uses semantic primitive templates to generate high-quality output
 """
 
-import math
-from typing import List, Dict, Any, Optional
-from dataclasses import dataclass
-from enum import Enum
-
-# Import from the compressor
-import sys
 import importlib.util
+import math
 
 # Load the compiler module dynamically
 import os
+
+# Import from the compressor
+import sys
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 spec = importlib.util.spec_from_file_location(
-    "ljpw_semantic_compiler",
-    os.path.join(_current_dir, "ljpw_semantic_compiler.py")
+    "ljpw_semantic_compiler", os.path.join(_current_dir, "ljpw_semantic_compiler.py")
 )
 compiler_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(compiler_module)
@@ -36,6 +36,7 @@ CompressedSemanticUnit = compiler_module.CompressedSemanticUnit
 # ============================================================================
 # CODE GENERATION TEMPLATES
 # ============================================================================
+
 
 class CodeTemplate:
     """Templates for generating code from semantic primitives"""
@@ -50,7 +51,6 @@ def __init__(self, {params}):
     # Safe initialization
     {initializations}
 """,
-
         SemanticPrimitive.ERROR_HANDLE: """
 try:
     {operation}
@@ -59,7 +59,6 @@ except {exception_types} as e:
     {recovery_strategy}
     raise
 """,
-
         SemanticPrimitive.VALIDATION: """
 def validate_{name}(value: {type_hint}) -> bool:
     '''Validate {name} meets constraints'''
@@ -68,7 +67,6 @@ def validate_{name}(value: {type_hint}) -> bool:
     {constraints}
     return True
 """,
-
         SemanticPrimitive.TYPE_DEF: """
 @dataclass
 class {name}:
@@ -79,7 +77,6 @@ class {name}:
         '''Validate invariants'''
         {invariant_checks}
 """,
-
         SemanticPrimitive.ALGORITHM: """
 def {name}({params}) -> {return_type}:
     '''
@@ -91,7 +88,6 @@ def {name}({params}) -> {return_type}:
     {implementation}
     return result
 """,
-
         SemanticPrimitive.ABSTRACTION: """
 class {name}(ABC):
     '''Abstract interface for {description}'''
@@ -103,7 +99,6 @@ class {name}(ABC):
 
     {additional_methods}
 """,
-
         SemanticPrimitive.PATTERN: """
 # Design Pattern: {pattern_name}
 class {name}:
@@ -114,15 +109,17 @@ class {name}:
     }
 
     @classmethod
-    def get_template(cls, primitive: SemanticPrimitive, language: str = 'python') -> str:
+    def get_template(cls, primitive: SemanticPrimitive, language: str = "python") -> str:
         """Get template for a semantic primitive"""
-        if language.lower() == 'python':
+        if language.lower() == "python":
             return cls.PYTHON_TEMPLATES.get(primitive, "# {primitive}")
         return "// Template not available"
+
 
 # ============================================================================
 # DOCUMENTATION TEMPLATES
 # ============================================================================
+
 
 class DocumentationTemplate:
     """Templates for generating documentation"""
@@ -140,7 +137,6 @@ This component implements safe initialization with:
 
 **LJPW Profile**: L={L:.2f}, J={J:.2f}, P={P:.2f}, W={W:.2f}
 """,
-
         SemanticPrimitive.ARCHITECTURE: """
 ## Architectural Decision
 
@@ -162,9 +158,11 @@ This component implements safe initialization with:
 """,
     }
 
+
 # ============================================================================
 # SEMANTIC EXPANDER
 # ============================================================================
+
 
 class SemanticExpander:
     """
@@ -174,12 +172,12 @@ class SemanticExpander:
     Compressed Genome → Generated Code/Docs/Specs
     """
 
-    def __init__(self, target_language: str = 'python'):
+    def __init__(self, target_language: str = "python"):
         self.target_language = target_language
 
-    def expand_to_code(self,
-                      compressed_units: List[CompressedSemanticUnit],
-                      context: Dict[str, Any] = None) -> str:
+    def expand_to_code(
+        self, compressed_units: List[CompressedSemanticUnit], context: Dict[str, Any] = None
+    ) -> str:
         """
         Expand compressed semantic units to actual code
 
@@ -218,11 +216,11 @@ class SemanticExpander:
                 generated_code.append(f"\n# TODO: Implement {unit.primitive.value}")
                 generated_code.append(f"# LJPW: L={L:.2f}, J={J:.2f}, P={P:.2f}, W={W:.2f}")
 
-        return '\n'.join(generated_code)
+        return "\n".join(generated_code)
 
-    def expand_to_documentation(self,
-                               compressed_units: List[CompressedSemanticUnit],
-                               context: Dict[str, Any] = None) -> str:
+    def expand_to_documentation(
+        self, compressed_units: List[CompressedSemanticUnit], context: Dict[str, Any] = None
+    ) -> str:
         """
         Expand compressed genome to documentation
 
@@ -230,7 +228,7 @@ class SemanticExpander:
             Markdown documentation
         """
         if context is None:
-            context = {'system_name': 'System'}
+            context = {"system_name": "System"}
 
         docs = []
         docs.append(f"# {context.get('system_name', 'System')} Architecture")
@@ -251,7 +249,7 @@ class SemanticExpander:
             primitive_counts[prim] = primitive_counts.get(prim, 0) + 1
 
         n = len(compressed_units)
-        avg_L, avg_J, avg_P, avg_W = total_L/n, total_J/n, total_P/n, total_W/n
+        avg_L, avg_J, avg_P, avg_W = total_L / n, total_J / n, total_P / n, total_W / n
 
         # Overall system assessment
         docs.append("## System Profile\n")
@@ -275,11 +273,11 @@ class SemanticExpander:
         docs.append("\n## Recommendations\n")
         docs.append(self._generate_recommendations(avg_L, avg_J, avg_P, avg_W, primitive_counts))
 
-        return '\n'.join(docs)
+        return "\n".join(docs)
 
-    def expand_to_improvement_plan(self,
-                                  compressed_units: List[CompressedSemanticUnit],
-                                  target_ljpw: tuple = None) -> str:
+    def expand_to_improvement_plan(
+        self, compressed_units: List[CompressedSemanticUnit], target_ljpw: tuple = None
+    ) -> str:
         """
         Generate an improvement plan to move system toward target LJPW state
 
@@ -306,7 +304,12 @@ class SemanticExpander:
             total_W += W
 
         n = len(compressed_units)
-        current_L, current_J, current_P, current_W = total_L/n, total_J/n, total_P/n, total_W/n
+        current_L, current_J, current_P, current_W = (
+            total_L / n,
+            total_J / n,
+            total_P / n,
+            total_W / n,
+        )
 
         plan = []
         plan.append("# LJPW Improvement Plan\n")
@@ -315,42 +318,44 @@ class SemanticExpander:
         plan.append("|-----------|---------|--------|-----|----------|")
 
         gaps = {
-            'L': (current_L, target_L, target_L - current_L),
-            'J': (current_J, target_J, target_J - current_J),
-            'P': (current_P, target_P, target_P - current_P),
-            'W': (current_W, target_W, target_W - current_W),
+            "L": (current_L, target_L, target_L - current_L),
+            "J": (current_J, target_J, target_J - current_J),
+            "P": (current_P, target_P, target_P - current_P),
+            "W": (current_W, target_W, target_W - current_W),
         }
 
         for dim, (curr, targ, gap) in gaps.items():
             priority = "HIGH" if abs(gap) > 0.15 else ("MEDIUM" if abs(gap) > 0.08 else "LOW")
             direction = "UP" if gap > 0 else ("DOWN" if gap < 0 else "OK")
-            plan.append(f"| {dim} | {curr:.3f} | {targ:.3f} | {gap:+.3f} {direction} | {priority} |")
+            plan.append(
+                f"| {dim} | {curr:.3f} | {targ:.3f} | {gap:+.3f} {direction} | {priority} |"
+            )
 
         plan.append("\n## Recommended Actions\n")
 
         # Generate specific actions based on gaps
-        if gaps['L'][2] > 0.1:  # Need more Love
+        if gaps["L"][2] > 0.1:  # Need more Love
             plan.append("### Increase Safety (Love)\n")
             plan.append("- [ ] Add error handling to critical paths")
             plan.append("- [ ] Implement input validation")
             plan.append("- [ ] Add defensive null checks")
             plan.append("- [ ] Increase test coverage\n")
 
-        if gaps['J'][2] > 0.1:  # Need more Justice
+        if gaps["J"][2] > 0.1:  # Need more Justice
             plan.append("### Improve Structure (Justice)\n")
             plan.append("- [ ] Define clear interfaces")
             plan.append("- [ ] Add type annotations")
             plan.append("- [ ] Enforce coding standards")
             plan.append("- [ ] Document contracts\n")
 
-        if gaps['P'][2] < -0.1:  # Too much Power, need to reduce
+        if gaps["P"][2] < -0.1:  # Too much Power, need to reduce
             plan.append("### Optimize Performance (Power)\n")
             plan.append("- [ ] Profile and identify bottlenecks")
             plan.append("- [ ] Add caching where appropriate")
             plan.append("- [ ] Consider async operations")
             plan.append("- [ ] Review algorithmic complexity\n")
 
-        if gaps['W'][2] > 0.1:  # Need more Wisdom
+        if gaps["W"][2] > 0.1:  # Need more Wisdom
             plan.append("### Enhance Design (Wisdom)\n")
             plan.append("- [ ] Refactor into smaller modules")
             plan.append("- [ ] Apply design patterns")
@@ -364,9 +369,11 @@ class SemanticExpander:
         plan.append(f"\n## Estimated Effort\n")
         plan.append(f"**Total improvement gap**: {total_gap:.3f}")
         plan.append(f"**Estimated effort**: {effort_days} person-days")
-        plan.append(f"**Expected improvement**: {100*total_gap/(4*0.3):.1f}% movement toward optimal")
+        plan.append(
+            f"**Expected improvement**: {100*total_gap/(4*0.3):.1f}% movement toward optimal"
+        )
 
-        return '\n'.join(plan)
+        return "\n".join(plan)
 
     def _dequantize_ljpw(self, state: tuple) -> tuple:
         """Convert quantized LJPW levels back to continuous values"""
@@ -380,37 +387,41 @@ class SemanticExpander:
 
         return (dequant(L_q), dequant(J_q), dequant(P_q), dequant(W_q))
 
-    def _generate_parameters(self, unit: CompressedSemanticUnit,
-                           context: Dict, index: int) -> Dict[str, str]:
+    def _generate_parameters(
+        self, unit: CompressedSemanticUnit, context: Dict, index: int
+    ) -> Dict[str, str]:
         """Generate parameters for code template"""
         L, J, P, W = self._dequantize_ljpw(unit.ljpw_state)
 
         # Generic parameters
         params = {
-            'name': context.get('name', f'component_{index}'),
-            'description': context.get('description', f'Component {index}'),
-            'primitive': unit.primitive.value,
-            'L': L, 'J': J, 'P': P, 'W': W,
-            'params': 'self, *args, **kwargs',
-            'type_hint': 'Any',
-            'return_type': 'None',
-            'fields': '    pass',
-            'implementation': '    pass',
-            'validations': '    pass',
-            'initializations': '    pass',
-            'constraints': '    pass',
-            'invariant_checks': '    pass',
-            'operation': '    pass',
-            'exception_types': 'Exception',
-            'recovery_strategy': '    pass',
-            'context': 'operation',
-            'method_name': 'execute',
-            'additional_methods': '    pass',
-            'pattern_name': 'Unknown',
-            'purpose': 'system operation',
-            'pattern_implementation': '    pass',
-            'time_complexity': 'n',
-            'space_complexity': 'n',
+            "name": context.get("name", f"component_{index}"),
+            "description": context.get("description", f"Component {index}"),
+            "primitive": unit.primitive.value,
+            "L": L,
+            "J": J,
+            "P": P,
+            "W": W,
+            "params": "self, *args, **kwargs",
+            "type_hint": "Any",
+            "return_type": "None",
+            "fields": "    pass",
+            "implementation": "    pass",
+            "validations": "    pass",
+            "initializations": "    pass",
+            "constraints": "    pass",
+            "invariant_checks": "    pass",
+            "operation": "    pass",
+            "exception_types": "Exception",
+            "recovery_strategy": "    pass",
+            "context": "operation",
+            "method_name": "execute",
+            "additional_methods": "    pass",
+            "pattern_name": "Unknown",
+            "purpose": "system operation",
+            "pattern_implementation": "    pass",
+            "time_complexity": "n",
+            "space_complexity": "n",
         }
 
         return params
@@ -422,8 +433,7 @@ class SemanticExpander:
         # Calculate distance from Natural Equilibrium
         NE = (0.618, 0.414, 0.718, 0.693)
         distance = math.sqrt(
-            (NE[0] - L)**2 + (NE[1] - J)**2 +
-            (NE[2] - P)**2 + (NE[3] - W)**2
+            (NE[0] - L) ** 2 + (NE[1] - J) ** 2 + (NE[2] - P) ** 2 + (NE[3] - W) ** 2
         )
 
         if distance < 0.2:
@@ -442,10 +452,11 @@ class SemanticExpander:
         assessment.append(f"\n**Overall Health**: {health}")
         assessment.append(f"**Distance from Natural Equilibrium**: {distance:.3f}")
 
-        return '\n'.join(assessment)
+        return "\n".join(assessment)
 
-    def _generate_recommendations(self, L: float, J: float, P: float, W: float,
-                                 primitive_counts: Dict) -> str:
+    def _generate_recommendations(
+        self, L: float, J: float, P: float, W: float, primitive_counts: Dict
+    ) -> str:
         """Generate specific recommendations"""
         recs = []
 
@@ -457,14 +468,21 @@ class SemanticExpander:
         if P > 0.8 and W < 0.6:
             recs.append("- **WARNING**: High power without wisdom - risk of technical debt")
         if W < 0.5:
-            recs.append("- **MEDIUM**: Enhance design quality (refactoring, patterns, documentation)")
+            recs.append(
+                "- **MEDIUM**: Enhance design quality (refactoring, patterns, documentation)"
+            )
 
         # Check primitive distribution
         total = sum(primitive_counts.values())
         safe_prims = sum(
-            count for prim, count in primitive_counts.items()
-            if prim in [SemanticPrimitive.SAFE_INIT, SemanticPrimitive.ERROR_HANDLE,
-                       SemanticPrimitive.VALIDATION]
+            count
+            for prim, count in primitive_counts.items()
+            if prim
+            in [
+                SemanticPrimitive.SAFE_INIT,
+                SemanticPrimitive.ERROR_HANDLE,
+                SemanticPrimitive.VALIDATION,
+            ]
         )
 
         if safe_prims / total < 0.3:
@@ -473,17 +491,18 @@ class SemanticExpander:
         if not recs:
             recs.append("- System appears well-balanced. Continue maintaining quality.")
 
-        return '\n'.join(recs)
+        return "\n".join(recs)
+
 
 # ============================================================================
 # DEMONSTRATION
 # ============================================================================
 
-if __name__ == '__main__':
-    print("="*70)
+if __name__ == "__main__":
+    print("=" * 70)
     print("LJPW SEMANTIC EXPANDER v1.0")
     print("Generative Compiler - Expanding Compressed Genomes")
-    print("="*70)
+    print("=" * 70)
 
     # Create sample compressed genome
     print("\n1. CREATING SAMPLE COMPRESSED GENOME")
@@ -506,8 +525,8 @@ if __name__ == '__main__':
     print("\n2. EXPANDING TO CODE")
     print("-" * 70)
 
-    expander = SemanticExpander(target_language='python')
-    generated_code = expander.expand_to_code(sample_genome, context={'name': 'DataProcessor'})
+    expander = SemanticExpander(target_language="python")
+    generated_code = expander.expand_to_code(sample_genome, context={"name": "DataProcessor"})
 
     print(generated_code[:500])
     print("\n... (truncated)")
@@ -518,8 +537,7 @@ if __name__ == '__main__':
     print("-" * 70)
 
     documentation = expander.expand_to_documentation(
-        sample_genome,
-        context={'system_name': 'Data Processing Module'}
+        sample_genome, context={"system_name": "Data Processing Module"}
     )
 
     print(documentation)
@@ -531,9 +549,9 @@ if __name__ == '__main__':
     improvement_plan = expander.expand_to_improvement_plan(sample_genome)
     print(improvement_plan)
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("EXPANSION SUCCESSFUL")
-    print("="*70)
+    print("=" * 70)
     print("\nThe Expander can generate:")
     print("  [OK] Code implementations")
     print("  [OK] Architecture documentation")

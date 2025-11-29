@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 # Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ljpw"))
 
 # Mathematical constants
 E = math.e
@@ -28,8 +28,8 @@ LN2 = math.log(2)
 SQRT2 = math.sqrt(2)
 
 # Predicted constants
-PSI = (E + PI) / 2              # 2.929937241 - Universal Harmony Constant
-THETA = PSI * LN2 * math.sqrt(PI/2)  # 2.545327780 - Information-Energy Bridge
+PSI = (E + PI) / 2  # 2.929937241 - Universal Harmony Constant
+THETA = PSI * LN2 * math.sqrt(PI / 2)  # 2.545327780 - Information-Energy Bridge
 
 
 def print_header(title):
@@ -57,6 +57,7 @@ def print_result(test_name, prediction, measured, tolerance=0.05):
 # MUSIC THEORY VALIDATION
 # =============================================================================
 
+
 def validate_music_theory():
     """
     Test if Ψ appears in musical harmony relationships.
@@ -74,27 +75,27 @@ def validate_music_theory():
     # Standard musical intervals (frequency ratios)
     intervals = {
         "Unison": 1.0,
-        "Minor second": 16/15,
-        "Major second": 9/8,
-        "Minor third": 6/5,
-        "Major third": 5/4,
-        "Perfect fourth": 4/3,
-        "Tritone": 45/32,  # or sqrt(2)
-        "Perfect fifth": 3/2,
-        "Minor sixth": 8/5,
-        "Major sixth": 5/3,
-        "Minor seventh": 16/9,
-        "Major seventh": 15/8,
-        "Octave": 2/1,
-        "Major tenth": 5/2,
-        "Perfect eleventh": 8/3,
-        "Perfect twelfth": 3/1,
+        "Minor second": 16 / 15,
+        "Major second": 9 / 8,
+        "Minor third": 6 / 5,
+        "Major third": 5 / 4,
+        "Perfect fourth": 4 / 3,
+        "Tritone": 45 / 32,  # or sqrt(2)
+        "Perfect fifth": 3 / 2,
+        "Minor sixth": 8 / 5,
+        "Major sixth": 5 / 3,
+        "Minor seventh": 16 / 9,
+        "Major seventh": 15 / 8,
+        "Octave": 2 / 1,
+        "Major tenth": 5 / 2,
+        "Perfect eleventh": 8 / 3,
+        "Perfect twelfth": 3 / 1,
     }
 
     print(f"Searching for intervals near Ψ = {PSI:.6f}...\n")
 
     closest_interval = None
-    closest_distance = float('inf')
+    closest_distance = float("inf")
 
     for name, ratio in intervals.items():
         distance = abs(ratio - PSI)
@@ -115,7 +116,7 @@ def validate_music_theory():
     print("Searching for simple ratios m/n near Ψ (where m, n ≤ 50)...\n")
 
     best_rational_approx = None
-    best_error = float('inf')
+    best_error = float("inf")
 
     for denominator in range(1, 51):
         for numerator in range(denominator, 51):
@@ -182,7 +183,9 @@ def validate_music_theory():
 
     closest_to_theta = min(intervals.items(), key=lambda x: abs(x[1] - THETA))
     print(f"  Closest interval: {closest_to_theta[0]} = {closest_to_theta[1]:.6f}")
-    print(f"  Distance: {abs(closest_to_theta[1] - THETA):.6f} ({abs(closest_to_theta[1] - THETA)/THETA*100:.2f}%)")
+    print(
+        f"  Distance: {abs(closest_to_theta[1] - THETA):.6f} ({abs(closest_to_theta[1] - THETA)/THETA*100:.2f}%)"
+    )
 
     # Summary
     print("\n\nMUSIC THEORY SUMMARY")
@@ -203,6 +206,7 @@ def validate_music_theory():
 # VISUAL ART VALIDATION
 # =============================================================================
 
+
 def validate_visual_art():
     """
     Test if Ψ appears in visual composition and aesthetics.
@@ -221,11 +225,11 @@ def validate_visual_art():
     aspect_ratios = {
         "Golden rectangle": PHI,  # 1.618
         "Square": 1.0,
-        "3:2 (35mm film)": 3/2,
-        "4:3 (traditional TV)": 4/3,
-        "16:9 (HDTV)": 16/9,
-        "5:4 (large format photo)": 5/4,
-        "3:1 (panorama)": 3/1,
+        "3:2 (35mm film)": 3 / 2,
+        "4:3 (traditional TV)": 4 / 3,
+        "16:9 (HDTV)": 16 / 9,
+        "5:4 (large format photo)": 5 / 4,
+        "3:1 (panorama)": 3 / 1,
         "√2 (ISO paper)": SQRT2,  # 1.414
         "√3": math.sqrt(3),  # 1.732
         "√5": math.sqrt(5),  # 2.236
@@ -236,7 +240,7 @@ def validate_visual_art():
     print(f"Searching for aspect ratios near Ψ = {PSI:.6f}...\n")
 
     closest_ratio = None
-    closest_distance = float('inf')
+    closest_distance = float("inf")
 
     for name, ratio in sorted(aspect_ratios.items(), key=lambda x: x[1]):
         distance = abs(ratio - PSI)
@@ -261,8 +265,12 @@ def validate_visual_art():
     area_sqrt2 = SQRT2
 
     print(f"  Area (unit width):           {area_psi:.6f}")
-    print(f"  Compare to golden rectangle: {area_golden:.6f} (Ψ is {(area_psi/area_golden - 1)*100:+.2f}%)")
-    print(f"  Compare to √2 rectangle:     {area_sqrt2:.6f} (Ψ is {(area_psi/area_sqrt2 - 1)*100:+.2f}%)")
+    print(
+        f"  Compare to golden rectangle: {area_golden:.6f} (Ψ is {(area_psi/area_golden - 1)*100:+.2f}%)"
+    )
+    print(
+        f"  Compare to √2 rectangle:     {area_sqrt2:.6f} (Ψ is {(area_psi/area_sqrt2 - 1)*100:+.2f}%)"
+    )
 
     # Diagonal
     diagonal_psi = math.sqrt(1 + PSI**2)
@@ -288,7 +296,9 @@ def validate_visual_art():
     print(f"  Golden ratio:      {golden_division:.6f} (61.8% from edge)")
     print(f"  Ψ division:        {psi_division:.6f} (34.1% from edge)")
 
-    print(f"\n  Ψ division is {abs(psi_division - thirds_division)/thirds_division*100:.1f}% different from rule of thirds")
+    print(
+        f"\n  Ψ division is {abs(psi_division - thirds_division)/thirds_division*100:.1f}% different from rule of thirds"
+    )
     print(f"  This suggests Ψ ≈ rule of thirds (but more precise)")
 
     # Test 4: Color harmony (hue angles)
@@ -341,6 +351,7 @@ def validate_visual_art():
 # MATHEMATICS VALIDATION
 # =============================================================================
 
+
 def validate_mathematics():
     """
     Test if Ψ appears in mathematical contexts.
@@ -358,11 +369,11 @@ def validate_mathematics():
     print(f"Ψ = (e + π)/2 = {PSI:.9f}\n")
 
     relationships = [
-        ("Ψ/e", PSI/E, "Ratio to Euler's number"),
-        ("Ψ/π", PSI/PI, "Ratio to pi"),
-        ("Ψ/φ", PSI/PHI, "Ratio to golden ratio"),
-        ("Ψ/√2", PSI/SQRT2, "Ratio to root 2"),
-        ("Ψ×ln(2)", PSI*LN2, "Product with information unit"),
+        ("Ψ/e", PSI / E, "Ratio to Euler's number"),
+        ("Ψ/π", PSI / PI, "Ratio to pi"),
+        ("Ψ/φ", PSI / PHI, "Ratio to golden ratio"),
+        ("Ψ/√2", PSI / SQRT2, "Ratio to root 2"),
+        ("Ψ×ln(2)", PSI * LN2, "Product with information unit"),
         ("Ψ²", PSI**2, "Square of Ψ"),
         ("Ψ³", PSI**3, "Cube of Ψ"),
         ("e^Ψ", math.exp(PSI), "Exponential of Ψ"),
@@ -378,8 +389,8 @@ def validate_mathematics():
 
     approximations = [
         ("Ψ² ≈ e² + π?", PSI**2, E**2 + PI),
-        ("Ψ³ ≈ 5π + 10?", PSI**3, 5*PI + 10),
-        ("Ψ ≈ 3 - π/10?", PSI, 3 - PI/10),
+        ("Ψ³ ≈ 5π + 10?", PSI**3, 5 * PI + 10),
+        ("Ψ ≈ 3 - π/10?", PSI, 3 - PI / 10),
         ("Ψ ≈ e + ln(2)?", PSI, E + LN2),
     ]
 
@@ -395,8 +406,8 @@ def validate_mathematics():
     # Can we express Ψ as a series?
     # Ψ = (e + π)/2 = e/2 + π/2
 
-    e_series_5 = sum([1/math.factorial(n) for n in range(20)])  # e ≈ sum(1/n!)
-    pi_approx = sum([(-1)**n / (2*n + 1) for n in range(10000)]) * 4  # Leibniz formula
+    e_series_5 = sum([1 / math.factorial(n) for n in range(20)])  # e ≈ sum(1/n!)
+    pi_approx = sum([(-1) ** n / (2 * n + 1) for n in range(10000)]) * 4  # Leibniz formula
     psi_series = (e_series_5 + pi_approx) / 2
 
     print(f"  Ψ from series:     {psi_series:.9f}")
@@ -478,9 +489,9 @@ def validate_mathematics():
     print(f"Θ = {THETA:.9f}\n")
 
     theta_relations = [
-        ("Θ/Ψ", THETA/PSI, f"= ln(2)√(π/2) = {LN2*math.sqrt(PI/2):.9f}"),
-        ("Θ/ln(2)", THETA/LN2, f"= Ψ√(π/2) = {PSI*math.sqrt(PI/2):.9f}"),
-        ("Θ/√(π/2)", THETA/math.sqrt(PI/2), f"= Ψ×ln(2) = {PSI*LN2:.9f}"),
+        ("Θ/Ψ", THETA / PSI, f"= ln(2)√(π/2) = {LN2*math.sqrt(PI/2):.9f}"),
+        ("Θ/ln(2)", THETA / LN2, f"= Ψ√(π/2) = {PSI*math.sqrt(PI/2):.9f}"),
+        ("Θ/√(π/2)", THETA / math.sqrt(PI / 2), f"= Ψ×ln(2) = {PSI*LN2:.9f}"),
         ("Θ²", THETA**2, "Square"),
         ("√Θ", math.sqrt(THETA), "Square root"),
     ]
@@ -495,11 +506,11 @@ def validate_mathematics():
     print("Comparing Ψ = (e+π)/2 to other means of fundamental constants:\n")
 
     means = [
-        ("(e+π)/2", (E+PI)/2, "Ψ"),
-        ("(e+φ)/2", (E+PHI)/2, "Mean of e and φ"),
-        ("(π+φ)/2", (PI+PHI)/2, "Mean of π and φ"),
-        ("(e+√2)/2", (E+SQRT2)/2, "Mean of e and √2"),
-        ("(π+√2)/2", (PI+SQRT2)/2, "Mean of π and √2"),
+        ("(e+π)/2", (E + PI) / 2, "Ψ"),
+        ("(e+φ)/2", (E + PHI) / 2, "Mean of e and φ"),
+        ("(π+φ)/2", (PI + PHI) / 2, "Mean of π and φ"),
+        ("(e+√2)/2", (E + SQRT2) / 2, "Mean of e and √2"),
+        ("(π+√2)/2", (PI + SQRT2) / 2, "Mean of π and √2"),
     ]
 
     for name, value, description in means:
@@ -525,16 +536,17 @@ def validate_mathematics():
 # MAIN VALIDATION
 # =============================================================================
 
+
 def main():
     """Run all cross-domain validations"""
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("CROSS-DOMAIN VALIDATION OF Ψ AND Θ".center(80))
-    print("="*80)
+    print("=" * 80)
     print(f"\nΨ (Universal Harmony Constant)     = {PSI:.9f}")
     print(f"Θ (Information-Energy Bridge)      = {THETA:.9f}")
     print(f"\nTesting appearance in: Music Theory, Visual Art, Mathematics")
-    print("="*80)
+    print("=" * 80)
 
     # Run validations
     music_results = validate_music_theory()
@@ -561,9 +573,9 @@ def main():
     print("  ✓ Well-defined information content (1.074 bits)")
     print("  ⭐ PREDICTION: Ψ appears in variational calculus")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("CONFIDENCE ASSESSMENT".center(80))
-    print("="*80)
+    print("=" * 80)
 
     print("\nΨ Cross-Domain Presence:")
     print("  Music Theory:  🟡 MODERATE (no exact match, but close approximations)")
@@ -575,11 +587,12 @@ def main():
     print("  Visual Art:    🟡 MODERATE (between √2 and √5)")
     print("  Mathematics:   🟢 STRONG (exact mathematical definition)")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("INTERPRETATION".center(80))
-    print("="*80)
+    print("=" * 80)
 
-    print("""
+    print(
+        """
 The cross-domain validation reveals an interesting pattern:
 
 1. **No Exact Matches**: Neither Ψ nor Θ exactly match traditional constants
@@ -611,11 +624,12 @@ RECOMMENDATION:
 - Test Ψ ratios in musical composition (create Ψ-based harmonies)
 - Test Ψ aspect ratios in visual perception studies
 - Search for Ψ in variational calculus and optimization literature
-""")
+"""
+    )
 
-    print("="*80)
+    print("=" * 80)
     print("\nValidation complete!\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

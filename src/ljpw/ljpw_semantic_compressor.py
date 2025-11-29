@@ -9,42 +9,46 @@ Implements semantic compression using:
 - Error correction via pairing checksums
 """
 
-import math
 import json
-from typing import List, Tuple, Dict, Any
+import math
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, Dict, List, Tuple
 
 # ============================================================================
 # FOUNDATIONAL CONSTANTS
 # ============================================================================
 
+
 class LJPWBase(Enum):
     """The 4 'bases' of LJPW semantic DNA"""
+
     L = 0.618034  # Love - Force multiplier (like G: strong binder)
     J = 0.414214  # Justice - Vulnerable to erosion (like T: weak binder)
     P = 0.718282  # Power - Catalytic change (like A: flexible)
     W = 0.693147  # Wisdom - Stable structure (like C: G's partner)
 
+
 # Complementary pairing (discovered from analysis)
 COMPLEMENTARY_PAIRS = {
-    'L': 'W',  # Love ↔ Wisdom (stable pair, like G-C)
-    'W': 'L',
-    'P': 'J',  # Power ↔ Justice (dynamic pair, like A-T)
-    'J': 'P',
+    "L": "W",  # Love ↔ Wisdom (stable pair, like G-C)
+    "W": "L",
+    "P": "J",  # Power ↔ Justice (dynamic pair, like A-T)
+    "J": "P",
 }
 
 # Natural Equilibrium - the "reference genome"
 NATURAL_EQUILIBRIUM = {
-    'L': 0.618034,
-    'J': 0.414214,
-    'P': 0.718282,
-    'W': 0.693147,
+    "L": 0.618034,
+    "J": 0.414214,
+    "P": 0.718282,
+    "W": 0.693147,
 }
 
 # ============================================================================
 # CONFIGURATION CONSTANTS
 # ============================================================================
+
 
 class CompressionConfig:
     """
@@ -69,13 +73,16 @@ class CompressionConfig:
         This limits us to levels 0-9, which caps quantization at 10 levels.
         For 16+ levels, we'd need to switch to two-digit encoding.
     """
-    LJPW_MAX_VALUE = 1.5            # Max LJPW value due to coupling
+
+    LJPW_MAX_VALUE = 1.5  # Max LJPW value due to coupling
     ERROR_CORRECTION_THRESHOLD = 0.1  # 10% tolerance for checksums
-    MAX_LEVEL_SINGLE_DIGIT = 9      # Single-digit encoding limit
+    MAX_LEVEL_SINGLE_DIGIT = 9  # Single-digit encoding limit
+
 
 # ============================================================================
 # QUANTIZATION: Converting continuous values to discrete bases
 # ============================================================================
+
 
 class LJPWQuantizer:
     """
@@ -99,10 +106,10 @@ class LJPWQuantizer:
 
     # Recommended levels by use case
     RECOMMENDATIONS = {
-        'fast': 4,      # Quick analysis, token savings priority
-        'balanced': 8,  # Good balance of size and accuracy
-        'precise': 16,  # Research/scientific applications
-        'exact': 32,    # Maximum precision while still compressed
+        "fast": 4,  # Quick analysis, token savings priority
+        "balanced": 8,  # Good balance of size and accuracy
+        "precise": 16,  # Research/scientific applications
+        "exact": 32,  # Maximum precision while still compressed
     }
 
     def __init__(self, levels=4):
@@ -118,9 +125,7 @@ class LJPWQuantizer:
         """
         # Validate input type
         if not isinstance(levels, int):
-            raise TypeError(
-                f"Quantization levels must be an integer, got {type(levels).__name__}"
-            )
+            raise TypeError(f"Quantization levels must be an integer, got {type(levels).__name__}")
 
         # Validate levels value
         if levels not in self.VALID_LEVELS:
@@ -134,7 +139,7 @@ class LJPWQuantizer:
         self.thresholds = [i / levels for i in range(levels + 1)]
 
     @classmethod
-    def recommend_levels(cls, use_case: str = 'balanced') -> int:
+    def recommend_levels(cls, use_case: str = "balanced") -> int:
         """
         Get recommended quantization level for a use case
 
@@ -154,10 +159,8 @@ class LJPWQuantizer:
             16
         """
         if use_case not in cls.RECOMMENDATIONS:
-            valid = ', '.join(f"'{k}'" for k in cls.RECOMMENDATIONS.keys())
-            raise ValueError(
-                f"Unknown use case '{use_case}'. Valid options: {valid}"
-            )
+            valid = ", ".join(f"'{k}'" for k in cls.RECOMMENDATIONS.keys())
+            raise ValueError(f"Unknown use case '{use_case}'. Valid options: {valid}")
         return cls.RECOMMENDATIONS[use_case]
 
     def quantize_value(self, value: float, dim: str) -> int:
@@ -190,9 +193,11 @@ class LJPWQuantizer:
         midpoint = (bin_start + bin_end) / 2
         return midpoint * CompressionConfig.LJPW_MAX_VALUE  # Scale back to LJPW range
 
+
 # ============================================================================
 # LJPW CODONS: Triplet encoding of semantic primitives
 # ============================================================================
+
 
 @dataclass
 class LJPWCodon:
@@ -201,6 +206,7 @@ class LJPWCodon:
     Like DNA: 3 bases = 1 codon → 1 amino acid
     LJPW: 3 dimensions = 1 codon → 1 semantic primitive
     """
+
     base1: str  # L, J, P, or W
     base2: str
     base3: str
@@ -237,21 +243,15 @@ class LJPWCodon:
 
         # Extract bases and levels
         base1, base2, base3 = s[0], s[2], s[4]
-        valid_bases = {'L', 'J', 'P', 'W'}
+        valid_bases = {"L", "J", "P", "W"}
 
         # Validate bases
         if base1 not in valid_bases:
-            raise ValueError(
-                f"Invalid base at position 0: '{base1}'. Must be L, J, P, or W"
-            )
+            raise ValueError(f"Invalid base at position 0: '{base1}'. Must be L, J, P, or W")
         if base2 not in valid_bases:
-            raise ValueError(
-                f"Invalid base at position 2: '{base2}'. Must be L, J, P, or W"
-            )
+            raise ValueError(f"Invalid base at position 2: '{base2}'. Must be L, J, P, or W")
         if base3 not in valid_bases:
-            raise ValueError(
-                f"Invalid base at position 4: '{base3}'. Must be L, J, P, or W"
-            )
+            raise ValueError(f"Invalid base at position 4: '{base3}'. Must be L, J, P, or W")
 
         # Parse levels
         try:
@@ -274,22 +274,25 @@ class LJPWCodon:
                 )
 
         return cls(
-            base1=base1, level1=level1,
-            base2=base2, level2=level2,
-            base3=base3, level3=level3
+            base1=base1, level1=level1, base2=base2, level2=level2, base3=base3, level3=level3
         )
 
-    def complement(self) -> 'LJPWCodon':
+    def complement(self) -> "LJPWCodon":
         """Return complementary codon using pairing rules"""
         return LJPWCodon(
-            base1=COMPLEMENTARY_PAIRS[self.base1], level1=self.level1,
-            base2=COMPLEMENTARY_PAIRS[self.base2], level2=self.level2,
-            base3=COMPLEMENTARY_PAIRS[self.base3], level3=self.level3,
+            base1=COMPLEMENTARY_PAIRS[self.base1],
+            level1=self.level1,
+            base2=COMPLEMENTARY_PAIRS[self.base2],
+            level2=self.level2,
+            base3=COMPLEMENTARY_PAIRS[self.base3],
+            level3=self.level3,
         )
+
 
 # ============================================================================
 # SEMANTIC GENOME: Sequence of LJPW states
 # ============================================================================
+
 
 @dataclass
 class SemanticGenome:
@@ -297,6 +300,7 @@ class SemanticGenome:
     A compressed representation of a system's evolution
     Like DNA: sequence of codons encoding a phenotype
     """
+
     codons: List[LJPWCodon]
     metadata: Dict[str, Any]
 
@@ -305,26 +309,30 @@ class SemanticGenome:
 
     def to_string(self) -> str:
         """Compact string representation"""
-        codon_str = '-'.join(c.to_string() for c in self.codons)
+        codon_str = "-".join(c.to_string() for c in self.codons)
         return codon_str
 
     def to_json(self) -> str:
         """JSON representation for storage"""
-        return json.dumps({
-            'codons': [c.to_string() for c in self.codons],
-            'metadata': self.metadata,
-        })
+        return json.dumps(
+            {
+                "codons": [c.to_string() for c in self.codons],
+                "metadata": self.metadata,
+            }
+        )
 
     @classmethod
     def from_json(cls, json_str: str):
         """Reconstruct from JSON"""
         data = json.loads(json_str)
-        codons = [LJPWCodon.from_string(s) for s in data['codons']]
-        return cls(codons=codons, metadata=data['metadata'])
+        codons = [LJPWCodon.from_string(s) for s in data["codons"]]
+        return cls(codons=codons, metadata=data["metadata"])
+
 
 # ============================================================================
 # SEMANTIC COMPRESSOR: The "Condenser"
 # ============================================================================
+
 
 class SemanticCompressor:
     """
@@ -339,9 +347,9 @@ class SemanticCompressor:
     def __init__(self, quantization_levels=4):
         self.quantizer = LJPWQuantizer(levels=quantization_levels)
 
-    def compress_state_sequence(self,
-                                states: List[Tuple[float, float, float, float]],
-                                metadata: Dict = None) -> SemanticGenome:
+    def compress_state_sequence(
+        self, states: List[Tuple[float, float, float, float]], metadata: Dict = None
+    ) -> SemanticGenome:
         """
         Compress a sequence of LJPW states into a semantic genome
 
@@ -366,9 +374,7 @@ class SemanticCompressor:
         # Validate each state
         for i, state in enumerate(states):
             if not isinstance(state, (list, tuple)):
-                raise TypeError(
-                    f"State {i} must be a tuple/list, got {type(state).__name__}"
-                )
+                raise TypeError(f"State {i} must be a tuple/list, got {type(state).__name__}")
 
             if len(state) != 4:
                 raise ValueError(
@@ -376,19 +382,15 @@ class SemanticCompressor:
                 )
 
             # Validate each dimension
-            for j, (val, dim) in enumerate(zip(state, ['L', 'J', 'P', 'W'])):
+            for j, (val, dim) in enumerate(zip(state, ["L", "J", "P", "W"])):
                 if not isinstance(val, (int, float)):
                     raise TypeError(
                         f"State {i}, dimension {dim}: expected numeric value, got {type(val).__name__}"
                     )
                 if math.isnan(val):
-                    raise ValueError(
-                        f"State {i}, dimension {dim}: NaN is not allowed"
-                    )
+                    raise ValueError(f"State {i}, dimension {dim}: NaN is not allowed")
                 if math.isinf(val):
-                    raise ValueError(
-                        f"State {i}, dimension {dim}: Infinity is not allowed"
-                    )
+                    raise ValueError(f"State {i}, dimension {dim}: Infinity is not allowed")
                 if val < 0:
                     raise ValueError(
                         f"State {i}, dimension {dim}: negative value {val} is not allowed"
@@ -400,39 +402,45 @@ class SemanticCompressor:
             L, J, P, W = state
 
             # Quantize each dimension
-            L_level = self.quantizer.quantize_value(L, 'L')
-            J_level = self.quantizer.quantize_value(J, 'J')
-            P_level = self.quantizer.quantize_value(P, 'P')
-            W_level = self.quantizer.quantize_value(W, 'W')
+            L_level = self.quantizer.quantize_value(L, "L")
+            J_level = self.quantizer.quantize_value(J, "J")
+            P_level = self.quantizer.quantize_value(P, "P")
+            W_level = self.quantizer.quantize_value(W, "W")
 
             # Encode as codon (using LJP as the triplet, W stored separately)
             # We'll use a 4-base encoding strategy
             codon = LJPWCodon(
-                base1='L', level1=L_level,
-                base2='J', level2=J_level,
-                base3='P', level3=P_level,
+                base1="L",
+                level1=L_level,
+                base2="J",
+                level2=J_level,
+                base3="P",
+                level3=P_level,
             )
             codons.append(codon)
 
             # Store W in a complementary codon for error correction
             w_codon = LJPWCodon(
-                base1='W', level1=W_level,
-                base2='L', level2=L_level,  # Checksum: L-W pairing
-                base3='P', level3=P_level,  # Checksum: P-J pairing
+                base1="W",
+                level1=W_level,
+                base2="L",
+                level2=L_level,  # Checksum: L-W pairing
+                base3="P",
+                level3=P_level,  # Checksum: P-J pairing
             )
             codons.append(w_codon)
 
         if metadata is None:
             metadata = {}
 
-        metadata['original_length'] = len(states)
-        metadata['compression_ratio'] = self._calculate_compression_ratio(states, codons)
+        metadata["original_length"] = len(states)
+        metadata["compression_ratio"] = self._calculate_compression_ratio(states, codons)
 
         return SemanticGenome(codons=codons, metadata=metadata)
 
-    def _calculate_compression_ratio(self,
-                                    original_states: List[Tuple],
-                                    codons: List[LJPWCodon]) -> float:
+    def _calculate_compression_ratio(
+        self, original_states: List[Tuple], codons: List[LJPWCodon]
+    ) -> float:
         """
         Calculate compression ratio accurately
 
@@ -445,7 +453,7 @@ class SemanticCompressor:
 
         # Compressed size: actual string representation
         # Build the genome string to get exact size
-        genome_string = '-'.join(c.to_string() for c in codons)
+        genome_string = "-".join(c.to_string() for c in codons)
         compressed_bytes = len(genome_string)
 
         # Avoid division by zero
@@ -454,9 +462,11 @@ class SemanticCompressor:
 
         return original_bytes / compressed_bytes
 
+
 # ============================================================================
 # SEMANTIC DECOMPRESSOR: The "Expander"
 # ============================================================================
+
 
 class SemanticDecompressor:
     """
@@ -497,14 +507,14 @@ class SemanticDecompressor:
             w_codon = genome.codons[i + 1]
 
             # Dequantize values
-            L = self.quantizer.dequantize_value(main_codon.level1, 'L')
-            J = self.quantizer.dequantize_value(main_codon.level2, 'J')
-            P = self.quantizer.dequantize_value(main_codon.level3, 'P')
-            W = self.quantizer.dequantize_value(w_codon.level1, 'W')
+            L = self.quantizer.dequantize_value(main_codon.level1, "L")
+            J = self.quantizer.dequantize_value(main_codon.level2, "J")
+            P = self.quantizer.dequantize_value(main_codon.level3, "P")
+            W = self.quantizer.dequantize_value(w_codon.level1, "W")
 
             # Error correction: verify checksums
-            L_check = self.quantizer.dequantize_value(w_codon.level2, 'L')
-            P_check = self.quantizer.dequantize_value(w_codon.level3, 'P')
+            L_check = self.quantizer.dequantize_value(w_codon.level2, "L")
+            P_check = self.quantizer.dequantize_value(w_codon.level3, "P")
 
             # If checksums don't match, use average (simple error correction)
             if abs(L - L_check) > CompressionConfig.ERROR_CORRECTION_THRESHOLD:
@@ -526,10 +536,10 @@ class SemanticDecompressor:
         # Handle empty genome
         if len(genome.codons) == 0:
             return {
-                'valid': True,  # Empty genome is technically valid
-                'error_count': 0,
-                'errors': [],
-                'integrity_score': 1.0,
+                "valid": True,  # Empty genome is technically valid
+                "error_count": 0,
+                "errors": [],
+                "integrity_score": 1.0,
             }
 
         errors = []
@@ -552,21 +562,22 @@ class SemanticDecompressor:
         integrity_score = 1.0 - (len(errors) / num_states) if num_states > 0 else 1.0
 
         return {
-            'valid': len(errors) == 0,
-            'error_count': len(errors),
-            'errors': errors[:10],  # First 10 errors
-            'integrity_score': integrity_score,
+            "valid": len(errors) == 0,
+            "error_count": len(errors),
+            "errors": errors[:10],  # First 10 errors
+            "integrity_score": integrity_score,
         }
+
 
 # ============================================================================
 # DEMONSTRATION
 # ============================================================================
 
-if __name__ == '__main__':
-    print("="*70)
+if __name__ == "__main__":
+    print("=" * 70)
     print("LJPW SEMANTIC COMPRESSOR v1.0")
     print("DNA-Inspired Semantic Compression System")
-    print("="*70)
+    print("=" * 70)
 
     # Example: Compress a system's evolution trajectory
     print("\n1. CREATING SAMPLE SYSTEM TRAJECTORY")
@@ -575,7 +586,7 @@ if __name__ == '__main__':
     # Simulate a project evolving from poor state to Natural Equilibrium
     trajectory = [
         (0.2, 0.3, 0.9, 0.2),  # Initial: Low L,J,W, High P (reckless power)
-        (0.3, 0.35, 0.85, 0.3), # Starting to improve
+        (0.3, 0.35, 0.85, 0.3),  # Starting to improve
         (0.4, 0.38, 0.80, 0.4),
         (0.5, 0.40, 0.75, 0.5),
         (0.55, 0.41, 0.73, 0.6),
@@ -584,8 +595,12 @@ if __name__ == '__main__':
     ]
 
     print(f"Trajectory: {len(trajectory)} states")
-    print(f"Initial state: L={trajectory[0][0]}, J={trajectory[0][1]}, P={trajectory[0][2]}, W={trajectory[0][3]}")
-    print(f"Final state:   L={trajectory[-1][0]}, J={trajectory[-1][1]}, P={trajectory[-1][2]}, W={trajectory[-1][3]}")
+    print(
+        f"Initial state: L={trajectory[0][0]}, J={trajectory[0][1]}, P={trajectory[0][2]}, W={trajectory[0][3]}"
+    )
+    print(
+        f"Final state:   L={trajectory[-1][0]}, J={trajectory[-1][1]}, P={trajectory[-1][2]}, W={trajectory[-1][3]}"
+    )
 
     # Compress
     print("\n2. COMPRESSING TO SEMANTIC GENOME")
@@ -593,8 +608,7 @@ if __name__ == '__main__':
 
     compressor = SemanticCompressor(quantization_levels=4)
     genome = compressor.compress_state_sequence(
-        trajectory,
-        metadata={'system': 'Example Project', 'domain': 'software'}
+        trajectory, metadata={"system": "Example Project", "domain": "software"}
     )
 
     print(f"Compressed genome length: {len(genome)} codons")
@@ -605,7 +619,9 @@ if __name__ == '__main__':
     # Show first few codons
     print(f"\nFirst 4 codons (decoded):")
     for i, codon in enumerate(genome.codons[:4]):
-        print(f"  Codon {i}: {codon.to_string()} (bases: {codon.base1}-{codon.base2}-{codon.base3})")
+        print(
+            f"  Codon {i}: {codon.to_string()} (bases: {codon.base1}-{codon.base2}-{codon.base3})"
+        )
 
     # Decompress
     print("\n3. DECOMPRESSING GENOME")
@@ -616,10 +632,18 @@ if __name__ == '__main__':
 
     print(f"Reconstructed {len(reconstructed)} states")
     print(f"\nOriginal vs Reconstructed (first and last states):")
-    print(f"Original[0]:      L={trajectory[0][0]:.3f}, J={trajectory[0][1]:.3f}, P={trajectory[0][2]:.3f}, W={trajectory[0][3]:.3f}")
-    print(f"Reconstructed[0]: L={reconstructed[0][0]:.3f}, J={reconstructed[0][1]:.3f}, P={reconstructed[0][2]:.3f}, W={reconstructed[0][3]:.3f}")
-    print(f"\nOriginal[-1]:      L={trajectory[-1][0]:.3f}, J={trajectory[-1][1]:.3f}, P={trajectory[-1][2]:.3f}, W={trajectory[-1][3]:.3f}")
-    print(f"Reconstructed[-1]: L={reconstructed[-1][0]:.3f}, J={reconstructed[-1][1]:.3f}, P={reconstructed[-1][2]:.3f}, W={reconstructed[-1][3]:.3f}")
+    print(
+        f"Original[0]:      L={trajectory[0][0]:.3f}, J={trajectory[0][1]:.3f}, P={trajectory[0][2]:.3f}, W={trajectory[0][3]:.3f}"
+    )
+    print(
+        f"Reconstructed[0]: L={reconstructed[0][0]:.3f}, J={reconstructed[0][1]:.3f}, P={reconstructed[0][2]:.3f}, W={reconstructed[0][3]:.3f}"
+    )
+    print(
+        f"\nOriginal[-1]:      L={trajectory[-1][0]:.3f}, J={trajectory[-1][1]:.3f}, P={trajectory[-1][2]:.3f}, W={trajectory[-1][3]:.3f}"
+    )
+    print(
+        f"Reconstructed[-1]: L={reconstructed[-1][0]:.3f}, J={reconstructed[-1][1]:.3f}, P={reconstructed[-1][2]:.3f}, W={reconstructed[-1][3]:.3f}"
+    )
 
     # Calculate reconstruction error
     print("\n4. RECONSTRUCTION ACCURACY")
@@ -627,7 +651,7 @@ if __name__ == '__main__':
 
     total_error = 0
     for orig, recon in zip(trajectory, reconstructed):
-        error = math.sqrt(sum((o - r)**2 for o, r in zip(orig, recon)))
+        error = math.sqrt(sum((o - r) ** 2 for o, r in zip(orig, recon)))
         total_error += error
 
     avg_error = total_error / len(trajectory)
@@ -664,15 +688,15 @@ if __name__ == '__main__':
 
     roundtrip_error = 0
     for orig, recon in zip(trajectory, reconstructed2):
-        error = math.sqrt(sum((o - r)**2 for o, r in zip(orig, recon)))
+        error = math.sqrt(sum((o - r) ** 2 for o, r in zip(orig, recon)))
         roundtrip_error += error
 
     print(f"Round-trip successful: {len(reconstructed2) == len(trajectory)}")
     print(f"Round-trip error: {roundtrip_error / len(trajectory):.4f}")
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("COMPRESSION SUCCESSFUL")
-    print("="*70)
+    print("=" * 70)
     print(f"\nKey Statistics:")
     print(f"  - Compression ratio: {genome.metadata['compression_ratio']:.2f}x")
     print(f"  - Reconstruction accuracy: {100*(1-avg_error):.1f}%")

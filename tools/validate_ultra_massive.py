@@ -13,14 +13,15 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from ljpw_standalone import analyze_directory
-from ljpw_semantic_compressor import (
+import math
+
+from src.ljpw.ljpw_semantic_compressor import (
     SemanticCompressor,
     SemanticDecompressor,
 )
-import math
+from src.ljpw.ljpw_standalone import analyze_directory
 
 
 def analyze_ultra_massive(path: str, name: str):
@@ -53,10 +54,10 @@ def analyze_ultra_massive(path: str, name: str):
     print(f"   Speed: {len(file_results) / analysis_time:.0f} files/sec")
 
     # Aggregate
-    total_L = sum(r['ljpw']['L'] for r in file_results)
-    total_J = sum(r['ljpw']['J'] for r in file_results)
-    total_P = sum(r['ljpw']['P'] for r in file_results)
-    total_W = sum(r['ljpw']['W'] for r in file_results)
+    total_L = sum(r["ljpw"]["L"] for r in file_results)
+    total_J = sum(r["ljpw"]["J"] for r in file_results)
+    total_P = sum(r["ljpw"]["P"] for r in file_results)
+    total_W = sum(r["ljpw"]["W"] for r in file_results)
 
     state = (
         total_L / len(file_results),
@@ -83,13 +84,13 @@ def analyze_ultra_massive(path: str, name: str):
     print(f"{'='*70}")
 
     compressor = SemanticCompressor(quantization_levels=16)
-    genome = compressor.compress_state_sequence([state], metadata={'project': name})
+    genome = compressor.compress_state_sequence([state], metadata={"project": name})
     genome_str = genome.to_string()
 
     decompressor = SemanticDecompressor(quantization_levels=16)
     reconstructed = decompressor.decompress_genome(genome)[0]
 
-    error = math.sqrt(sum((o - r)**2 for o, r in zip(state, reconstructed)))
+    error = math.sqrt(sum((o - r) ** 2 for o, r in zip(state, reconstructed)))
     relative_error = error / math.sqrt(sum(v**2 for v in state))
     accuracy = 1 - relative_error
 
@@ -97,36 +98,38 @@ def analyze_ultra_massive(path: str, name: str):
     print(f"Accuracy: {accuracy:.1%}")
 
     # Check meaning preservation
-    dims = ['L', 'J', 'P', 'W']
+    dims = ["L", "J", "P", "W"]
     orig_max = dims[state.index(max(state))]
     orig_min = dims[state.index(min(state))]
     recon_max = dims[list(reconstructed).index(max(reconstructed))]
     recon_min = dims[list(reconstructed).index(min(reconstructed))]
 
-    meaning_preserved = (orig_max == recon_max and orig_min == recon_min)
+    meaning_preserved = orig_max == recon_max and orig_min == recon_min
 
     if meaning_preserved:
         print(f"✅ Meaning preserved (strongest: {orig_max}, weakest: {orig_min})")
     else:
-        print(f"⚠️  Meaning changed (strongest: {orig_max}→{recon_max}, weakest: {orig_min}→{recon_min})")
+        print(
+            f"⚠️  Meaning changed (strongest: {orig_max}→{recon_max}, weakest: {orig_min}→{recon_min})"
+        )
 
     return {
-        'name': name,
-        'num_files': len(file_results),
-        'state': state,
-        'health_score': health_score,
-        'analysis_time': analysis_time,
-        'genome': genome_str,
-        'accuracy': accuracy,
-        'meaning_preserved': meaning_preserved,
+        "name": name,
+        "num_files": len(file_results),
+        "state": state,
+        "health_score": health_score,
+        "analysis_time": analysis_time,
+        "genome": genome_str,
+        "accuracy": accuracy,
+        "meaning_preserved": meaning_preserved,
     }
 
 
 def main():
     """Run ultra-massive validation"""
-    print("="*70)
+    print("=" * 70)
     print("🔥 ULTRA MASSIVE SCALE VALIDATION 🔥")
-    print("="*70)
+    print("=" * 70)
     print()
     print("Testing the BIGGEST Python projects:")
     print("  - scikit-learn: 983 Python files")
@@ -140,21 +143,19 @@ def main():
 
     # Test scikit-learn
     sklearn_result = analyze_ultra_massive(
-        "/tmp/ljpw_validation_test/scikit-learn",
-        "scikit-learn (ML Library)"
+        "/tmp/ljpw_validation_test/scikit-learn", "scikit-learn (ML Library)"
     )
 
     if sklearn_result:
         all_results.append(sklearn_result)
 
     # Test Transformers (THE BIG ONE!)
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("🚀 TESTING THE BIGGEST: TRANSFORMERS")
-    print("="*70)
+    print("=" * 70)
 
     transformers_result = analyze_ultra_massive(
-        "/tmp/ljpw_validation_test/transformers",
-        "Transformers (Hugging Face)"
+        "/tmp/ljpw_validation_test/transformers", "Transformers (Hugging Face)"
     )
 
     if transformers_result:
@@ -167,19 +168,21 @@ def main():
     print()
 
     for r in all_results:
-        status = "✅" if r['meaning_preserved'] else "⚠️"
+        status = "✅" if r["meaning_preserved"] else "⚠️"
         print(f"{status} {r['name']}")
         print(f"   Files: {r['num_files']:,}")
         print(f"   Speed: {r['num_files']/r['analysis_time']:.0f} files/sec")
-        print(f"   LJPW:  L={r['state'][0]:.2f}, J={r['state'][1]:.2f}, P={r['state'][2]:.2f}, W={r['state'][3]:.2f}")
+        print(
+            f"   LJPW:  L={r['state'][0]:.2f}, J={r['state'][1]:.2f}, P={r['state'][2]:.2f}, W={r['state'][3]:.2f}"
+        )
         print(f"   Health: {r['health_score']:.1%}")
         print(f"   Accuracy: {r['accuracy']:.1%}")
         print()
 
     # Overall stats
-    total_files = sum(r['num_files'] for r in all_results)
-    total_time = sum(r['analysis_time'] for r in all_results)
-    avg_accuracy = sum(r['accuracy'] for r in all_results) / len(all_results) if all_results else 0
+    total_files = sum(r["num_files"] for r in all_results)
+    total_time = sum(r["analysis_time"] for r in all_results)
+    avg_accuracy = sum(r["accuracy"] for r in all_results) / len(all_results) if all_results else 0
 
     print(f"{'='*70}")
     print(f"COMBINED STATISTICS")
@@ -201,7 +204,7 @@ def main():
     print(f"GRAND TOTAL: {309 + 4386 + total_files:,} PYTHON FILES VALIDATED!")
     print()
 
-    if all(r['meaning_preserved'] for r in all_results):
+    if all(r["meaning_preserved"] for r in all_results):
         print(f"✅ ULTRA MASSIVE VALIDATION SUCCESSFUL!")
         print(f"   Framework handles the BIGGEST Python codebases!")
         return 0
@@ -210,5 +213,5 @@ def main():
         return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

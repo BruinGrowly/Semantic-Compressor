@@ -16,15 +16,15 @@ Usage:
     python evolution_visualizer.py <file> --output evolution.html
 """
 
-import sys
-from pathlib import Path
-import subprocess
 import argparse
 import json
+import subprocess
+import sys
 from datetime import datetime
+from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
-from ljpw_standalone import analyze_quick, calculate_distance
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.ljpw.ljpw_standalone import analyze_quick, calculate_distance
 
 # Natural Equilibrium
 NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
@@ -32,10 +32,10 @@ NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
 
 def get_genome(result):
     """Create genome from LJPW result"""
-    L = result['ljpw']['L']
-    J = result['ljpw']['J']
-    P = result['ljpw']['P']
-    W = result['ljpw']['W']
+    L = result["ljpw"]["L"]
+    J = result["ljpw"]["J"]
+    P = result["ljpw"]["P"]
+    W = result["ljpw"]["W"]
 
     L_digit = int(round(L * 10)) % 10
     J_digit = int(round(J * 10)) % 10
@@ -56,12 +56,12 @@ def get_git_history(filepath, num_commits=50):
     """Get git history for file"""
     try:
         result = subprocess.run(
-            ['git', 'log', f'-{num_commits}', '--format=%H|%ai|%s', '--', filepath],
+            ["git", "log", f"-{num_commits}", "--format=%H|%ai|%s", "--", filepath],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
-        return result.stdout.strip().split('\n')
+        return result.stdout.strip().split("\n")
     except subprocess.CalledProcessError:
         return []
 
@@ -70,10 +70,7 @@ def get_git_file_content(commit, filepath):
     """Get file content at commit"""
     try:
         result = subprocess.run(
-            ['git', 'show', f'{commit}:{filepath}'],
-            capture_output=True,
-            text=True,
-            check=True
+            ["git", "show", f"{commit}:{filepath}"], capture_output=True, text=True, check=True
         )
         return result.stdout
     except:
@@ -87,7 +84,7 @@ def analyze_evolution(filepath, num_commits=50):
 
     commits = get_git_history(filepath, num_commits)
 
-    if not commits or commits[0] == '':
+    if not commits or commits[0] == "":
         print(f"No git history found for {filepath}")
         return []
 
@@ -97,11 +94,11 @@ def analyze_evolution(filepath, num_commits=50):
         if not commit_line.strip():
             continue
 
-        parts = commit_line.split('|')
+        parts = commit_line.split("|")
         if len(parts) < 3:
             continue
 
-        commit_hash, commit_date, commit_msg = parts[0], parts[1], '|'.join(parts[2:])
+        commit_hash, commit_date, commit_msg = parts[0], parts[1], "|".join(parts[2:])
 
         # Get code at this commit
         code = get_git_file_content(commit_hash, filepath)
@@ -111,29 +108,31 @@ def analyze_evolution(filepath, num_commits=50):
         # Analyze
         try:
             result = analyze_quick(code)
-            l = result['ljpw']['L']
-            j = result['ljpw']['J']
-            p = result['ljpw']['P']
-            w = result['ljpw']['W']
+            l = result["ljpw"]["L"]
+            j = result["ljpw"]["J"]
+            p = result["ljpw"]["P"]
+            w = result["ljpw"]["W"]
 
             coords = (l, j, p, w)
             genome = get_genome(result)
             dist_to_ne = calculate_distance(coords, NATURAL_EQUILIBRIUM)
             health = calculate_health(coords)
 
-            evolution.append({
-                'commit': commit_hash[:7],
-                'date': commit_date,
-                'message': commit_msg[:60],
-                'L': l,
-                'J': j,
-                'P': p,
-                'W': w,
-                'genome': genome,
-                'dist_ne': dist_to_ne,
-                'health': health,
-                'loc': len(code.split('\n'))
-            })
+            evolution.append(
+                {
+                    "commit": commit_hash[:7],
+                    "date": commit_date,
+                    "message": commit_msg[:60],
+                    "L": l,
+                    "J": j,
+                    "P": p,
+                    "W": w,
+                    "genome": genome,
+                    "dist_ne": dist_to_ne,
+                    "health": health,
+                    "loc": len(code.split("\n")),
+                }
+            )
 
             print(f"  [{i+1}/{len(commits)}] {commit_hash[:7]} - {health:.1f}/100")
 
@@ -287,12 +286,12 @@ def generate_html(evolution, filepath, output_file):
 
     # Prepare data for charts
     labels = [f"{e['commit']}" for e in evolution]
-    l_data = [e['L'] for e in evolution]
-    j_data = [e['J'] for e in evolution]
-    p_data = [e['P'] for e in evolution]
-    w_data = [e['W'] for e in evolution]
-    health_data = [e['health'] for e in evolution]
-    ne_data = [e['dist_ne'] for e in evolution]
+    l_data = [e["L"] for e in evolution]
+    j_data = [e["J"] for e in evolution]
+    p_data = [e["P"] for e in evolution]
+    w_data = [e["W"] for e in evolution]
+    health_data = [e["health"] for e in evolution]
+    ne_data = [e["dist_ne"] for e in evolution]
 
     html += f"""
             </tbody>
@@ -432,7 +431,7 @@ def generate_html(evolution, filepath, output_file):
 </html>
 """
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         f.write(html)
 
     print(f"\n✓ Visualization saved to {output_file}")
@@ -440,10 +439,10 @@ def generate_html(evolution, filepath, output_file):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Code Evolution Visualizer')
-    parser.add_argument('file', help='File to analyze')
-    parser.add_argument('--commits', type=int, default=50, help='Number of commits')
-    parser.add_argument('--output', default='evolution.html', help='Output HTML file')
+    parser = argparse.ArgumentParser(description="Code Evolution Visualizer")
+    parser.add_argument("file", help="File to analyze")
+    parser.add_argument("--commits", type=int, default=50, help="Number of commits")
+    parser.add_argument("--output", default="evolution.html", help="Output HTML file")
 
     args = parser.parse_args()
 
@@ -455,7 +454,7 @@ def main():
 
     print(f"\n{'='*70}")
     print("EVOLUTION SUMMARY")
-    print('='*70)
+    print("=" * 70)
     print(f"File: {args.file}")
     print(f"Commits: {len(evolution)}")
     print(f"Date range: {evolution[0]['date'][:10]} → {evolution[-1]['date'][:10]}")

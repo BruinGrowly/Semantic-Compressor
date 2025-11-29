@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ljpw"))
 
 # Import without numpy-dependent components
 import math
@@ -59,9 +59,7 @@ def test_distance_calculations():
 
     def distance_from_ne(L, J, P, W):
         NE = (0.618034, 0.414214, 0.718282, 0.693147)
-        return math.sqrt(
-            (NE[0] - L) ** 2 + (NE[1] - J) ** 2 + (NE[2] - P) ** 2 + (NE[3] - W) ** 2
-        )
+        return math.sqrt((NE[0] - L) ** 2 + (NE[1] - J) ** 2 + (NE[2] - P) ** 2 + (NE[3] - W) ** 2)
 
     # Test 1: Anchor to Anchor should be 0
     assert distance_from_anchor(1, 1, 1, 1) == 0

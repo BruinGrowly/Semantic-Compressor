@@ -14,15 +14,16 @@ Test Categories:
 5. Algorithmic Complexity: O(1) vs O(n) vs O(n²) implementations
 """
 
+import math
 import sys
 from pathlib import Path
-import math
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ljpw"))
 from ljpw_standalone import analyze_quick, calculate_distance
 
 # Natural Equilibrium for reference
 NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
+
 
 def distance(coords1, coords2):
     """Calculate Euclidean distance between two 4D points"""
@@ -38,11 +39,9 @@ EDGE_CASES = {
 def empty():
     pass
 """,
-
     "one_liner": """
 def add(a, b): return a + b
 """,
-
     "deeply_nested": """
 def process(data):
     if data:
@@ -54,11 +53,9 @@ def process(data):
                             return item
     return None
 """,
-
     "single_expression": """
 lambda x: x * 2
 """,
-
     "docstring_only": """
 def placeholder():
     '''This function does nothing yet'''
@@ -81,7 +78,6 @@ class Singleton:
             cls._instance = super().__new__(cls)
         return cls._instance
 """,
-
     "factory": """
 class AnimalFactory:
     @staticmethod
@@ -93,7 +89,6 @@ class AnimalFactory:
         else:
             raise ValueError(f"Unknown animal: {animal_type}")
 """,
-
     "observer": """
 class Subject:
     def __init__(self):
@@ -106,7 +101,6 @@ class Subject:
         for observer in self._observers:
             observer.update(event)
 """,
-
     "strategy": """
 class SortContext:
     def __init__(self, strategy):
@@ -115,7 +109,6 @@ class SortContext:
     def sort(self, data):
         return self._strategy.sort(data)
 """,
-
     "decorator_pattern": """
 class Component:
     def operation(self):
@@ -153,7 +146,6 @@ class UserManager:
     def update_settings(self, key, val): pass
     def process_payment(self, amount): pass
 """,
-
     "long_method": """
 def process_order(order):
     # Validate order
@@ -186,7 +178,6 @@ def process_order(order):
 
     return total
 """,
-
     "duplicate_code": """
 def calculate_circle_area(radius):
     return 3.14159 * radius * radius
@@ -197,7 +188,6 @@ def calculate_circle_circumference(radius):
 def calculate_sphere_volume(radius):
     return (4/3) * 3.14159 * radius * radius * radius
 """,
-
     "magic_numbers": """
 def calculate_price(base):
     if base > 100:
@@ -245,7 +235,6 @@ def process_data(data):
     return transform_data(data)
 """,
     },
-
     # Refactoring 2: Replace magic number with constant
     {
         "name": "Replace Magic Number",
@@ -265,7 +254,6 @@ def calculate_discount(price):
     return 0
 """,
     },
-
     # Refactoring 3: Replace conditional with polymorphism
     {
         "name": "Replace Conditional with Polymorphism",
@@ -313,7 +301,6 @@ def linear_search(arr, target):
             return i
     return -1
 """,
-
     "binary_search_O_log_n": """
 def binary_search(arr, target):
     left, right = 0, len(arr) - 1
@@ -327,7 +314,6 @@ def binary_search(arr, target):
             right = mid - 1
     return -1
 """,
-
     "bubble_sort_O_n2": """
 def bubble_sort(arr):
     n = len(arr)
@@ -337,7 +323,6 @@ def bubble_sort(arr):
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
     return arr
 """,
-
     "merge_sort_O_n_log_n": """
 def merge_sort(arr):
     if len(arr) <= 1:
@@ -363,7 +348,6 @@ def merge(left, right):
     result.extend(right[j:])
     return result
 """,
-
     "constant_lookup_O_1": """
 def get_value(dictionary, key):
     return dictionary.get(key)
@@ -375,12 +359,13 @@ def get_value(dictionary, key):
 # TEST EXECUTION
 # =============================================================================
 
+
 def get_genome(result):
     """Create genome from LJPW result"""
-    L = result['ljpw']['L']
-    J = result['ljpw']['J']
-    P = result['ljpw']['P']
-    W = result['ljpw']['W']
+    L = result["ljpw"]["L"]
+    J = result["ljpw"]["J"]
+    P = result["ljpw"]["P"]
+    W = result["ljpw"]["W"]
 
     L_digit = int(round(L * 10)) % 10
     J_digit = int(round(J * 10)) % 10
@@ -401,10 +386,10 @@ def test_edge_cases():
 
     for name, code in EDGE_CASES.items():
         result = analyze_quick(code)
-        l = result['ljpw']['L']
-        j = result['ljpw']['J']
-        p = result['ljpw']['P']
-        w = result['ljpw']['W']
+        l = result["ljpw"]["L"]
+        j = result["ljpw"]["J"]
+        p = result["ljpw"]["P"]
+        w = result["ljpw"]["W"]
         coords = (l, j, p, w)
         genome = get_genome(result)
         dist_to_ne = distance(coords, NATURAL_EQUILIBRIUM)
@@ -415,12 +400,7 @@ def test_edge_cases():
         print(f"  Distance from NE: {dist_to_ne:.3f}")
         print()
 
-        results.append({
-            'name': name,
-            'coords': coords,
-            'genome': genome,
-            'dist_to_ne': dist_to_ne
-        })
+        results.append({"name": name, "coords": coords, "genome": genome, "dist_to_ne": dist_to_ne})
 
     # Test passes if no exceptions were raised
     assert len(results) > 0
@@ -439,10 +419,10 @@ def test_design_patterns():
 
     for name, code in DESIGN_PATTERNS.items():
         result = analyze_quick(code)
-        l = result['ljpw']['L']
-        j = result['ljpw']['J']
-        p = result['ljpw']['P']
-        w = result['ljpw']['W']
+        l = result["ljpw"]["L"]
+        j = result["ljpw"]["J"]
+        p = result["ljpw"]["P"]
+        w = result["ljpw"]["W"]
         coords = (l, j, p, w)
         genome = get_genome(result)
         dist_to_ne = distance(coords, NATURAL_EQUILIBRIUM)
@@ -453,12 +433,7 @@ def test_design_patterns():
         print(f"  Distance from NE: {dist_to_ne:.3f}")
         print()
 
-        results.append({
-            'name': name,
-            'coords': coords,
-            'genome': genome,
-            'dist_to_ne': dist_to_ne
-        })
+        results.append({"name": name, "coords": coords, "genome": genome, "dist_to_ne": dist_to_ne})
 
     # Calculate average pairwise distance
     n = len(results)
@@ -466,13 +441,15 @@ def test_design_patterns():
     count = 0
     for i in range(n):
         for j in range(i + 1, n):
-            d = distance(results[i]['coords'], results[j]['coords'])
+            d = distance(results[i]["coords"], results[j]["coords"])
             total_dist += d
             count += 1
 
     avg_pattern_distance = total_dist / count if count > 0 else 0
     print(f"Average pairwise distance: {avg_pattern_distance:.3f}")
-    print(f"✓ Patterns cluster together" if avg_pattern_distance < 0.5 else "✗ Patterns are scattered")
+    print(
+        f"✓ Patterns cluster together" if avg_pattern_distance < 0.5 else "✗ Patterns are scattered"
+    )
     print()
 
     # Test passes if no exceptions were raised
@@ -492,10 +469,10 @@ def test_code_smells():
 
     for name, code in CODE_SMELLS.items():
         result = analyze_quick(code)
-        l = result['ljpw']['L']
-        j = result['ljpw']['J']
-        p = result['ljpw']['P']
-        w = result['ljpw']['W']
+        l = result["ljpw"]["L"]
+        j = result["ljpw"]["J"]
+        p = result["ljpw"]["P"]
+        w = result["ljpw"]["W"]
         coords = (l, j, p, w)
         genome = get_genome(result)
         dist_to_ne = distance(coords, NATURAL_EQUILIBRIUM)
@@ -506,14 +483,9 @@ def test_code_smells():
         print(f"  Distance from NE: {dist_to_ne:.3f}")
         print()
 
-        results.append({
-            'name': name,
-            'coords': coords,
-            'genome': genome,
-            'dist_to_ne': dist_to_ne
-        })
+        results.append({"name": name, "coords": coords, "genome": genome, "dist_to_ne": dist_to_ne})
 
-    avg_smell_distance = sum(r['dist_to_ne'] for r in results) / len(results)
+    avg_smell_distance = sum(r["dist_to_ne"] for r in results) / len(results)
     print(f"Average distance from NE: {avg_smell_distance:.3f}")
     print(f"✓ Code smells are far from NE" if avg_smell_distance > 0.8 else "✗ Code smells near NE")
     print()
@@ -537,17 +509,25 @@ def test_refactoring_sequences():
     degradations = 0
 
     for refactoring in REFACTORING_BEFORE_AFTER:
-        name = refactoring['name']
-        before_code = refactoring['before']
-        after_code = refactoring['after']
+        name = refactoring["name"]
+        before_code = refactoring["before"]
+        after_code = refactoring["after"]
 
         before_result = analyze_quick(before_code)
         after_result = analyze_quick(after_code)
 
-        before_coords = (before_result['ljpw']['L'], before_result['ljpw']['J'],
-                        before_result['ljpw']['P'], before_result['ljpw']['W'])
-        after_coords = (after_result['ljpw']['L'], after_result['ljpw']['J'],
-                       after_result['ljpw']['P'], after_result['ljpw']['W'])
+        before_coords = (
+            before_result["ljpw"]["L"],
+            before_result["ljpw"]["J"],
+            before_result["ljpw"]["P"],
+            before_result["ljpw"]["W"],
+        )
+        after_coords = (
+            after_result["ljpw"]["L"],
+            after_result["ljpw"]["J"],
+            after_result["ljpw"]["P"],
+            after_result["ljpw"]["W"],
+        )
 
         before_dist = distance(before_coords, NATURAL_EQUILIBRIUM)
         after_dist = distance(after_coords, NATURAL_EQUILIBRIUM)
@@ -569,16 +549,20 @@ def test_refactoring_sequences():
         else:
             degradations += 1
 
-        results.append({
-            'name': name,
-            'before_dist': before_dist,
-            'after_dist': after_dist,
-            'delta': delta,
-            'moved_toward_ne': moved_toward
-        })
+        results.append(
+            {
+                "name": name,
+                "before_dist": before_dist,
+                "after_dist": after_dist,
+                "delta": delta,
+                "moved_toward_ne": moved_toward,
+            }
+        )
 
     success_rate = improvements / len(REFACTORING_BEFORE_AFTER) * 100
-    print(f"Refactorings toward NE: {improvements}/{len(REFACTORING_BEFORE_AFTER)} ({success_rate:.0f}%)")
+    print(
+        f"Refactorings toward NE: {improvements}/{len(REFACTORING_BEFORE_AFTER)} ({success_rate:.0f}%)"
+    )
     print(f"{'✓ HYPOTHESIS CONFIRMED' if success_rate >= 70 else '✗ HYPOTHESIS CHALLENGED'}")
     print()
 
@@ -599,16 +583,16 @@ def test_algorithmic_complexity():
 
     for name, code in ALGORITHMIC_COMPLEXITY.items():
         result = analyze_quick(code)
-        l = result['ljpw']['L']
-        j = result['ljpw']['J']
-        p = result['ljpw']['P']
-        w = result['ljpw']['W']
+        l = result["ljpw"]["L"]
+        j = result["ljpw"]["J"]
+        p = result["ljpw"]["P"]
+        w = result["ljpw"]["W"]
         coords = (l, j, p, w)
         genome = get_genome(result)
         dist_to_ne = distance(coords, NATURAL_EQUILIBRIUM)
 
         # Extract complexity from name
-        complexity = name.split('_')[-1].replace('_', ' ')
+        complexity = name.split("_")[-1].replace("_", " ")
 
         print(f"{name} ({complexity}):")
         print(f"  Genome: {genome}")
@@ -616,13 +600,15 @@ def test_algorithmic_complexity():
         print(f"  Distance from NE: {dist_to_ne:.3f}")
         print()
 
-        results.append({
-            'name': name,
-            'complexity': complexity,
-            'coords': coords,
-            'genome': genome,
-            'dist_to_ne': dist_to_ne
-        })
+        results.append(
+            {
+                "name": name,
+                "complexity": complexity,
+                "coords": coords,
+                "genome": genome,
+                "dist_to_ne": dist_to_ne,
+            }
+        )
 
     # Test passes if no exceptions were raised
     assert len(results) > 0
@@ -658,7 +644,9 @@ def main():
     print(f"✓ Tested {len(refactoring_results)} refactoring sequences")
     print(f"✓ Tested {len(complexity_results)} algorithmic complexities")
     print()
-    print(f"Total test cases: {len(edge_results) + len(pattern_results) + len(smell_results) + len(refactoring_results) + len(complexity_results)}")
+    print(
+        f"Total test cases: {len(edge_results) + len(pattern_results) + len(smell_results) + len(refactoring_results) + len(complexity_results)}"
+    )
     print()
 
 

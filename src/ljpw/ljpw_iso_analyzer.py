@@ -26,16 +26,17 @@ Version: 1.0 (Proof of Concept)
 Date: November 2025
 """
 
-import sys
-import os
 import math
-from pathlib import Path
+import os
+import sys
 from collections import Counter, defaultdict
-from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 try:
     import pycdlib
+
     PYCDLIB_AVAILABLE = True
 except ImportError:
     PYCDLIB_AVAILABLE = False
@@ -49,6 +50,7 @@ NATURAL_EQUILIBRIUM = (0.618034, 0.414214, 0.718282, 0.693147)
 @dataclass
 class ISOStructure:
     """Extracted structural information from ISO"""
+
     total_files: int
     total_dirs: int
     total_size: int
@@ -86,7 +88,7 @@ class LJPWISOAnalyzer:
             Dictionary with LJPW scores, genome, and insights
         """
         if not os.path.exists(iso_path):
-            return {'error': f'ISO file not found: {iso_path}'}
+            return {"error": f"ISO file not found: {iso_path}"}
 
         if not PYCDLIB_AVAILABLE:
             # Fallback: basic file-based analysis
@@ -106,7 +108,7 @@ class LJPWISOAnalyzer:
 
         # Calculate health with improved formula
         distance = self._distance_from_ne((L_score, J_score, P_score, W_score))
-        
+
         # Improved health calculation (matching ljpw_standalone.py)
         distance_health = max(0, 1.0 - distance / 3.0)
         magnitude = (L_score + J_score + P_score + W_score) / 4.0
@@ -121,25 +123,25 @@ class LJPWISOAnalyzer:
         iso_type = self._detect_type(structure)
 
         return {
-            'filename': os.path.basename(iso_path),
-            'size_mb': structure.total_size / (1024 * 1024),
-            'type': iso_type,
-            'ljpw': {
-                'L': round(L_score, 3),
-                'J': round(J_score, 3),
-                'P': round(P_score, 3),
-                'W': round(W_score, 3)
+            "filename": os.path.basename(iso_path),
+            "size_mb": structure.total_size / (1024 * 1024),
+            "type": iso_type,
+            "ljpw": {
+                "L": round(L_score, 3),
+                "J": round(J_score, 3),
+                "P": round(P_score, 3),
+                "W": round(W_score, 3),
             },
-            'genome': genome,
-            'health': round(health * 100, 1),
-            'distance_from_ne': round(distance, 3),
-            'insights': insights,
-            'structure': {
-                'files': structure.total_files,
-                'directories': structure.total_dirs,
-                'max_depth': structure.max_depth,
-                'avg_depth': round(structure.avg_depth, 2)
-            }
+            "genome": genome,
+            "health": round(health * 100, 1),
+            "distance_from_ne": round(distance, 3),
+            "insights": insights,
+            "structure": {
+                "files": structure.total_files,
+                "directories": structure.total_dirs,
+                "max_depth": structure.max_depth,
+                "avg_depth": round(structure.avg_depth, 2),
+            },
         }
 
     def _extract_structure(self, iso_path: str) -> ISOStructure:
@@ -160,8 +162,8 @@ class LJPWISOAnalyzer:
         binaries = 0
 
         # Walk the ISO filesystem
-        for dirname, dirlist, filelist in iso.walk(iso_path='/'):
-            depth = dirname.count('/')
+        for dirname, dirlist, filelist in iso.walk(iso_path="/"):
+            depth = dirname.count("/")
             directory_depths.append(depth)
             total_dirs += 1
 
@@ -173,26 +175,26 @@ class LJPWISOAnalyzer:
                 file_types[ext] += 1
 
                 # Categorize files
-                if ext in ['.gz', '.xz', '.bz2', '.zst', '.cab', '.zip']:
+                if ext in [".gz", ".xz", ".bz2", ".zst", ".cab", ".zip"]:
                     compressed += 1
-                if ext in ['.md5', '.sha256', '.sha1', '.sig', '.asc']:
+                if ext in [".md5", ".sha256", ".sha1", ".sig", ".asc"]:
                     checksums += 1
-                if ext in ['.conf', '.cfg', '.xml', '.json', '.yaml', '.ini']:
+                if ext in [".conf", ".cfg", ".xml", ".json", ".yaml", ".ini"]:
                     configs += 1
-                if ext in ['.sh', '.py', '.pl', '.rb', '.ps1', '.bat']:
+                if ext in [".sh", ".py", ".pl", ".rb", ".ps1", ".bat"]:
                     scripts += 1
-                if ext in ['.md', '.txt', '.rst', '.pdf', '.html'] or 'readme' in filename.lower():
+                if ext in [".md", ".txt", ".rst", ".pdf", ".html"] or "readme" in filename.lower():
                     docs += 1
-                if ext in ['.exe', '.dll', '.so', '.bin', '.elf']:
+                if ext in [".exe", ".dll", ".so", ".bin", ".elf"]:
                     binaries += 1
 
                 # Try to get file size (if available)
                 try:
                     full_path = os.path.join(dirname, filename)
                     entry = iso.get_entry(iso_path=full_path)
-                    if hasattr(entry, 'get_data_length'):
+                    if hasattr(entry, "get_data_length"):
                         total_size += entry.get_data_length()
-                except:
+                except Exception:
                     pass
 
         iso.close()
@@ -214,7 +216,7 @@ class LJPWISOAnalyzer:
             binary_files=binaries,
             max_depth=max_depth,
             avg_depth=avg_depth,
-            naming_patterns=[]
+            naming_patterns=[],
         )
 
     def _analyze_fallback(self, iso_path: str) -> Dict:
@@ -225,22 +227,22 @@ class LJPWISOAnalyzer:
         filename = os.path.basename(iso_path).lower()
 
         # Guess type from filename
-        if 'server' in filename:
-            iso_type = 'Server Operating System'
+        if "server" in filename:
+            iso_type = "Server Operating System"
             L, J, P, W = 0.70, 0.75, 0.65, 0.80
-        elif 'desktop' in filename or 'live' in filename:
-            iso_type = 'Desktop Operating System'
+        elif "desktop" in filename or "live" in filename:
+            iso_type = "Desktop Operating System"
             L, J, P, W = 0.65, 0.70, 0.70, 0.75
-        elif 'minimal' in filename or 'net' in filename:
-            iso_type = 'Minimal Installation'
+        elif "minimal" in filename or "net" in filename:
+            iso_type = "Minimal Installation"
             L, J, P, W = 0.50, 0.65, 0.75, 0.70
         else:
-            iso_type = 'Unknown ISO'
+            iso_type = "Unknown ISO"
             L, J, P, W = 0.60, 0.65, 0.65, 0.70
 
         genome = self._generate_genome(L, J, P, W)
         distance = self._distance_from_ne((L, J, P, W))
-        
+
         # Improved health calculation (matching ljpw_standalone.py)
         distance_health = max(0, 1.0 - distance / 3.0)
         magnitude = (L + J + P + W) / 4.0
@@ -249,15 +251,15 @@ class LJPWISOAnalyzer:
         health = 0.7 * distance_health + 0.3 * magnitude_health
 
         return {
-            'filename': os.path.basename(iso_path),
-            'size_mb': size_mb,
-            'type': iso_type,
-            'ljpw': {'L': L, 'J': J, 'P': P, 'W': W},
-            'genome': genome,
-            'health': round(health * 100, 1),
-            'distance_from_ne': round(distance, 3),
-            'insights': ['(Basic analysis - install pycdlib for detailed analysis)'],
-            'structure': {'note': 'Install pycdlib for detailed structure analysis'}
+            "filename": os.path.basename(iso_path),
+            "size_mb": size_mb,
+            "type": iso_type,
+            "ljpw": {"L": L, "J": J, "P": P, "W": W},
+            "genome": genome,
+            "health": round(health * 100, 1),
+            "distance_from_ne": round(distance, 3),
+            "insights": ["(Basic analysis - install pycdlib for detailed analysis)"],
+            "structure": {"note": "Install pycdlib for detailed structure analysis"},
         }
 
     def _calculate_love(self, s: ISOStructure) -> float:
@@ -392,7 +394,9 @@ class LJPWISOAnalyzer:
             score += min(0.25, script_ratio * 50)
 
         # Balanced depth indicates architectural thinking
-        depth_variance = max(s.directory_depths) - min(s.directory_depths) if s.directory_depths else 0
+        depth_variance = (
+            max(s.directory_depths) - min(s.directory_depths) if s.directory_depths else 0
+        )
         if depth_variance <= 5:  # Consistent depth
             score += 0.15
 
@@ -400,6 +404,7 @@ class LJPWISOAnalyzer:
 
     def _generate_genome(self, L: float, J: float, P: float, W: float) -> str:
         """Generate LJPW genome string"""
+
         def encode_dimension(value: float) -> str:
             # Map 0.0-1.0 to 0-9
             level = int(value * 10)
@@ -411,15 +416,11 @@ class LJPWISOAnalyzer:
         """Calculate Euclidean distance from Natural Equilibrium"""
         L, J, P, W = state
         L_ne, J_ne, P_ne, W_ne = NATURAL_EQUILIBRIUM
-        return math.sqrt(
-            (L - L_ne)**2 +
-            (J - J_ne)**2 +
-            (P - P_ne)**2 +
-            (W - W_ne)**2
-        )
+        return math.sqrt((L - L_ne) ** 2 + (J - J_ne) ** 2 + (P - P_ne) ** 2 + (W - W_ne) ** 2)
 
-    def _generate_insights(self, L: float, J: float, P: float, W: float,
-                          s: ISOStructure) -> List[str]:
+    def _generate_insights(
+        self, L: float, J: float, P: float, W: float, s: ISOStructure
+    ) -> List[str]:
         """Generate actionable insights"""
         insights = []
 
@@ -430,22 +431,30 @@ class LJPWISOAnalyzer:
 
         # Dimension-specific insights
         if L < 0.50:
-            insights.append(f"Low Safety (L={L:.2f}): Few checksums ({s.checksum_files}), minimal validation")
+            insights.append(
+                f"Low Safety (L={L:.2f}): Few checksums ({s.checksum_files}), minimal validation"
+            )
         elif L > 0.75:
             insights.append(f"High Safety (L={L:.2f}): Excellent validation and error handling")
 
         if J < 0.50:
-            insights.append(f"Low Structure (J={J:.2f}): Disorganized hierarchy (depth: {s.avg_depth:.1f})")
+            insights.append(
+                f"Low Structure (J={J:.2f}): Disorganized hierarchy (depth: {s.avg_depth:.1f})"
+            )
         elif J > 0.75:
             insights.append(f"Good Structure (J={J:.2f}): Well-organized, modular design")
 
         if P > 0.80:
-            insights.append(f"High Performance (P={P:.2f}): Heavily optimized ({s.compressed_files} compressed files)")
+            insights.append(
+                f"High Performance (P={P:.2f}): Heavily optimized ({s.compressed_files} compressed files)"
+            )
         elif P < 0.50:
             insights.append(f"Low Performance (P={P:.2f}): Minimal optimization")
 
         if W > 0.75:
-            insights.append(f"High Wisdom (W={W:.2f}): Thoughtful design ({s.doc_files} docs, {s.config_files} configs)")
+            insights.append(
+                f"High Wisdom (W={W:.2f}): Thoughtful design ({s.doc_files} docs, {s.config_files} configs)"
+            )
         elif W < 0.50:
             insights.append(f"Low Wisdom (W={W:.2f}): Limited documentation and configuration")
 
@@ -461,8 +470,9 @@ class LJPWISOAnalyzer:
     def _detect_type(self, s: ISOStructure) -> str:
         """Detect ISO type from structural patterns"""
         # Heuristics based on file patterns
-        has_kernel = any('.vmlinuz' in str(ext) or 'kernel' in str(ext)
-                        for ext in s.file_types.keys())
+        has_kernel = any(
+            ".vmlinuz" in str(ext) or "kernel" in str(ext) for ext in s.file_types.keys()
+        )
         has_installer = s.script_files > 10
         has_docs = s.doc_files > 20
 
@@ -488,10 +498,7 @@ class LJPWISOAnalyzer:
             result = self.analyze(iso_path)
             results.append(result)
 
-        return {
-            'comparison': results,
-            'summary': self._generate_comparison_summary(results)
-        }
+        return {"comparison": results, "summary": self._generate_comparison_summary(results)}
 
     def _generate_comparison_summary(self, results: List[Dict]) -> str:
         """Generate comparison summary"""
@@ -499,50 +506,67 @@ class LJPWISOAnalyzer:
             return "No ISOs to compare"
 
         # Find highest in each dimension
-        highest_L = max(results, key=lambda r: r['ljpw']['L'])
-        highest_J = max(results, key=lambda r: r['ljpw']['J'])
-        highest_P = max(results, key=lambda r: r['ljpw']['P'])
-        highest_W = max(results, key=lambda r: r['ljpw']['W'])
-        healthiest = max(results, key=lambda r: r['health'])
+        highest_L = max(results, key=lambda r: r["ljpw"]["L"])
+        highest_J = max(results, key=lambda r: r["ljpw"]["J"])
+        highest_P = max(results, key=lambda r: r["ljpw"]["P"])
+        highest_W = max(results, key=lambda r: r["ljpw"]["W"])
+        healthiest = max(results, key=lambda r: r["health"])
 
         summary = []
-        summary.append(f"Most Safe (L):      {highest_L['filename']} (L={highest_L['ljpw']['L']:.2f})")
-        summary.append(f"Best Structured (J): {highest_J['filename']} (J={highest_J['ljpw']['J']:.2f})")
-        summary.append(f"Most Optimized (P):  {highest_P['filename']} (P={highest_P['ljpw']['P']:.2f})")
-        summary.append(f"Most Wise (W):       {highest_W['filename']} (W={highest_W['ljpw']['W']:.2f})")
-        summary.append(f"Healthiest Overall:  {healthiest['filename']} ({healthiest['health']:.1f}%)")
+        summary.append(
+            f"Most Safe (L):      {highest_L['filename']} (L={highest_L['ljpw']['L']:.2f})"
+        )
+        summary.append(
+            f"Best Structured (J): {highest_J['filename']} (J={highest_J['ljpw']['J']:.2f})"
+        )
+        summary.append(
+            f"Most Optimized (P):  {highest_P['filename']} (P={highest_P['ljpw']['P']:.2f})"
+        )
+        summary.append(
+            f"Most Wise (W):       {highest_W['filename']} (W={highest_W['ljpw']['W']:.2f})"
+        )
+        summary.append(
+            f"Healthiest Overall:  {healthiest['filename']} ({healthiest['health']:.1f}%)"
+        )
 
-        return '\n'.join(summary)
+        return "\n".join(summary)
 
 
 # CLI Interface
 
+
 def format_result(result: Dict) -> str:
     """Format analysis result for display"""
     output = []
-    output.append("="*70)
+    output.append("=" * 70)
     output.append(f"ISO: {result['filename']}")
     output.append(f"Type: {result.get('type', 'Unknown')}")
     output.append(f"Size: {result.get('size_mb', 0):.1f} MB")
-    output.append("-"*70)
+    output.append("-" * 70)
 
-    ljpw = result['ljpw']
-    output.append(f"LJPW State: L={ljpw['L']:.3f}, J={ljpw['J']:.3f}, P={ljpw['P']:.3f}, W={ljpw['W']:.3f}")
+    ljpw = result["ljpw"]
+    output.append(
+        f"LJPW State: L={ljpw['L']:.3f}, J={ljpw['J']:.3f}, P={ljpw['P']:.3f}, W={ljpw['W']:.3f}"
+    )
     output.append(f"Genome: {result['genome']}")
     output.append(f"Health: {result['health']}%")
     output.append(f"Distance from NE: {result['distance_from_ne']:.3f}")
 
-    if 'structure' in result and isinstance(result['structure'], dict) and 'files' in result['structure']:
-        s = result['structure']
+    if (
+        "structure" in result
+        and isinstance(result["structure"], dict)
+        and "files" in result["structure"]
+    ):
+        s = result["structure"]
         output.append(f"\nStructure: {s['files']} files, {s['directories']} dirs")
         output.append(f"Depth: avg={s['avg_depth']:.1f}, max={s['max_depth']}")
 
     output.append("\nInsights:")
-    for insight in result['insights']:
+    for insight in result["insights"]:
         output.append(f"  {insight}")
 
-    output.append("="*70)
-    return '\n'.join(output)
+    output.append("=" * 70)
+    return "\n".join(output)
 
 
 def main():
@@ -566,34 +590,34 @@ def main():
     command = sys.argv[1]
     analyzer = LJPWISOAnalyzer()
 
-    if command == 'analyze':
+    if command == "analyze":
         iso_path = sys.argv[2]
         result = analyzer.analyze(iso_path)
         print(format_result(result))
 
-    elif command == 'compare':
+    elif command == "compare":
         iso_paths = sys.argv[2:]
         comparison = analyzer.compare(iso_paths)
 
-        print("="*70)
+        print("=" * 70)
         print("ISO COMPARISON")
-        print("="*70)
+        print("=" * 70)
         print()
 
-        for result in comparison['comparison']:
+        for result in comparison["comparison"]:
             print(format_result(result))
             print()
 
-        print("="*70)
+        print("=" * 70)
         print("SUMMARY")
-        print("-"*70)
-        print(comparison['summary'])
-        print("="*70)
+        print("-" * 70)
+        print(comparison["summary"])
+        print("=" * 70)
 
     else:
         print(f"Unknown command: {command}")
         print("Use 'analyze' or 'compare'")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

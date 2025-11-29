@@ -5,18 +5,20 @@ Tests accuracy, size, and validation for different precision settings
 """
 
 import math
+
 from ljpw_semantic_compressor import (
+    LJPWCodon,
+    LJPWQuantizer,
     SemanticCompressor,
     SemanticDecompressor,
-    LJPWQuantizer,
-    LJPWCodon,
 )
+
 
 def test_invalid_levels():
     """Test that invalid quantization levels are properly rejected"""
-    print("="*70)
+    print("=" * 70)
     print("TEST 1: Invalid Quantization Levels")
-    print("="*70)
+    print("=" * 70)
 
     invalid_cases = [
         (3, "Not a power of 2"),
@@ -44,15 +46,15 @@ def test_invalid_levels():
 
 def test_recommend_levels():
     """Test the recommend_levels helper"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 2: Recommendation System")
-    print("="*70)
+    print("=" * 70)
 
     test_cases = [
-        ('fast', 4),
-        ('balanced', 8),
-        ('precise', 16),
-        ('exact', 32),
+        ("fast", 4),
+        ("balanced", 8),
+        ("precise", 16),
+        ("exact", 32),
     ]
 
     passed = 0
@@ -66,7 +68,7 @@ def test_recommend_levels():
 
     # Test invalid use case
     try:
-        LJPWQuantizer.recommend_levels('invalid')
+        LJPWQuantizer.recommend_levels("invalid")
         print("✗ FAIL: Invalid use case should raise ValueError")
         assert False, "Invalid use case should raise ValueError"
     except ValueError:
@@ -79,14 +81,14 @@ def test_recommend_levels():
 
 def calculate_error(original, reconstructed):
     """Calculate Euclidean distance between states"""
-    return math.sqrt(sum((o - r)**2 for o, r in zip(original, reconstructed)))
+    return math.sqrt(sum((o - r) ** 2 for o, r in zip(original, reconstructed)))
 
 
 def test_quantization_accuracy():
     """Test compression accuracy at different quantization levels"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 3: Quantization Accuracy vs Levels")
-    print("="*70)
+    print("=" * 70)
 
     # Test states covering different value ranges
     test_states = [
@@ -131,28 +133,32 @@ def test_quantization_accuracy():
         print(f"{levels:<10} {avg_error:<12.4f} {max_error:<12.4f} {genome_size:<12} {status:<10}")
 
         results[levels] = {
-            'avg_error': avg_error,
-            'max_error': max_error,
-            'genome_size': genome_size,
+            "avg_error": avg_error,
+            "max_error": max_error,
+            "genome_size": genome_size,
         }
 
     # Verify that higher levels = better accuracy
     print("\nAccuracy Improvement Analysis:")
     print("-" * 70)
 
-    prev_error = float('inf')
+    prev_error = float("inf")
     monotonic = True
 
     for levels in levels_to_test:
-        current_error = results[levels]['avg_error']
-        improvement = ((prev_error - current_error) / prev_error * 100) if prev_error != float('inf') else 0
+        current_error = results[levels]["avg_error"]
+        improvement = (
+            ((prev_error - current_error) / prev_error * 100) if prev_error != float("inf") else 0
+        )
 
-        if current_error >= prev_error and prev_error != float('inf'):
+        if current_error >= prev_error and prev_error != float("inf"):
             monotonic = False
             print(f"{levels} levels: {current_error:.4f} error (✗ WORSE than previous!)")
         else:
-            if prev_error != float('inf'):
-                print(f"{levels} levels: {current_error:.4f} error ({improvement:.1f}% improvement)")
+            if prev_error != float("inf"):
+                print(
+                    f"{levels} levels: {current_error:.4f} error ({improvement:.1f}% improvement)"
+                )
             else:
                 print(f"{levels} levels: {current_error:.4f} error (baseline)")
 
@@ -168,9 +174,9 @@ def test_quantization_accuracy():
 
 def test_round_trip_all_levels():
     """Test round-trip compression at all quantization levels"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 4: Round-Trip Integrity (All Levels)")
-    print("="*70)
+    print("=" * 70)
 
     trajectory = [
         (0.2, 0.3, 0.9, 0.2),
@@ -187,8 +193,7 @@ def test_round_trip_all_levels():
 
         # Compress
         genome = compressor.compress_state_sequence(
-            trajectory,
-            metadata={'test': f'{levels}-level quantization'}
+            trajectory, metadata={"test": f"{levels}-level quantization"}
         )
 
         # Decompress
@@ -199,13 +204,15 @@ def test_round_trip_all_levels():
 
         # Check integrity
         passed = (
-            len(reconstructed) == len(trajectory) and
-            validation['valid'] and
-            validation['integrity_score'] == 1.0
+            len(reconstructed) == len(trajectory)
+            and validation["valid"]
+            and validation["integrity_score"] == 1.0
         )
 
         status = "✓ PASS" if passed else "✗ FAIL"
-        print(f"{levels:2} levels: {status} - {len(reconstructed)} states, {validation['integrity_score']:.1%} integrity")
+        print(
+            f"{levels:2} levels: {status} - {len(reconstructed)} states, {validation['integrity_score']:.1%} integrity"
+        )
 
         if not passed:
             all_passed = False
@@ -215,9 +222,9 @@ def test_round_trip_all_levels():
 
 def test_codon_parsing_edge_cases():
     """Test that codon parsing handles edge cases properly"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST 5: Codon Parsing Edge Cases")
-    print("="*70)
+    print("=" * 70)
 
     valid_cases = [
         "L0J0P0",
@@ -263,9 +270,9 @@ def test_codon_parsing_edge_cases():
 
 def main():
     """Run all tests"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("CONFIGURABLE QUANTIZATION TEST SUITE")
-    print("="*70)
+    print("=" * 70)
     print("\nTesting configurable precision levels in LJPW semantic compression\n")
 
     tests = [
@@ -285,13 +292,14 @@ def main():
         except Exception as e:
             print(f"\n✗ EXCEPTION in {name}: {e}")
             import traceback
+
             traceback.print_exc()
             results.append((name, False))
 
     # Summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("TEST SUMMARY")
-    print("="*70)
+    print("=" * 70)
 
     for name, passed in results:
         status = "✓ PASS" if passed else "✗ FAIL"
@@ -300,9 +308,9 @@ def main():
     total = len(results)
     passed_count = sum(1 for _, passed in results if passed)
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print(f"OVERALL: {passed_count}/{total} test suites passed")
-    print("="*70)
+    print("=" * 70)
 
     if passed_count == total:
         print("\n✅ ALL TESTS PASSED - Configurable quantization is working correctly!")
@@ -312,5 +320,5 @@ def main():
         return 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

@@ -17,38 +17,35 @@ Geometric solution:
 
 import sys
 from pathlib import Path
-from typing import Tuple, Dict, List
+from typing import Dict, List, Tuple
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ljpw"))
 from ljpw_standalone import analyze_quick, calculate_distance
 
 # ============================================================================
 # ANALOGY ENGINE
 # ============================================================================
 
-def calculate_vector(pos1: Tuple[float, float, float, float],
-                     pos2: Tuple[float, float, float, float]) -> Tuple[float, float, float, float]:
+
+def calculate_vector(
+    pos1: Tuple[float, float, float, float], pos2: Tuple[float, float, float, float]
+) -> Tuple[float, float, float, float]:
     """Calculate semantic vector from pos1 to pos2."""
-    return (
-        pos2[0] - pos1[0],
-        pos2[1] - pos1[1],
-        pos2[2] - pos1[2],
-        pos2[3] - pos1[3]
-    )
+    return (pos2[0] - pos1[0], pos2[1] - pos1[1], pos2[2] - pos1[2], pos2[3] - pos1[3])
 
-def apply_vector(pos: Tuple[float, float, float, float],
-                vec: Tuple[float, float, float, float]) -> Tuple[float, float, float, float]:
+
+def apply_vector(
+    pos: Tuple[float, float, float, float], vec: Tuple[float, float, float, float]
+) -> Tuple[float, float, float, float]:
     """Apply semantic vector to position."""
-    return (
-        pos[0] + vec[0],
-        pos[1] + vec[1],
-        pos[2] + vec[2],
-        pos[3] + vec[3]
-    )
+    return (pos[0] + vec[0], pos[1] + vec[1], pos[2] + vec[2], pos[3] + vec[3])
 
-def solve_analogy(A: Tuple[float, float, float, float],
-                 B: Tuple[float, float, float, float],
-                 C: Tuple[float, float, float, float]) -> Tuple[float, float, float, float]:
+
+def solve_analogy(
+    A: Tuple[float, float, float, float],
+    B: Tuple[float, float, float, float],
+    C: Tuple[float, float, float, float],
+) -> Tuple[float, float, float, float]:
     """
     Solve: A is to B as C is to ?
 
@@ -59,6 +56,7 @@ def solve_analogy(A: Tuple[float, float, float, float],
     vector_AB = calculate_vector(A, B)
     D = apply_vector(C, vector_AB)
     return D
+
 
 def describe_vector(vec: Tuple[float, float, float, float]) -> str:
     """Describe what a semantic vector represents."""
@@ -87,13 +85,16 @@ def describe_vector(vec: Tuple[float, float, float, float]) -> str:
 
     return ", ".join(changes)
 
+
 def format_position(pos: Tuple[float, float, float, float]) -> str:
     """Format position for display."""
     return f"L={pos[0]:.2f}, J={pos[1]:.2f}, P={pos[2]:.2f}, W={pos[3]:.2f}"
 
+
 # ============================================================================
 # TEST CASES
 # ============================================================================
+
 
 def test_analogies():
     print("\n" + "=" * 70)
@@ -134,12 +135,24 @@ def get(key):
     result_safe = analyze_quick(safe_func)
     result_getter = analyze_quick(simple_getter)
 
-    pos_simple = (result_simple['ljpw']['L'], result_simple['ljpw']['J'],
-                 result_simple['ljpw']['P'], result_simple['ljpw']['W'])
-    pos_safe = (result_safe['ljpw']['L'], result_safe['ljpw']['J'],
-               result_safe['ljpw']['P'], result_safe['ljpw']['W'])
-    pos_getter = (result_getter['ljpw']['L'], result_getter['ljpw']['J'],
-                 result_getter['ljpw']['P'], result_getter['ljpw']['W'])
+    pos_simple = (
+        result_simple["ljpw"]["L"],
+        result_simple["ljpw"]["J"],
+        result_simple["ljpw"]["P"],
+        result_simple["ljpw"]["W"],
+    )
+    pos_safe = (
+        result_safe["ljpw"]["L"],
+        result_safe["ljpw"]["J"],
+        result_safe["ljpw"]["P"],
+        result_safe["ljpw"]["W"],
+    )
+    pos_getter = (
+        result_getter["ljpw"]["L"],
+        result_getter["ljpw"]["J"],
+        result_getter["ljpw"]["P"],
+        result_getter["ljpw"]["W"],
+    )
 
     print(f"\nA (simple function): {format_position(pos_simple)}")
     print(f"B (safe function):   {format_position(pos_safe)}")
@@ -196,12 +209,24 @@ def validate(x):
     result_doc = analyze_quick(documented)
     result_val = analyze_quick(undoc_validator)
 
-    pos_undoc = (result_undoc['ljpw']['L'], result_undoc['ljpw']['J'],
-                result_undoc['ljpw']['P'], result_undoc['ljpw']['W'])
-    pos_doc = (result_doc['ljpw']['L'], result_doc['ljpw']['J'],
-              result_doc['ljpw']['P'], result_doc['ljpw']['W'])
-    pos_val = (result_val['ljpw']['L'], result_val['ljpw']['J'],
-              result_val['ljpw']['P'], result_val['ljpw']['W'])
+    pos_undoc = (
+        result_undoc["ljpw"]["L"],
+        result_undoc["ljpw"]["J"],
+        result_undoc["ljpw"]["P"],
+        result_undoc["ljpw"]["W"],
+    )
+    pos_doc = (
+        result_doc["ljpw"]["L"],
+        result_doc["ljpw"]["J"],
+        result_doc["ljpw"]["P"],
+        result_doc["ljpw"]["W"],
+    )
+    pos_val = (
+        result_val["ljpw"]["L"],
+        result_val["ljpw"]["J"],
+        result_val["ljpw"]["P"],
+        result_val["ljpw"]["W"],
+    )
 
     print(f"\nA (undocumented): {format_position(pos_undoc)}")
     print(f"B (documented):   {format_position(pos_doc)}")
@@ -255,12 +280,24 @@ def api_call(url):
     result_prod = analyze_quick(production)
     result_api = analyze_quick(simple_api)
 
-    pos_proto = (result_proto['ljpw']['L'], result_proto['ljpw']['J'],
-                result_proto['ljpw']['P'], result_proto['ljpw']['W'])
-    pos_prod = (result_prod['ljpw']['L'], result_prod['ljpw']['J'],
-               result_prod['ljpw']['P'], result_prod['ljpw']['W'])
-    pos_api = (result_api['ljpw']['L'], result_api['ljpw']['J'],
-              result_api['ljpw']['P'], result_api['ljpw']['W'])
+    pos_proto = (
+        result_proto["ljpw"]["L"],
+        result_proto["ljpw"]["J"],
+        result_proto["ljpw"]["P"],
+        result_proto["ljpw"]["W"],
+    )
+    pos_prod = (
+        result_prod["ljpw"]["L"],
+        result_prod["ljpw"]["J"],
+        result_prod["ljpw"]["P"],
+        result_prod["ljpw"]["W"],
+    )
+    pos_api = (
+        result_api["ljpw"]["L"],
+        result_api["ljpw"]["J"],
+        result_api["ljpw"]["P"],
+        result_api["ljpw"]["W"],
+    )
 
     print(f"\nA (prototype):  {format_position(pos_proto)}")
     print(f"B (production): {format_position(pos_prod)}")
@@ -293,7 +330,7 @@ def api_call(url):
         vec_AB[0] + vec_BC[0],
         vec_AB[1] + vec_BC[1],
         vec_AB[2] + vec_BC[2],
-        vec_AB[3] + vec_BC[3]
+        vec_AB[3] + vec_BC[3],
     )
 
     # Apply both transformations
@@ -320,7 +357,8 @@ def api_call(url):
     print("\n" + "=" * 70)
     print("CONCLUSIONS")
     print("=" * 70)
-    print("""
+    print(
+        """
 If analogies work geometrically, this proves:
 
 1. Semantic relationships are geometric transformations
@@ -333,8 +371,10 @@ Potential applications:
 - Example-based refactoring ("make this like that")
 - Pattern transfer across codebases
 - Semantic code search by relationship
-    """)
+    """
+    )
     print("=" * 70 + "\n")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     test_analogies()

@@ -6,6 +6,7 @@ Classic divide-and-conquer sorting algorithm.
 Average time complexity: O(n log n)
 """
 
+
 def quicksort(arr):
     """
     Sort an array using the quicksort algorithm.
@@ -76,14 +77,9 @@ def partition(arr, low, high):
 
 
 # Example usage
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Test data
-    test_arrays = [
-        [64, 34, 25, 12, 22, 11, 90],
-        [5, 1, 4, 2, 8],
-        [1],
-        []
-    ]
+    test_arrays = [[64, 34, 25, 12, 22, 11, 90], [5, 1, 4, 2, 8], [1], []]
 
     for arr in test_arrays:
         sorted_arr = quicksort(arr.copy())

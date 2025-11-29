@@ -13,14 +13,14 @@ This serves as proof that LJPW works on real, messy production code,
 not just curated examples.
 """
 
-import sys
-from pathlib import Path
 import json
 import math
+import sys
 from collections import defaultdict
+from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
-from ljpw_standalone import analyze_quick, calculate_distance
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from src.ljpw.ljpw_standalone import analyze_quick, calculate_distance
 
 # Natural Equilibrium
 NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
@@ -29,17 +29,17 @@ NATURAL_EQUILIBRIUM = (0.618, 0.414, 0.718, 0.693)
 def analyze_python_file(filepath):
     """Analyze a single Python file"""
     try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             code = f.read()
 
         if not code.strip():
             return None
 
         result = analyze_quick(code)
-        l = result['ljpw']['L']
-        j = result['ljpw']['J']
-        p = result['ljpw']['P']
-        w = result['ljpw']['W']
+        l = result["ljpw"]["L"]
+        j = result["ljpw"]["J"]
+        p = result["ljpw"]["P"]
+        w = result["ljpw"]["W"]
 
         coords = (l, j, p, w)
         dist_to_ne = calculate_distance(coords, NATURAL_EQUILIBRIUM)
@@ -57,13 +57,13 @@ def analyze_python_file(filepath):
         genome = f"L{L_digit}J{J_digit}P{P_digit}W{W_digit}"
 
         return {
-            'file': str(filepath),
-            'coords': coords,
-            'genome': genome,
-            'dist_to_ne': dist_to_ne,
-            'dist_to_anchor': dist_to_anchor,
-            'health': health,
-            'loc': len(code.split('\n'))
+            "file": str(filepath),
+            "coords": coords,
+            "genome": genome,
+            "dist_to_ne": dist_to_ne,
+            "dist_to_anchor": dist_to_anchor,
+            "health": health,
+            "loc": len(code.split("\n")),
         }
 
     except Exception as e:
@@ -71,7 +71,7 @@ def analyze_python_file(filepath):
         return None
 
 
-def analyze_codebase(root_dir='.', pattern='*.py', max_files=50):
+def analyze_codebase(root_dir=".", pattern="*.py", max_files=50):
     """Analyze all Python files in a directory"""
     print("=" * 70)
     print("REAL-WORLD CODEBASE VALIDATION")
@@ -103,7 +103,7 @@ def print_distribution_analysis(results):
     print()
 
     # Health score distribution
-    health_scores = [r['health'] for r in results]
+    health_scores = [r["health"] for r in results]
     avg_health = sum(health_scores) / len(health_scores)
     min_health = min(health_scores)
     max_health = max(health_scores)
@@ -115,7 +115,7 @@ def print_distribution_analysis(results):
     print()
 
     # Distance to NE distribution
-    distances = [r['dist_to_ne'] for r in results]
+    distances = [r["dist_to_ne"] for r in results]
     avg_dist = sum(distances) / len(distances)
 
     print(f"Distance to Natural Equilibrium:")
@@ -126,18 +126,20 @@ def print_distribution_analysis(results):
     coords_sum = [0, 0, 0, 0]
     for r in results:
         for i in range(4):
-            coords_sum[i] += r['coords'][i]
+            coords_sum[i] += r["coords"][i]
 
     n = len(results)
     avg_coords = tuple(c / n for c in coords_sum)
 
     print(f"Average Position:")
-    print(f"  L={avg_coords[0]:.3f}, J={avg_coords[1]:.3f}, P={avg_coords[2]:.3f}, W={avg_coords[3]:.3f}")
+    print(
+        f"  L={avg_coords[0]:.3f}, J={avg_coords[1]:.3f}, P={avg_coords[2]:.3f}, W={avg_coords[3]:.3f}"
+    )
     print(f"  Distance from NE: {calculate_distance(avg_coords, NATURAL_EQUILIBRIUM):.3f}")
     print()
 
     # Genome diversity
-    genomes = [r['genome'] for r in results]
+    genomes = [r["genome"] for r in results]
     unique_genomes = len(set(genomes))
     diversity = (unique_genomes / len(genomes)) * 100
 
@@ -156,7 +158,7 @@ def print_clustering_analysis(results):
     # Group by genome
     genome_groups = defaultdict(list)
     for r in results:
-        genome_groups[r['genome']].append(r['file'])
+        genome_groups[r["genome"]].append(r["file"])
 
     # Find largest clusters
     sorted_clusters = sorted(genome_groups.items(), key=lambda x: len(x[1]), reverse=True)
@@ -179,11 +181,11 @@ def print_quality_insights(results):
     print()
 
     # Files far from NE (potential code smells)
-    far_from_ne = sorted(results, key=lambda x: x['dist_to_ne'], reverse=True)[:5]
+    far_from_ne = sorted(results, key=lambda x: x["dist_to_ne"], reverse=True)[:5]
 
     print("Files Farthest from Natural Equilibrium (potential code smells):")
     for i, r in enumerate(far_from_ne, 1):
-        filename = Path(r['file']).name
+        filename = Path(r["file"]).name
         print(f"{i}. {filename}")
         print(f"   Genome: {r['genome']}")
         print(f"   Health: {r['health']:.1f}/100")
@@ -191,11 +193,11 @@ def print_quality_insights(results):
         print()
 
     # Files closest to NE (high quality)
-    close_to_ne = sorted(results, key=lambda x: x['dist_to_ne'])[:5]
+    close_to_ne = sorted(results, key=lambda x: x["dist_to_ne"])[:5]
 
     print("Files Closest to Natural Equilibrium (high quality):")
     for i, r in enumerate(close_to_ne, 1):
-        filename = Path(r['file']).name
+        filename = Path(r["file"]).name
         print(f"{i}. {filename}")
         print(f"   Genome: {r['genome']}")
         print(f"   Health: {r['health']:.1f}/100")
@@ -203,9 +205,9 @@ def print_quality_insights(results):
         print()
 
 
-def export_results(results, output_file='realworld_analysis.json'):
+def export_results(results, output_file="realworld_analysis.json"):
     """Export results to JSON for further analysis"""
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         json.dump(results, f, indent=2)
     print(f"\n✓ Results exported to {output_file}")
 
@@ -213,7 +215,7 @@ def export_results(results, output_file='realworld_analysis.json'):
 def main():
     """Run real-world codebase validation"""
     # Analyze current directory (the Semantic-Compressor codebase itself!)
-    results = analyze_codebase('.', '*.py', max_files=30)
+    results = analyze_codebase(".", "*.py", max_files=30)
 
     if not results:
         print("No files to analyze!")

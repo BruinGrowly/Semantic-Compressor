@@ -13,16 +13,17 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / 'src' / 'ljpw'))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from ljpw_standalone import analyze_directory
-from ljpw_semantic_compressor import (
+import math
+
+from src.ljpw.ljpw_semantic_compressor import (
+    LJPWCodon,
     SemanticCompressor,
     SemanticDecompressor,
     SemanticGenome,
-    LJPWCodon,
 )
-import math
+from src.ljpw.ljpw_standalone import analyze_directory
 
 
 def analyze_massive_codebase(path: str, name: str):
@@ -57,10 +58,10 @@ def analyze_massive_codebase(path: str, name: str):
     print(f"   Speed: {len(file_results) / analysis_time:.0f} files/sec")
 
     # Aggregate
-    total_L = sum(r['ljpw']['L'] for r in file_results)
-    total_J = sum(r['ljpw']['J'] for r in file_results)
-    total_P = sum(r['ljpw']['P'] for r in file_results)
-    total_W = sum(r['ljpw']['W'] for r in file_results)
+    total_L = sum(r["ljpw"]["L"] for r in file_results)
+    total_J = sum(r["ljpw"]["J"] for r in file_results)
+    total_P = sum(r["ljpw"]["P"] for r in file_results)
+    total_W = sum(r["ljpw"]["W"] for r in file_results)
 
     state = (
         total_L / len(file_results),
@@ -85,12 +86,12 @@ def analyze_massive_codebase(path: str, name: str):
     print(f"Analysis Time:         {analysis_time:.1f}s")
 
     return {
-        'name': name,
-        'path': path,
-        'state': state,
-        'health_score': health_score,
-        'num_files': len(file_results),
-        'analysis_time': analysis_time,
+        "name": name,
+        "path": path,
+        "state": state,
+        "health_score": health_score,
+        "num_files": len(file_results),
+        "analysis_time": analysis_time,
     }
 
 
@@ -100,8 +101,8 @@ def test_compression_at_scale(result):
     print(f"🧬 SEMANTIC COMPRESSION TEST")
     print(f"{'='*70}")
 
-    name = result['name']
-    state = result['state']
+    name = result["name"]
+    state = result["state"]
 
     # Test multiple quantization levels
     levels_to_test = [4, 8, 16]
@@ -117,11 +118,11 @@ def test_compression_at_scale(result):
 
         # Compress
         compressor = SemanticCompressor(quantization_levels=levels)
-        genome = compressor.compress_state_sequence([state], metadata={'project': name})
+        genome = compressor.compress_state_sequence([state], metadata={"project": name})
 
         genome_str = genome.to_string()
         genome_bytes = len(genome_str)
-        ratio = genome.metadata['compression_ratio']
+        ratio = genome.metadata["compression_ratio"]
 
         print(f"Genome: {genome_str}")
         print(f"Size: {genome_bytes} bytes")
@@ -132,7 +133,7 @@ def test_compression_at_scale(result):
         reconstructed = decompressor.decompress_genome(genome)[0]
 
         # Calculate error
-        error = math.sqrt(sum((o - r)**2 for o, r in zip(state, reconstructed)))
+        error = math.sqrt(sum((o - r) ** 2 for o, r in zip(state, reconstructed)))
         relative_error = error / math.sqrt(sum(v**2 for v in state))
         accuracy = 1 - relative_error
 
@@ -140,27 +141,31 @@ def test_compression_at_scale(result):
         print(f"Accuracy: {accuracy:.1%}")
 
         # Check meaning preservation
-        dims = ['L', 'J', 'P', 'W']
+        dims = ["L", "J", "P", "W"]
         orig_max = dims[state.index(max(state))]
         orig_min = dims[state.index(min(state))]
         recon_max = dims[list(reconstructed).index(max(reconstructed))]
         recon_min = dims[list(reconstructed).index(min(reconstructed))]
 
-        meaning_preserved = (orig_max == recon_max and orig_min == recon_min)
+        meaning_preserved = orig_max == recon_max and orig_min == recon_min
 
         if meaning_preserved:
             print(f"✅ Meaning preserved (strongest: {orig_max}, weakest: {orig_min})")
         else:
-            print(f"⚠️  Meaning changed (strongest: {orig_max}→{recon_max}, weakest: {orig_min}→{recon_min})")
+            print(
+                f"⚠️  Meaning changed (strongest: {orig_max}→{recon_max}, weakest: {orig_min}→{recon_min})"
+            )
 
-        results.append({
-            'levels': levels,
-            'genome': genome_str,
-            'bytes': genome_bytes,
-            'ratio': ratio,
-            'accuracy': accuracy,
-            'meaning_preserved': meaning_preserved,
-        })
+        results.append(
+            {
+                "levels": levels,
+                "genome": genome_str,
+                "bytes": genome_bytes,
+                "ratio": ratio,
+                "accuracy": accuracy,
+                "meaning_preserved": meaning_preserved,
+            }
+        )
 
     return results
 
@@ -171,7 +176,7 @@ def test_token_efficiency(result):
     print(f"💰 TOKEN EFFICIENCY FOR AI")
     print(f"{'='*70}")
 
-    num_files = result['num_files']
+    num_files = result["num_files"]
 
     # Estimate: average Python file is ~200 lines, ~50 chars/line = 10,000 chars
     # Rough token estimate: 1 token ≈ 4 chars
@@ -193,7 +198,7 @@ def test_token_efficiency(result):
     print(f"  Cost: ~${total_tokens / 1_000_000 * 3:.2f} per analysis (at $3/1M tokens)")
     print(f"")
     print(f"Compressed representation:")
-    print(f"  \"{genome_representation}\"")
+    print(f'  "{genome_representation}"')
     print(f"  Size: ~{compressed_tokens:.0f} tokens")
     print(f"  Cost: ~${compressed_tokens / 1_000_000 * 3:.4f} per analysis")
     print(f"")
@@ -206,9 +211,9 @@ def test_token_efficiency(result):
 
 def main():
     """Run massive scale validation"""
-    print("="*70)
+    print("=" * 70)
     print("🚀 MASSIVE SCALE SEMANTIC COMPRESSION VALIDATION 🚀")
-    print("="*70)
+    print("=" * 70)
     print()
     print("Testing on production-sized codebases:")
     print("  - Django: 2,882 Python files (71MB)")
@@ -222,8 +227,7 @@ def main():
 
     # Test Django
     django_result = analyze_massive_codebase(
-        "/tmp/ljpw_validation_test/django",
-        "Django Web Framework"
+        "/tmp/ljpw_validation_test/django", "Django Web Framework"
     )
 
     if django_result:
@@ -232,13 +236,12 @@ def main():
         all_results.append((django_result, django_compression))
 
     # Test SciPy
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("MOVING TO NEXT MASSIVE CODEBASE")
-    print("="*70)
+    print("=" * 70)
 
     scipy_result = analyze_massive_codebase(
-        "/tmp/ljpw_validation_test/scipy",
-        "SciPy Scientific Computing Library"
+        "/tmp/ljpw_validation_test/scipy", "SciPy Scientific Computing Library"
     )
 
     if scipy_result:
@@ -256,19 +259,21 @@ def main():
         print(f"📊 {result['name']}")
         print(f"   Files: {result['num_files']:,}")
         print(f"   Speed: {result['num_files']/result['analysis_time']:.0f} files/sec")
-        print(f"   LJPW:  L={result['state'][0]:.2f}, J={result['state'][1]:.2f}, P={result['state'][2]:.2f}, W={result['state'][3]:.2f}")
+        print(
+            f"   LJPW:  L={result['state'][0]:.2f}, J={result['state'][1]:.2f}, P={result['state'][2]:.2f}, W={result['state'][3]:.2f}"
+        )
         print(f"   Health: {result['health_score']:.1%}")
 
         # Show best compression result
-        best = max(compression_results, key=lambda x: x['accuracy'])
-        status = "✅" if best['meaning_preserved'] else "⚠️"
+        best = max(compression_results, key=lambda x: x["accuracy"])
+        status = "✅" if best["meaning_preserved"] else "⚠️"
         print(f"   Best: {status} {best['levels']}-level, {best['accuracy']:.1%} accuracy")
         print()
 
     # Overall stats
-    total_files = sum(r[0]['num_files'] for r in all_results)
-    total_time = sum(r[0]['analysis_time'] for r in all_results)
-    avg_accuracy = sum(max(cr['accuracy'] for cr in r[1]) for r in all_results) / len(all_results)
+    total_files = sum(r[0]["num_files"] for r in all_results)
+    total_time = sum(r[0]["analysis_time"] for r in all_results)
+    avg_accuracy = sum(max(cr["accuracy"] for cr in r[1]) for r in all_results) / len(all_results)
 
     print(f"{'='*70}")
     print(f"OVERALL STATISTICS")
@@ -281,14 +286,8 @@ def main():
     print()
 
     # Check success
-    all_preserved = all(
-        any(cr['meaning_preserved'] for cr in r[1])
-        for r in all_results
-    )
-    all_accurate = all(
-        any(cr['accuracy'] >= 0.85 for cr in r[1])
-        for r in all_results
-    )
+    all_preserved = all(any(cr["meaning_preserved"] for cr in r[1]) for r in all_results)
+    all_accurate = all(any(cr["accuracy"] >= 0.85 for cr in r[1]) for r in all_results)
 
     if all_preserved and all_accurate:
         print(f"✅ MASSIVE SCALE VALIDATION SUCCESSFUL!")
@@ -300,5 +299,5 @@ def main():
         return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     exit(main())

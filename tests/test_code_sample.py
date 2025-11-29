@@ -2,18 +2,16 @@ def process_user_data(user_id, data):
     """Process user data from API"""
     result = []
     for item in data:
-        if item['status'] == 'active':
+        if item["status"] == "active":
             processed = transform_item(item)
             result.append(processed)
     return result
 
+
 def transform_item(item):
     """Transform single item"""
-    return {
-        'id': item['id'],
-        'value': item['value'] * 2,
-        'timestamp': item['timestamp']
-    }
+    return {"id": item["id"], "value": item["value"] * 2, "timestamp": item["timestamp"]}
+
 
 class DataManager:
     def __init__(self):
@@ -28,4 +26,4 @@ class DataManager:
 
     def fetch_from_db(self, key):
         # Simulate DB fetch
-        return {'key': key, 'value': 'data'}
+        return {"key": key, "value": "data"}

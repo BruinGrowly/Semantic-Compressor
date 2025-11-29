@@ -12,11 +12,13 @@ Based on: docs/LJPW Mathematical Baselines Reference V4.md
 
 import math
 from dataclasses import dataclass
-from typing import Dict, Tuple, List, Optional
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 
 try:
     import matplotlib.pyplot as plt
+
     MATPLOTLIB_AVAILABLE = True
 except ImportError:
     MATPLOTLIB_AVAILABLE = False
@@ -70,9 +72,7 @@ class LJPWBaselines:
     }
 
     @staticmethod
-    def effective_dimensions(
-        L: float, J: float, P: float, W: float
-    ) -> Dict[str, float]:
+    def effective_dimensions(L: float, J: float, P: float, W: float) -> Dict[str, float]:
         """
         Calculate coupling-adjusted effective dimensions.
 
@@ -153,9 +153,7 @@ class LJPWBaselines:
         Returns:
             Harmony index (0.0 to 1.0, asymptotic to 1.0)
         """
-        d_anchor = math.sqrt(
-            (1 - L) ** 2 + (1 - J) ** 2 + (1 - P) ** 2 + (1 - W) ** 2
-        )
+        d_anchor = math.sqrt((1 - L) ** 2 + (1 - J) ** 2 + (1 - P) ** 2 + (1 - W) ** 2)
         return 1.0 / (1.0 + d_anchor)
 
     @staticmethod
@@ -178,9 +176,7 @@ class LJPWBaselines:
         robustness = baselines.harmonic_mean(L, J, P, W)
         harmony = baselines.harmony_index(L, J, P, W)
 
-        return (
-            0.35 * growth + 0.25 * effectiveness + 0.25 * robustness + 0.15 * harmony
-        )
+        return 0.35 * growth + 0.25 * effectiveness + 0.25 * robustness + 0.15 * harmony
 
     @staticmethod
     def distance_from_anchor(L: float, J: float, P: float, W: float) -> float:
@@ -193,14 +189,10 @@ class LJPWBaselines:
         Returns:
             Distance (0.0 to ~2.0)
         """
-        return math.sqrt(
-            (1 - L) ** 2 + (1 - J) ** 2 + (1 - P) ** 2 + (1 - W) ** 2
-        )
+        return math.sqrt((1 - L) ** 2 + (1 - J) ** 2 + (1 - P) ** 2 + (1 - W) ** 2)
 
     @staticmethod
-    def distance_from_natural_equilibrium(
-        L: float, J: float, P: float, W: float
-    ) -> float:
+    def distance_from_natural_equilibrium(L: float, J: float, P: float, W: float) -> float:
         """
         Euclidean distance from Natural Equilibrium.
 
@@ -211,12 +203,7 @@ class LJPWBaselines:
             Distance (0.0 to ~2.0)
         """
         NE = ReferencePoints.NATURAL_EQUILIBRIUM
-        return math.sqrt(
-            (NE[0] - L) ** 2
-            + (NE[1] - J) ** 2
-            + (NE[2] - P) ** 2
-            + (NE[3] - W) ** 2
-        )
+        return math.sqrt((NE[0] - L) ** 2 + (NE[1] - J) ** 2 + (NE[2] - P) ** 2 + (NE[3] - W) ** 2)
 
     @staticmethod
     def full_diagnostic(L: float, J: float, P: float, W: float) -> Dict:
@@ -239,9 +226,7 @@ class LJPWBaselines:
             "effective_dimensions": eff,
             "distances": {
                 "from_anchor": baselines.distance_from_anchor(L, J, P, W),
-                "from_natural_equilibrium": baselines.distance_from_natural_equilibrium(
-                    L, J, P, W
-                ),
+                "from_natural_equilibrium": baselines.distance_from_natural_equilibrium(L, J, P, W),
             },
             "metrics": {
                 "harmonic_mean": baselines.harmonic_mean(L, J, P, W),
@@ -412,9 +397,7 @@ class DynamicLJPWv4:
         dP_dt = p["alpha_PL"] * L + p["alpha_PJ"] * J - p["beta_P"] * P
 
         # Wisdom equation (linear)
-        dW_dt = (
-            p["alpha_WL"] * L + p["alpha_WJ"] * J + p["alpha_WP"] * P - p["beta_W"] * W
-        )
+        dW_dt = p["alpha_WL"] * L + p["alpha_WJ"] * J + p["alpha_WP"] * P - p["beta_W"] * W
 
         return np.array([dL_dt, dJ_dt, dP_dt, dW_dt])
 
@@ -490,17 +473,17 @@ class DynamicLJPWv4:
             print("Plotting requires matplotlib. Install with: pip install matplotlib")
             return
 
-        plt.style.use("seaborn-v0_8-whitegrid" if "seaborn-v0_8-whitegrid" in plt.style.available else "default")
+        plt.style.use(
+            "seaborn-v0_8-whitegrid"
+            if "seaborn-v0_8-whitegrid" in plt.style.available
+            else "default"
+        )
         fig, ax = plt.subplots(figsize=(12, 7))
 
         # Plot dimensions
         ax.plot(history["t"], history["L"], label="Love (L)", color="crimson", lw=2)
-        ax.plot(
-            history["t"], history["J"], label="Justice (J)", color="royalblue", lw=2
-        )
-        ax.plot(
-            history["t"], history["P"], label="Power (P)", color="darkgreen", lw=2
-        )
+        ax.plot(history["t"], history["J"], label="Justice (J)", color="royalblue", lw=2)
+        ax.plot(history["t"], history["P"], label="Power (P)", color="darkgreen", lw=2)
         ax.plot(history["t"], history["W"], label="Wisdom (W)", color="purple", lw=2)
 
         # Plot Natural Equilibrium reference lines
@@ -634,23 +617,31 @@ if __name__ == "__main__":
     simulator = DynamicLJPWv4(complexity_score=1.0)
     initial_state = (0.2, 0.3, 0.9, 0.2)  # High P, low L, J, W
 
-    print(f"Initial State: L={initial_state[0]:.2f}, J={initial_state[1]:.2f}, "
-          f"P={initial_state[2]:.2f}, W={initial_state[3]:.2f}")
+    print(
+        f"Initial State: L={initial_state[0]:.2f}, J={initial_state[1]:.2f}, "
+        f"P={initial_state[2]:.2f}, W={initial_state[3]:.2f}"
+    )
 
     history = simulator.simulate(initial_state, duration=50, dt=0.05)
 
     # Analyze trajectory
     analysis = simulator.analyze_trajectory(history)
 
-    print(f"Final State:   L={analysis['final_state'][0]:.2f}, "
-          f"J={analysis['final_state'][1]:.2f}, "
-          f"P={analysis['final_state'][2]:.2f}, W={analysis['final_state'][3]:.2f}")
+    print(
+        f"Final State:   L={analysis['final_state'][0]:.2f}, "
+        f"J={analysis['final_state'][1]:.2f}, "
+        f"P={analysis['final_state'][2]:.2f}, W={analysis['final_state'][3]:.2f}"
+    )
     print()
     print(f"Trajectory Type: {analysis['trajectory_type']}")
-    print(f"Distance from NE: {analysis['initial_distance_from_ne']:.3f} → "
-          f"{analysis['final_distance_from_ne']:.3f} (Δ={analysis['distance_improvement']:.3f})")
-    print(f"Composite Score: {analysis['initial_composite_score']:.3f} → "
-          f"{analysis['final_composite_score']:.3f} (Δ={analysis['score_improvement']:.3f})")
+    print(
+        f"Distance from NE: {analysis['initial_distance_from_ne']:.3f} → "
+        f"{analysis['final_distance_from_ne']:.3f} (Δ={analysis['distance_improvement']:.3f})"
+    )
+    print(
+        f"Composite Score: {analysis['initial_composite_score']:.3f} → "
+        f"{analysis['final_composite_score']:.3f} (Δ={analysis['score_improvement']:.3f})"
+    )
     print(f"Converged: {'Yes' if analysis['converged'] else 'No'}")
     print()
 

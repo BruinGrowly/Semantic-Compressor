@@ -17,15 +17,16 @@ Example:
 import sys
 from pathlib import Path
 
-# Add parent directory to path
+# Add parent directory to path for src module imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from ljpw_standalone import analyze_directory, SimpleCodeAnalyzer
+from src.ljpw.ljpw_standalone import SimpleCodeAnalyzer, analyze_directory
+
 
 def main():
-    print("="*70)
+    print("=" * 70)
     print("LJPW Example 2: Analyze a Directory")
-    print("="*70)
+    print("=" * 70)
     print()
 
     # Get directory from command line or use parent
@@ -48,7 +49,7 @@ def main():
 
     # Calculate statistics
     total_files = len(results)
-    valid_results = [r for r in results if 'error' not in r]
+    valid_results = [r for r in results if "error" not in r]
 
     print(f"Found {total_files} files")
     print(f"Successfully analyzed: {len(valid_results)} files")
@@ -59,11 +60,11 @@ def main():
         return
 
     # Aggregate scores
-    avg_L = sum(r['ljpw']['L'] for r in valid_results) / len(valid_results)
-    avg_J = sum(r['ljpw']['J'] for r in valid_results) / len(valid_results)
-    avg_P = sum(r['ljpw']['P'] for r in valid_results) / len(valid_results)
-    avg_W = sum(r['ljpw']['W'] for r in valid_results) / len(valid_results)
-    avg_health = sum(r['health'] for r in valid_results) / len(valid_results)
+    avg_L = sum(r["ljpw"]["L"] for r in valid_results) / len(valid_results)
+    avg_J = sum(r["ljpw"]["J"] for r in valid_results) / len(valid_results)
+    avg_P = sum(r["ljpw"]["P"] for r in valid_results) / len(valid_results)
+    avg_W = sum(r["ljpw"]["W"] for r in valid_results) / len(valid_results)
+    avg_health = sum(r["health"] for r in valid_results) / len(valid_results)
 
     print("AGGREGATE SCORES:")
     print("-" * 70)
@@ -75,10 +76,10 @@ def main():
     print()
 
     # Find problem areas
-    low_safety = [r for r in valid_results if r['ljpw']['L'] < 0.5]
-    low_structure = [r for r in valid_results if r['ljpw']['J'] < 0.4]
-    low_design = [r for r in valid_results if r['ljpw']['W'] < 0.5]
-    low_health = [r for r in valid_results if r['health'] < 0.5]
+    low_safety = [r for r in valid_results if r["ljpw"]["L"] < 0.5]
+    low_structure = [r for r in valid_results if r["ljpw"]["J"] < 0.4]
+    low_design = [r for r in valid_results if r["ljpw"]["W"] < 0.5]
+    low_health = [r for r in valid_results if r["health"] < 0.5]
 
     print("PROBLEM AREAS:")
     print("-" * 70)
@@ -106,7 +107,7 @@ def main():
 
     if low_health:
         print(f"\n{len(low_health)} files with LOW OVERALL HEALTH (<50%):")
-        sorted_by_health = sorted(low_health, key=lambda x: x['health'])
+        sorted_by_health = sorted(low_health, key=lambda x: x["health"])
         for r in sorted_by_health[:5]:
             print(f"  - {Path(r['filename']).name}: {r['health']*100:.1f}%")
         if len(low_health) > 5:
@@ -120,17 +121,18 @@ def main():
     print()
     print("TOP 5 HEALTHIEST FILES:")
     print("-" * 70)
-    sorted_by_health = sorted(valid_results, key=lambda x: x['health'], reverse=True)
+    sorted_by_health = sorted(valid_results, key=lambda x: x["health"], reverse=True)
     for i, r in enumerate(sorted_by_health[:5], 1):
         print(f"{i}. {Path(r['filename']).name}: {r['health']*100:.1f}%")
-        ljpw = r['ljpw']
+        ljpw = r["ljpw"]
         print(f"   L={ljpw['L']:.2f}, J={ljpw['J']:.2f}, P={ljpw['P']:.2f}, W={ljpw['W']:.2f}")
 
     print()
-    print("="*70)
+    print("=" * 70)
     print("TIP: Focus on fixing files with lowest health first")
     print("Next: Try running 03_compress_decompress.py")
-    print("="*70)
+    print("=" * 70)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

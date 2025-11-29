@@ -14,15 +14,16 @@ Run:
 import sys
 from pathlib import Path
 
-# Add parent directory to path
+# Add parent directory to path for src module imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from ljpw_standalone import SimpleCodeAnalyzer, format_result
+from src.ljpw.ljpw_standalone import SimpleCodeAnalyzer, format_result
+
 
 def main():
-    print("="*70)
+    print("=" * 70)
     print("LJPW Example 1: Analyze a Single File")
-    print("="*70)
+    print("=" * 70)
     print()
 
     # Sample code to analyze
@@ -45,7 +46,7 @@ def process_data(data):
     analyzer = SimpleCodeAnalyzer()
 
     # Analyze the code
-    result = analyzer.analyze(sample_code, filename='sample.py')
+    result = analyzer.analyze(sample_code, filename="sample.py")
 
     # Print formatted results
     print(format_result(result))
@@ -55,26 +56,26 @@ def process_data(data):
     print("INTERPRETATION:")
     print("-" * 70)
 
-    ljpw = result['ljpw']
-    health = result['health'] * 100
+    ljpw = result["ljpw"]
+    health = result["health"] * 100
 
     print(f"Love (Safety): {ljpw['L']:.2f}")
-    if ljpw['L'] < 0.5:
+    if ljpw["L"] < 0.5:
         print("  → LOW: This code has minimal error handling")
         print("  → FIX: Add try/except, input validation, null checks")
 
     print(f"\nJustice (Structure): {ljpw['J']:.2f}")
-    if ljpw['J'] < 0.4:
+    if ljpw["J"] < 0.4:
         print("  → LOW: This code lacks structure")
         print("  → FIX: Add type hints, docstrings, clear interfaces")
 
     print(f"\nPower (Performance): {ljpw['P']:.2f}")
-    if ljpw['P'] < 0.7:
+    if ljpw["P"] < 0.7:
         print("  → MEDIUM: Performance is okay but not optimized")
         print("  → CONSIDER: Better algorithms, caching, async operations")
 
     print(f"\nWisdom (Design): {ljpw['W']:.2f}")
-    if ljpw['W'] < 0.6:
+    if ljpw["W"] < 0.6:
         print("  → LOW: Design could be improved")
         print("  → FIX: Add abstractions, use design patterns, modularize")
 
@@ -89,9 +90,10 @@ def process_data(data):
         print("  → NEEDS WORK: Significant issues to address")
 
     print()
-    print("="*70)
+    print("=" * 70)
     print("Next: Try running 02_analyze_directory.py")
-    print("="*70)
+    print("=" * 70)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

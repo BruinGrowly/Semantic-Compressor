@@ -15,30 +15,31 @@ Run:
 import sys
 from pathlib import Path
 
-# Add parent directory to path
+# Add parent directory to path for src module imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from ljpw_standalone import SimpleCodeAnalyzer
-from ljpw_semantic_compressor import SemanticCompressor, SemanticDecompressor
+from src.ljpw.ljpw_semantic_compressor import SemanticCompressor, SemanticDecompressor
+from src.ljpw.ljpw_standalone import SimpleCodeAnalyzer
+
 
 def main():
-    print("="*70)
+    print("=" * 70)
     print("LJPW Example 3: Compress and Decompress")
-    print("="*70)
+    print("=" * 70)
     print()
 
     # Sample code files to analyze
     code_samples = {
-        'v1_initial.py': '''
+        "v1_initial.py": """
 def process(data):
     return [x*2 for x in data]
-''',
-        'v2_typed.py': '''
+""",
+        "v2_typed.py": '''
 def process(data: list) -> list:
     """Process data"""
     return [x*2 for x in data]
 ''',
-        'v3_safe.py': '''
+        "v3_safe.py": '''
 def process(data: list) -> list:
     """Process data with validation"""
     if not data:
@@ -60,8 +61,8 @@ def process(data: list) -> list:
 
     for name, code in code_samples.items():
         result = analyzer.analyze(code, name)
-        ljpw = result['ljpw']
-        state = (ljpw['L'], ljpw['J'], ljpw['P'], ljpw['W'])
+        ljpw = result["ljpw"]
+        state = (ljpw["L"], ljpw["J"], ljpw["P"], ljpw["W"])
         states.append(state)
 
         print(f"\n{name}:")
@@ -75,13 +76,12 @@ def process(data: list) -> list:
 
     compressor = SemanticCompressor()
     genome = compressor.compress_state_sequence(
-        states,
-        metadata={'project': 'example', 'versions': len(states)}
+        states, metadata={"project": "example", "versions": len(states)}
     )
 
     # Calculate sizes
-    original_size = len(str(states).encode('utf-8'))
-    compressed_size = len(genome.to_string().encode('utf-8'))
+    original_size = len(str(states).encode("utf-8"))
+    compressed_size = len(genome.to_string().encode("utf-8"))
     ratio = original_size / compressed_size
 
     print(f"\nOriginal size: {original_size} bytes")
@@ -107,12 +107,16 @@ def process(data: list) -> list:
 
     total_error = 0
     for i, (original, recon) in enumerate(zip(states, reconstructed)):
-        error = sum((o - r)**2 for o, r in zip(original, recon))**0.5
+        error = sum((o - r) ** 2 for o, r in zip(original, recon)) ** 0.5
         total_error += error
 
         print(f"\nState {i+1}:")
-        print(f"  Original:      L={original[0]:.3f}, J={original[1]:.3f}, P={original[2]:.3f}, W={original[3]:.3f}")
-        print(f"  Reconstructed: L={recon[0]:.3f}, J={recon[1]:.3f}, P={recon[2]:.3f}, W={recon[3]:.3f}")
+        print(
+            f"  Original:      L={original[0]:.3f}, J={original[1]:.3f}, P={original[2]:.3f}, W={original[3]:.3f}"
+        )
+        print(
+            f"  Reconstructed: L={recon[0]:.3f}, J={recon[1]:.3f}, P={recon[2]:.3f}, W={recon[3]:.3f}"
+        )
         print(f"  Error: {error:.4f}")
 
     avg_error = total_error / len(states)
@@ -132,7 +136,7 @@ def process(data: list) -> list:
     print(f"Integrity score: {validation['integrity_score']:.1%}")
     print(f"Error count: {validation['error_count']}")
 
-    if validation['valid']:
+    if validation["valid"]:
         print("\n✓ Genome is intact! All checksums passed.")
     else:
         print(f"\n✗ Genome has {validation['error_count']} checksum errors")
@@ -162,10 +166,10 @@ def process(data: list) -> list:
 
     test_state = states[0]  # Use first state for comparison
     precision_levels = [
-        (4, 'fast'),
-        (8, 'balanced'),
-        (16, 'precise'),
-        (32, 'exact'),
+        (4, "fast"),
+        (8, "balanced"),
+        (16, "precise"),
+        (32, "exact"),
     ]
 
     print(f"{'Levels':<10} {'Use Case':<12} {'Error':<12} {'Size':<10}")
@@ -178,7 +182,7 @@ def process(data: list) -> list:
         g = comp.compress_state_sequence([test_state])
         recon = decomp.decompress_genome(g)[0]
 
-        error = sum((o - r)**2 for o, r in zip(test_state, recon))**0.5
+        error = sum((o - r) ** 2 for o, r in zip(test_state, recon)) ** 0.5
         size = len(g.to_string())
 
         print(f"{levels:<10} {use_case:<12} {error:<12.4f} {size:<10} bytes")
@@ -187,7 +191,7 @@ def process(data: list) -> list:
     print("Tip: Use LJPWQuantizer.recommend_levels('balanced') for guidance")
 
     print()
-    print("="*70)
+    print("=" * 70)
     print("KEY TAKEAWAYS:")
     print("-" * 70)
     print("1. LJPW compresses code quality to tiny genomes")
@@ -197,7 +201,8 @@ def process(data: list) -> list:
     print("5. Use recommend_levels() for guidance on precision settings")
     print()
     print("Next: Try running 04_interpret_scores.py")
-    print("="*70)
+    print("=" * 70)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 from typing import List, Union
 
+
 def calculate_total(items: List[Union[int, float]]) -> float:
     """
     Calculate the sum of numeric items.

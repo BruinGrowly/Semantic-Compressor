@@ -33,9 +33,8 @@ Date: November 2025
 """
 
 import math
-from typing import Tuple, List, Dict, Optional, Callable
 from dataclasses import dataclass
-
+from typing import Callable, Dict, List, Optional, Tuple
 
 # Natural Equilibrium (target state)
 NATURAL_EQUILIBRIUM = (0.618034, 0.414214, 0.718282, 0.693147)  # (L, J, P, W)
@@ -48,6 +47,7 @@ class LJPWParameters:
 
     Posterior means with 95% credible intervals from the validation study.
     """
+
     # Growth coefficients (α)
     alpha_LJ: float = 0.35  # Justice → Love
     alpha_LW: float = 0.30  # Wisdom → Love
@@ -70,13 +70,13 @@ class LJPWParameters:
 
     # Threshold effect (Sigmoidal)
     gamma_JP: float = 0.49  # Power erosion coefficient (POSTERIOR MEAN: [0.45, 0.53])
-    K_JP: float = 0.71      # Power threshold (POSTERIOR MEAN: [0.66, 0.76])
-    n_JP: float = 4.1       # Hill coefficient/steepness (POSTERIOR MEAN: [3.5, 4.7])
+    K_JP: float = 0.71  # Power threshold (POSTERIOR MEAN: [0.66, 0.76])
+    n_JP: float = 4.1  # Hill coefficient/steepness (POSTERIOR MEAN: [3.5, 4.7])
 
     # Coupling amplification (Love as force multiplier)
-    kappa_LJ: float = 1.4   # Love → Justice amplification (40%)
-    kappa_LP: float = 1.3   # Love → Power amplification (30%)
-    kappa_LW: float = 1.5   # Love → Wisdom amplification (50%)
+    kappa_LJ: float = 1.4  # Love → Justice amplification (40%)
+    kappa_LP: float = 1.3  # Love → Power amplification (30%)
+    kappa_LW: float = 1.5  # Love → Wisdom amplification (50%)
 
 
 class LJPWDynamicModel:
@@ -104,7 +104,9 @@ class LJPWDynamicModel:
         """
         self.params = params if params is not None else LJPWParameters()
 
-    def derivatives(self, state: Tuple[float, float, float, float]) -> Tuple[float, float, float, float]:
+    def derivatives(
+        self, state: Tuple[float, float, float, float]
+    ) -> Tuple[float, float, float, float]:
         """
         Calculate derivatives dL/dt, dJ/dt, dP/dt, dW/dt at given state.
 
@@ -120,9 +122,7 @@ class LJPWDynamicModel:
         p = self.params
 
         # Love dynamics (linear in v3.0)
-        dL_dt = (p.alpha_LJ * J +
-                 p.alpha_LW * W -
-                 p.beta_L * L)
+        dL_dt = p.alpha_LJ * J + p.alpha_LW * W - p.beta_L * L
 
         # Justice dynamics (NON-LINEAR - key innovation of v3.0)
 
@@ -131,31 +131,21 @@ class LJPWDynamicModel:
 
         # Threshold effect: Power erodes Justice above tipping point
         # Mitigated by Wisdom (1-W factor)
-        threshold_term = p.gamma_JP * (
-            (P ** p.n_JP) / (p.K_JP ** p.n_JP + P ** p.n_JP)
-        ) * (1 - W)
+        threshold_term = p.gamma_JP * ((P**p.n_JP) / (p.K_JP**p.n_JP + P**p.n_JP)) * (1 - W)
 
-        dJ_dt = (saturation_term +
-                 p.alpha_JW * W -
-                 threshold_term -
-                 p.beta_J * J)
+        dJ_dt = saturation_term + p.alpha_JW * W - threshold_term - p.beta_J * J
 
         # Power dynamics (linear in v3.0)
-        dP_dt = (p.alpha_PL * L +
-                 p.alpha_PJ * J -
-                 p.beta_P * P)
+        dP_dt = p.alpha_PL * L + p.alpha_PJ * J - p.beta_P * P
 
         # Wisdom dynamics (linear in v3.0)
-        dW_dt = (p.alpha_WL * L +
-                 p.alpha_WJ * J +
-                 p.alpha_WP * P -
-                 p.beta_W * W)
+        dW_dt = p.alpha_WL * L + p.alpha_WJ * J + p.alpha_WP * P - p.beta_W * W
 
         return (dL_dt, dJ_dt, dP_dt, dW_dt)
 
-    def rk4_step(self,
-                 state: Tuple[float, float, float, float],
-                 dt: float) -> Tuple[float, float, float, float]:
+    def rk4_step(
+        self, state: Tuple[float, float, float, float], dt: float
+    ) -> Tuple[float, float, float, float]:
         """
         Perform one RK4 integration step.
 
@@ -175,34 +165,25 @@ class LJPWDynamicModel:
         k1_L, k1_J, k1_P, k1_W = self.derivatives((L, J, P, W))
 
         # k2: Slope at midpoint using k1
-        k2_L, k2_J, k2_P, k2_W = self.derivatives((
-            L + 0.5 * dt * k1_L,
-            J + 0.5 * dt * k1_J,
-            P + 0.5 * dt * k1_P,
-            W + 0.5 * dt * k1_W
-        ))
+        k2_L, k2_J, k2_P, k2_W = self.derivatives(
+            (L + 0.5 * dt * k1_L, J + 0.5 * dt * k1_J, P + 0.5 * dt * k1_P, W + 0.5 * dt * k1_W)
+        )
 
         # k3: Slope at midpoint using k2
-        k3_L, k3_J, k3_P, k3_W = self.derivatives((
-            L + 0.5 * dt * k2_L,
-            J + 0.5 * dt * k2_J,
-            P + 0.5 * dt * k2_P,
-            W + 0.5 * dt * k2_W
-        ))
+        k3_L, k3_J, k3_P, k3_W = self.derivatives(
+            (L + 0.5 * dt * k2_L, J + 0.5 * dt * k2_J, P + 0.5 * dt * k2_P, W + 0.5 * dt * k2_W)
+        )
 
         # k4: Slope at endpoint using k3
-        k4_L, k4_J, k4_P, k4_W = self.derivatives((
-            L + dt * k3_L,
-            J + dt * k3_J,
-            P + dt * k3_P,
-            W + dt * k3_W
-        ))
+        k4_L, k4_J, k4_P, k4_W = self.derivatives(
+            (L + dt * k3_L, J + dt * k3_J, P + dt * k3_P, W + dt * k3_W)
+        )
 
         # Weighted average: (k1 + 2*k2 + 2*k3 + k4) / 6
-        L_next = L + (dt / 6.0) * (k1_L + 2*k2_L + 2*k3_L + k4_L)
-        J_next = J + (dt / 6.0) * (k1_J + 2*k2_J + 2*k3_J + k4_J)
-        P_next = P + (dt / 6.0) * (k1_P + 2*k2_P + 2*k3_P + k4_P)
-        W_next = W + (dt / 6.0) * (k1_W + 2*k2_W + 2*k3_W + k4_W)
+        L_next = L + (dt / 6.0) * (k1_L + 2 * k2_L + 2 * k3_L + k4_L)
+        J_next = J + (dt / 6.0) * (k1_J + 2 * k2_J + 2 * k3_J + k4_J)
+        P_next = P + (dt / 6.0) * (k1_P + 2 * k2_P + 2 * k3_P + k4_P)
+        W_next = W + (dt / 6.0) * (k1_W + 2 * k2_W + 2 * k3_W + k4_W)
 
         # Clamp to valid range [0, 1]
         L_next = max(0.0, min(1.0, L_next))
@@ -212,10 +193,12 @@ class LJPWDynamicModel:
 
         return (L_next, J_next, P_next, W_next)
 
-    def simulate(self,
-                 initial_state: Tuple[float, float, float, float],
-                 duration: float = 100.0,
-                 dt: float = 0.1) -> List[Tuple[float, float, float, float, float]]:
+    def simulate(
+        self,
+        initial_state: Tuple[float, float, float, float],
+        duration: float = 100.0,
+        dt: float = 0.1,
+    ) -> List[Tuple[float, float, float, float, float]]:
         """
         Simulate LJPW evolution over time.
 
@@ -240,8 +223,9 @@ class LJPWDynamicModel:
 
         return trajectory
 
-    def analyze_trajectory(self,
-                          trajectory: List[Tuple[float, float, float, float, float]]) -> Dict:
+    def analyze_trajectory(
+        self, trajectory: List[Tuple[float, float, float, float, float]]
+    ) -> Dict:
         """
         Analyze a simulated or observed trajectory.
 
@@ -258,7 +242,7 @@ class LJPWDynamicModel:
             Dictionary with analysis results
         """
         if len(trajectory) < 2:
-            return {'error': 'Trajectory too short (need at least 2 points)'}
+            return {"error": "Trajectory too short (need at least 2 points)"}
 
         # Initial and final states
         initial = trajectory[0][1:]  # (L, J, P, W)
@@ -284,7 +268,7 @@ class LJPWDynamicModel:
         if converging and velocity_magnitude > 0.001:
             eta = final_dist / velocity_magnitude
         else:
-            eta = float('inf')
+            eta = float("inf")
 
         # Check if near equilibrium
         near_equilibrium = final_dist < 0.1
@@ -293,18 +277,18 @@ class LJPWDynamicModel:
         crossing_threshold = any(state[3] > self.params.K_JP for _, *state in trajectory)
 
         return {
-            'initial_state': initial,
-            'final_state': final,
-            'initial_distance_from_ne': initial_dist,
-            'final_distance_from_ne': final_dist,
-            'velocity': velocity,
-            'velocity_magnitude': velocity_magnitude,
-            'converging': converging,
-            'near_equilibrium': near_equilibrium,
-            'eta_to_ne': eta,
-            'crossing_power_threshold': crossing_threshold,
-            'total_time': total_time,
-            'num_steps': len(trajectory)
+            "initial_state": initial,
+            "final_state": final,
+            "initial_distance_from_ne": initial_dist,
+            "final_distance_from_ne": final_dist,
+            "velocity": velocity,
+            "velocity_magnitude": velocity_magnitude,
+            "converging": converging,
+            "near_equilibrium": near_equilibrium,
+            "eta_to_ne": eta,
+            "crossing_power_threshold": crossing_threshold,
+            "total_time": total_time,
+            "num_steps": len(trajectory),
         }
 
     @staticmethod
@@ -312,17 +296,14 @@ class LJPWDynamicModel:
         """Calculate Euclidean distance from Natural Equilibrium."""
         L, J, P, W = state
         L_ne, J_ne, P_ne, W_ne = NATURAL_EQUILIBRIUM
-        return math.sqrt(
-            (L - L_ne)**2 +
-            (J - J_ne)**2 +
-            (P - P_ne)**2 +
-            (W - W_ne)**2
-        )
+        return math.sqrt((L - L_ne) ** 2 + (J - J_ne) ** 2 + (P - P_ne) ** 2 + (W - W_ne) ** 2)
 
-    def find_equilibrium(self,
-                        initial_state: Tuple[float, float, float, float],
-                        max_time: float = 1000.0,
-                        tolerance: float = 1e-6) -> Optional[Tuple[float, float, float, float]]:
+    def find_equilibrium(
+        self,
+        initial_state: Tuple[float, float, float, float],
+        max_time: float = 1000.0,
+        tolerance: float = 1e-6,
+    ) -> Optional[Tuple[float, float, float, float]]:
         """
         Find equilibrium point starting from initial_state.
 
@@ -352,10 +333,12 @@ class LJPWDynamicModel:
 
         return None  # Did not converge
 
-    def predict_future(self,
-                      current_state: Tuple[float, float, float, float],
-                      time_horizon: float = 10.0,
-                      dt: float = 0.1) -> Dict:
+    def predict_future(
+        self,
+        current_state: Tuple[float, float, float, float],
+        time_horizon: float = 10.0,
+        dt: float = 0.1,
+    ) -> Dict:
         """
         Predict future evolution from current state.
 
@@ -371,10 +354,10 @@ class LJPWDynamicModel:
         analysis = self.analyze_trajectory(trajectory)
 
         return {
-            'trajectory': trajectory,
-            'analysis': analysis,
-            'predicted_state': trajectory[-1][1:],
-            'time_horizon': time_horizon
+            "trajectory": trajectory,
+            "analysis": analysis,
+            "predicted_state": trajectory[-1][1:],
+            "time_horizon": time_horizon,
         }
 
 
@@ -394,9 +377,9 @@ class LJPWTrajectoryAnalyzer:
         """
         self.model = model if model is not None else LJPWDynamicModel()
 
-    def analyze_sequence(self,
-                        states: List[Tuple[float, float, float, float]],
-                        times: Optional[List[float]] = None) -> Dict:
+    def analyze_sequence(
+        self, states: List[Tuple[float, float, float, float]], times: Optional[List[float]] = None
+    ) -> Dict:
         """
         Analyze a sequence of observed LJPW states.
 
@@ -408,7 +391,7 @@ class LJPWTrajectoryAnalyzer:
             Analysis dictionary
         """
         if len(states) < 2:
-            return {'error': 'Need at least 2 states'}
+            return {"error": "Need at least 2 states"}
 
         if times is None:
             times = list(range(len(states)))
@@ -424,29 +407,33 @@ class LJPWTrajectoryAnalyzer:
 
         # Trend: improving or declining?
         if distances[-1] < distances[0]:
-            trend = 'IMPROVING'
+            trend = "IMPROVING"
         elif distances[-1] > distances[0]:
-            trend = 'DECLINING'
+            trend = "DECLINING"
         else:
-            trend = 'STABLE'
+            trend = "STABLE"
 
         # Volatility (standard deviation of distances)
         mean_dist = sum(distances) / len(distances)
-        variance = sum((d - mean_dist)**2 for d in distances) / len(distances)
+        variance = sum((d - mean_dist) ** 2 for d in distances) / len(distances)
         volatility = math.sqrt(variance)
 
-        analysis.update({
-            'distances_from_ne': distances,
-            'trend': trend,
-            'volatility': volatility,
-            'improvement': distances[0] - distances[-1]  # Positive = improved
-        })
+        analysis.update(
+            {
+                "distances_from_ne": distances,
+                "trend": trend,
+                "volatility": volatility,
+                "improvement": distances[0] - distances[-1],  # Positive = improved
+            }
+        )
 
         return analysis
 
-    def fit_trajectory(self,
-                      observed_states: List[Tuple[float, float, float, float]],
-                      times: Optional[List[float]] = None) -> Dict:
+    def fit_trajectory(
+        self,
+        observed_states: List[Tuple[float, float, float, float]],
+        times: Optional[List[float]] = None,
+    ) -> Dict:
         """
         Fit dynamic model to observed data.
 
@@ -476,25 +463,27 @@ class LJPWTrajectoryAnalyzer:
             # Find closest predicted time
             pred_state = min(predicted, key=lambda p: abs(p[0] - obs_time))[1:]
 
-            error = math.sqrt(sum((o - p)**2 for o, p in zip(obs_state, pred_state)))
+            error = math.sqrt(sum((o - p) ** 2 for o, p in zip(obs_state, pred_state)))
             errors.append(error)
 
         rmse = math.sqrt(sum(e**2 for e in errors) / len(errors))
 
         return {
-            'initial_state': initial_state,
-            'predicted_trajectory': predicted,
-            'observed_states': observed_states,
-            'errors': errors,
-            'rmse': rmse,
-            'fit_quality': 'GOOD' if rmse < 0.05 else 'FAIR' if rmse < 0.1 else 'POOR'
+            "initial_state": initial_state,
+            "predicted_trajectory": predicted,
+            "observed_states": observed_states,
+            "errors": errors,
+            "rmse": rmse,
+            "fit_quality": "GOOD" if rmse < 0.05 else "FAIR" if rmse < 0.1 else "POOR",
         }
 
 
 # Utility functions
 
-def analyze_code_evolution(ljpw_scores: List[Dict],
-                          timestamps: Optional[List[float]] = None) -> Dict:
+
+def analyze_code_evolution(
+    ljpw_scores: List[Dict], timestamps: Optional[List[float]] = None
+) -> Dict:
     """
     Analyze code evolution from LJPW scores over time.
 
@@ -505,14 +494,13 @@ def analyze_code_evolution(ljpw_scores: List[Dict],
     Returns:
         Analysis results
     """
-    states = [(s['L'], s['J'], s['P'], s['W']) for s in ljpw_scores]
+    states = [(s["L"], s["J"], s["P"], s["W"]) for s in ljpw_scores]
 
     analyzer = LJPWTrajectoryAnalyzer()
     return analyzer.analyze_sequence(states, timestamps)
 
 
-def predict_code_future(current_ljpw: Dict,
-                       time_horizon: float = 10.0) -> Dict:
+def predict_code_future(current_ljpw: Dict, time_horizon: float = 10.0) -> Dict:
     """
     Predict future code evolution from current LJPW state.
 
@@ -523,18 +511,17 @@ def predict_code_future(current_ljpw: Dict,
     Returns:
         Prediction results
     """
-    current_state = (current_ljpw['L'], current_ljpw['J'],
-                    current_ljpw['P'], current_ljpw['W'])
+    current_state = (current_ljpw["L"], current_ljpw["J"], current_ljpw["P"], current_ljpw["W"])
 
     model = LJPWDynamicModel()
     return model.predict_future(current_state, time_horizon=time_horizon)
 
 
 # Example usage
-if __name__ == '__main__':
-    print("="*70)
+if __name__ == "__main__":
+    print("=" * 70)
     print("LJPW Dynamic Model v3.0 - Demo")
-    print("="*70)
+    print("=" * 70)
     print()
 
     # Example 1: Simulate from poor state toward Natural Equilibrium
@@ -546,21 +533,25 @@ if __name__ == '__main__':
     model = LJPWDynamicModel()
     trajectory = model.simulate(poor_code, duration=50, dt=0.5)
 
-    print(f"Initial state: L={poor_code[0]:.3f}, J={poor_code[1]:.3f}, "
-          f"P={poor_code[2]:.3f}, W={poor_code[3]:.3f}")
+    print(
+        f"Initial state: L={poor_code[0]:.3f}, J={poor_code[1]:.3f}, "
+        f"P={poor_code[2]:.3f}, W={poor_code[3]:.3f}"
+    )
     print(f"Distance from NE: {model._distance_from_ne(poor_code):.3f}")
     print()
 
     final_state = trajectory[-1][1:]
-    print(f"Final state (t=50): L={final_state[0]:.3f}, J={final_state[1]:.3f}, "
-          f"P={final_state[2]:.3f}, W={final_state[3]:.3f}")
+    print(
+        f"Final state (t=50): L={final_state[0]:.3f}, J={final_state[1]:.3f}, "
+        f"P={final_state[2]:.3f}, W={final_state[3]:.3f}"
+    )
     print(f"Distance from NE: {model._distance_from_ne(final_state):.3f}")
     print()
 
     analysis = model.analyze_trajectory(trajectory)
     print(f"Converging: {analysis['converging']}")
     print(f"Velocity magnitude: {analysis['velocity_magnitude']:.4f}")
-    if analysis['eta_to_ne'] != float('inf'):
+    if analysis["eta_to_ne"] != float("inf"):
         print(f"ETA to equilibrium: {analysis['eta_to_ne']:.1f} time units")
     else:
         print("Not converging to equilibrium")
@@ -600,11 +591,11 @@ if __name__ == '__main__':
 
     # Simulated commit history
     commits = [
-        {'L': 0.3, 'J': 0.4, 'P': 0.5, 'W': 0.4},
-        {'L': 0.4, 'J': 0.5, 'P': 0.6, 'W': 0.5},
-        {'L': 0.5, 'J': 0.5, 'P': 0.7, 'W': 0.5},
-        {'L': 0.6, 'J': 0.5, 'P': 0.75, 'W': 0.6},
-        {'L': 0.6, 'J': 0.4, 'P': 0.8, 'W': 0.6},
+        {"L": 0.3, "J": 0.4, "P": 0.5, "W": 0.4},
+        {"L": 0.4, "J": 0.5, "P": 0.6, "W": 0.5},
+        {"L": 0.5, "J": 0.5, "P": 0.7, "W": 0.5},
+        {"L": 0.6, "J": 0.5, "P": 0.75, "W": 0.6},
+        {"L": 0.6, "J": 0.4, "P": 0.8, "W": 0.6},
     ]
 
     evolution = analyze_code_evolution(commits)
@@ -616,13 +607,13 @@ if __name__ == '__main__':
     print(f"Crossing power threshold: {evolution['crossing_power_threshold']}")
     print()
 
-    if evolution['crossing_power_threshold']:
+    if evolution["crossing_power_threshold"]:
         print("⚠️  WARNING: Power crossed threshold (0.71) in recent commits!")
         print("   Risk: Premature optimization eroding code structure")
         print("   Recommendation: Increase Wisdom before further optimization")
 
     print()
-    print("="*70)
+    print("=" * 70)
     print("See docs/THEORY.md for mathematical foundations")
     print("See examples/advanced/track_code_evolution.py for real usage")
-    print("="*70)
+    print("=" * 70)

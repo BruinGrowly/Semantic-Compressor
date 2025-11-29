@@ -37,16 +37,17 @@ Date: November 2025
 """
 
 import math
-from typing import Dict, List, Tuple, Optional, Any
-from dataclasses import dataclass
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
 
-from ljpw_dynamic_v3 import LJPWDynamicModel, LJPWParameters, NATURAL_EQUILIBRIUM
+from ljpw_dynamic_v3 import NATURAL_EQUILIBRIUM, LJPWDynamicModel, LJPWParameters
 
 
 @dataclass
 class LJPWState:
     """Represents a point in LJPW 4D phase space"""
+
     L: float
     J: float
     P: float
@@ -59,10 +60,10 @@ class LJPWState:
         """Calculate distance from Natural Equilibrium"""
         L_ne, J_ne, P_ne, W_ne = NATURAL_EQUILIBRIUM
         return math.sqrt(
-            (self.L - L_ne)**2 +
-            (self.J - J_ne)**2 +
-            (self.P - P_ne)**2 +
-            (self.W - W_ne)**2
+            (self.L - L_ne) ** 2
+            + (self.J - J_ne) ** 2
+            + (self.P - P_ne) ** 2
+            + (self.W - W_ne) ** 2
         )
 
     def health(self) -> float:
@@ -73,10 +74,11 @@ class LJPWState:
 @dataclass
 class LJPWComponent:
     """A component in LJPW space with its own state"""
+
     name: str
     state: LJPWState
     component_type: str
-    subcomponents: Dict[str, 'LJPWComponent']
+    subcomponents: Dict[str, "LJPWComponent"]
     metadata: Dict[str, Any]
 
     def get_all_states(self) -> Dict[str, LJPWState]:
@@ -98,13 +100,14 @@ class LJPWStructure:
     - Infrastructure (servers, networks, databases)
     - Organizations (teams, processes, products)
     """
+
     name: str
     root: LJPWComponent
     interactions: Dict[Tuple[str, str], float]  # Coupling strengths
 
     def get_component(self, path: str) -> Optional[LJPWComponent]:
         """Get component by path (e.g., 'os.kernel')"""
-        parts = path.split('.')
+        parts = path.split(".")
         current = self.root
 
         for part in parts[1:]:  # Skip root name
@@ -132,6 +135,7 @@ class LJPWStructure:
 @dataclass
 class SimulationResult:
     """Result of simulating an operation in LJPW space"""
+
     operation: str
     initial_state: LJPWState
     final_state: LJPWState
@@ -171,11 +175,12 @@ class LJPWVirtualMachine:
         if analyze:
             # Use the ISO analyzer to extract structure
             from ljpw_iso_analyzer import LJPWISOAnalyzer
+
             analyzer = LJPWISOAnalyzer()
             result = analyzer.analyze(iso_path)
 
-            ljpw = result['ljpw']
-            root_state = LJPWState(ljpw['L'], ljpw['J'], ljpw['P'], ljpw['W'])
+            ljpw = result["ljpw"]
+            root_state = LJPWState(ljpw["L"], ljpw["J"], ljpw["P"], ljpw["W"])
         else:
             # Default structure
             root_state = LJPWState(0.7, 0.7, 0.7, 0.7)
@@ -184,53 +189,45 @@ class LJPWVirtualMachine:
         # ISO typically has: boot, installer, core OS, components
 
         boot = LJPWComponent(
-            name='boot',
+            name="boot",
             state=LJPWState(0.9, 0.95, 0.8, 0.9),  # Boot sector is critical
-            component_type='boot_sector',
+            component_type="boot_sector",
             subcomponents={},
-            metadata={'critical': True}
+            metadata={"critical": True},
         )
 
         installer = LJPWComponent(
-            name='installer',
+            name="installer",
             state=LJPWState(0.8, 0.85, 0.9, 0.85),  # Installer is optimized
-            component_type='installer',
+            component_type="installer",
             subcomponents={},
-            metadata={'temporary': True}
+            metadata={"temporary": True},
         )
 
         core_os = LJPWComponent(
-            name='core',
+            name="core",
             state=LJPWState(0.85, 0.9, 0.85, 0.9),  # Core is well-designed
-            component_type='operating_system',
+            component_type="operating_system",
             subcomponents={},
-            metadata={'persistent': True}
+            metadata={"persistent": True},
         )
 
         root = LJPWComponent(
-            name='iso',
+            name="iso",
             state=root_state,
-            component_type='iso_image',
-            subcomponents={
-                'boot': boot,
-                'installer': installer,
-                'core': core_os
-            },
-            metadata={'path': iso_path}
+            component_type="iso_image",
+            subcomponents={"boot": boot, "installer": installer, "core": core_os},
+            metadata={"path": iso_path},
         )
 
         # Define interactions (how components affect each other)
         interactions = {
-            ('boot', 'installer'): 0.9,      # Boot enables installer
-            ('installer', 'core'): 0.95,     # Installer deploys core
-            ('core', 'installer'): 0.3,      # Core affects installer minimally
+            ("boot", "installer"): 0.9,  # Boot enables installer
+            ("installer", "core"): 0.95,  # Installer deploys core
+            ("core", "installer"): 0.3,  # Core affects installer minimally
         }
 
-        structure = LJPWStructure(
-            name=iso_path,
-            root=root,
-            interactions=interactions
-        )
+        structure = LJPWStructure(name=iso_path, root=root, interactions=interactions)
 
         self.loaded_structures[iso_path] = structure
         return structure
@@ -239,11 +236,13 @@ class LJPWVirtualMachine:
         """Load a pre-built structure into the VM"""
         self.loaded_structures[structure.name] = structure
 
-    def simulate_operation(self,
-                          structure: LJPWStructure,
-                          operation: str,
-                          duration: float = 100.0,
-                          environment: Optional[Dict] = None) -> SimulationResult:
+    def simulate_operation(
+        self,
+        structure: LJPWStructure,
+        operation: str,
+        duration: float = 100.0,
+        environment: Optional[Dict] = None,
+    ) -> SimulationResult:
         """
         Simulate an operation on a structure in LJPW space.
 
@@ -260,11 +259,11 @@ class LJPWVirtualMachine:
         initial = structure.overall_state()
 
         # Apply operation-specific dynamics
-        if operation == 'install':
+        if operation == "install":
             trajectory = self._simulate_installation(structure, duration, environment)
-        elif operation == 'update':
+        elif operation == "update":
             trajectory = self._simulate_update(structure, duration)
-        elif operation == 'scale':
+        elif operation == "scale":
             trajectory = self._simulate_scaling(structure, duration)
         else:
             # Generic simulation using v3.0 dynamics
@@ -280,8 +279,8 @@ class LJPWVirtualMachine:
 
         # Check for convergence
         analysis = self.model.analyze_trajectory(trajectory)
-        converging = analysis['converging']
-        eta_to_ne = analysis.get('eta_to_ne', float('inf'))
+        converging = analysis["converging"]
+        eta_to_ne = analysis.get("eta_to_ne", float("inf"))
 
         # Identify issues
         issues = self._identify_issues(initial, final, trajectory)
@@ -300,13 +299,12 @@ class LJPWVirtualMachine:
             recommendations=recommendations,
             duration=duration,
             converging=converging,
-            eta_to_ne=eta_to_ne
+            eta_to_ne=eta_to_ne,
         )
 
-    def _simulate_installation(self,
-                               structure: LJPWStructure,
-                               duration: float,
-                               environment: Optional[Dict]) -> List:
+    def _simulate_installation(
+        self, structure: LJPWStructure, duration: float, environment: Optional[Dict]
+    ) -> List:
         """Simulate OS installation process"""
         initial = structure.overall_state()
 
@@ -330,12 +328,12 @@ class LJPWVirtualMachine:
 
             # Installation increases P (activity)
             if step < 80:  # During active installation
-                P_boost = 0.1 * (1 - step/80)  # Decreasing boost
+                P_boost = 0.1 * (1 - step / 80)  # Decreasing boost
                 P = min(1.0, P + P_boost)
 
             # Environment affects L (safety)
             if environment:
-                env_L = environment.get('safety_factor', 1.0)
+                env_L = environment.get("safety_factor", 1.0)
                 L = L * env_L
 
             # Use model to evolve
@@ -394,16 +392,15 @@ class LJPWVirtualMachine:
 
         return modified
 
-    def _identify_issues(self,
-                        initial: LJPWState,
-                        final: LJPWState,
-                        trajectory: List) -> List[str]:
+    def _identify_issues(self, initial: LJPWState, final: LJPWState, trajectory: List) -> List[str]:
         """Identify potential issues from simulation"""
         issues = []
 
         # Check threshold crossing
         if final.P > 0.71 and final.W < 0.60:
-            issues.append(f"Power crossed threshold (P={final.P:.2f} > 0.71) with low Wisdom (W={final.W:.2f})")
+            issues.append(
+                f"Power crossed threshold (P={final.P:.2f} > 0.71) with low Wisdom (W={final.W:.2f})"
+            )
             issues.append("Risk: Over-optimization may cause instability")
 
         # Check dimension drops
@@ -425,9 +422,7 @@ class LJPWVirtualMachine:
 
         return issues
 
-    def _generate_recommendations(self,
-                                  final: LJPWState,
-                                  issues: List[str]) -> List[str]:
+    def _generate_recommendations(self, final: LJPWState, issues: List[str]) -> List[str]:
         """Generate recommendations based on final state"""
         recommendations = []
 
@@ -438,16 +433,20 @@ class LJPWVirtualMachine:
             recommendations.append(f"Boost Safety (L): Add validation, error handling, monitoring")
 
         if final.J < J_ne - 0.1:
-            recommendations.append(f"Improve Structure (J): Add documentation, modularize, clean interfaces")
+            recommendations.append(
+                f"Improve Structure (J): Add documentation, modularize, clean interfaces"
+            )
 
         if final.P > P_ne + 0.1 and final.W < W_ne:
-            recommendations.append(f"Balance Power with Wisdom: Add architecture review before optimizing")
+            recommendations.append(
+                f"Balance Power with Wisdom: Add architecture review before optimizing"
+            )
 
         if final.W < W_ne - 0.1:
             recommendations.append(f"Increase Wisdom (W): Invest in design, planning, architecture")
 
         # Issue-specific
-        if "threshold" in ' '.join(issues).lower():
+        if "threshold" in " ".join(issues).lower():
             recommendations.append("CRITICAL: Reduce Power or increase Wisdom to avoid erosion")
 
         if not recommendations:
@@ -455,10 +454,12 @@ class LJPWVirtualMachine:
 
         return recommendations
 
-    def predict_interaction(self,
-                           structure1: LJPWStructure,
-                           structure2: LJPWStructure,
-                           interaction_type: str = 'integrate') -> SimulationResult:
+    def predict_interaction(
+        self,
+        structure1: LJPWStructure,
+        structure2: LJPWStructure,
+        interaction_type: str = "integrate",
+    ) -> SimulationResult:
         """
         Predict outcome of two structures interacting.
 
@@ -469,7 +470,7 @@ class LJPWVirtualMachine:
         state2 = structure2.overall_state()
 
         # Weighted combination based on interaction type
-        if interaction_type == 'integrate':
+        if interaction_type == "integrate":
             # Application inherits OS characteristics
             combined_L = 0.3 * state1.L + 0.7 * state2.L
             combined_J = 0.5 * state1.J + 0.5 * state2.J
@@ -493,7 +494,7 @@ class LJPWVirtualMachine:
         analysis = self.model.analyze_trajectory(trajectory)
 
         return SimulationResult(
-            operation=f'{interaction_type}_{structure1.name}_with_{structure2.name}',
+            operation=f"{interaction_type}_{structure1.name}_with_{structure2.name}",
             initial_state=combined_state,
             final_state=final,
             trajectory=trajectory,
@@ -502,14 +503,16 @@ class LJPWVirtualMachine:
             issues=self._identify_issues(combined_state, final, trajectory),
             recommendations=self._generate_recommendations(final, []),
             duration=50,
-            converging=analysis['converging'],
-            eta_to_ne=analysis.get('eta_to_ne', float('inf'))
+            converging=analysis["converging"],
+            eta_to_ne=analysis.get("eta_to_ne", float("inf")),
         )
 
-    def create_composite_structure(self,
-                                   name: str,
-                                   components: Dict[str, LJPWComponent],
-                                   interactions: Dict[Tuple[str, str], float]) -> LJPWStructure:
+    def create_composite_structure(
+        self,
+        name: str,
+        components: Dict[str, LJPWComponent],
+        interactions: Dict[Tuple[str, str], float],
+    ) -> LJPWStructure:
         """
         Create a composite structure from components.
 
@@ -527,23 +530,19 @@ class LJPWVirtualMachine:
         root = LJPWComponent(
             name=name,
             state=LJPWState(avg_L, avg_J, avg_P, avg_W),
-            component_type='composite',
+            component_type="composite",
             subcomponents=components,
-            metadata={'created': 'composite'}
+            metadata={"created": "composite"},
         )
 
-        return LJPWStructure(
-            name=name,
-            root=root,
-            interactions=interactions
-        )
+        return LJPWStructure(name=name, root=root, interactions=interactions)
 
 
 # Example usage and demonstrations
-if __name__ == '__main__':
-    print("="*70)
+if __name__ == "__main__":
+    print("=" * 70)
     print("LJPW Virtual Machine - Semantic Computing Demo")
-    print("="*70)
+    print("=" * 70)
     print()
     print("Demonstrates: LJPW space as a computational substrate")
     print("Operations run on MEANING, not bytes!")
@@ -552,46 +551,29 @@ if __name__ == '__main__':
     vm = LJPWVirtualMachine()
 
     # Example 1: Load and "install" Ubuntu (simulated structure)
-    print("="*70)
+    print("=" * 70)
     print("Example 1: Installing Ubuntu Server in LJPW Space")
-    print("-"*70)
+    print("-" * 70)
     print()
 
     # Create simulated Ubuntu structure
     ubuntu = vm.create_composite_structure(
-        name='ubuntu-22.04-server',
+        name="ubuntu-22.04-server",
         components={
-            'boot': LJPWComponent(
-                'boot',
-                LJPWState(0.9, 0.95, 0.85, 0.9),
-                'boot_sector',
-                {},
-                {}
+            "boot": LJPWComponent("boot", LJPWState(0.9, 0.95, 0.85, 0.9), "boot_sector", {}, {}),
+            "installer": LJPWComponent(
+                "installer", LJPWState(0.85, 0.90, 0.90, 0.85), "installer", {}, {}
             ),
-            'installer': LJPWComponent(
-                'installer',
-                LJPWState(0.85, 0.90, 0.90, 0.85),
-                'installer',
-                {},
-                {}
-            ),
-            'core': LJPWComponent(
-                'core',
-                LJPWState(0.88, 0.90, 0.85, 0.90),
-                'os_core',
-                {},
-                {}
-            )
+            "core": LJPWComponent("core", LJPWState(0.88, 0.90, 0.85, 0.90), "os_core", {}, {}),
         },
-        interactions={
-            ('boot', 'installer'): 0.95,
-            ('installer', 'core'): 0.90
-        }
+        interactions={("boot", "installer"): 0.95, ("installer", "core"): 0.90},
     )
 
     print(f"Loaded: {ubuntu.name}")
-    print(f"Initial state: L={ubuntu.overall_state().L:.2f}, J={ubuntu.overall_state().J:.2f}, "
-          f"P={ubuntu.overall_state().P:.2f}, W={ubuntu.overall_state().W:.2f}")
+    print(
+        f"Initial state: L={ubuntu.overall_state().L:.2f}, J={ubuntu.overall_state().J:.2f}, "
+        f"P={ubuntu.overall_state().P:.2f}, W={ubuntu.overall_state().W:.2f}"
+    )
     print(f"Initial health: {ubuntu.overall_state().health()*100:.1f}%")
     print()
 
@@ -599,19 +581,21 @@ if __name__ == '__main__':
     print("Simulating installation (in LJPW space, NO bytes executed)...")
     result = vm.simulate_operation(
         ubuntu,
-        operation='install',
+        operation="install",
         duration=60,
-        environment={'safety_factor': 0.95}  # Slightly risky environment
+        environment={"safety_factor": 0.95},  # Slightly risky environment
     )
 
     print()
     print("RESULTS:")
     print(f"  Success probability: {result.success_prob*100:.1f}%")
     print(f"  Final health: {result.final_health*100:.1f}%")
-    print(f"  Final state: L={result.final_state.L:.2f}, J={result.final_state.J:.2f}, "
-          f"P={result.final_state.P:.2f}, W={result.final_state.W:.2f}")
+    print(
+        f"  Final state: L={result.final_state.L:.2f}, J={result.final_state.J:.2f}, "
+        f"P={result.final_state.P:.2f}, W={result.final_state.W:.2f}"
+    )
     print(f"  Converging to NE: {result.converging}")
-    if result.eta_to_ne != float('inf'):
+    if result.eta_to_ne != float("inf"):
         print(f"  ETA to equilibrium: {result.eta_to_ne:.1f} time units")
 
     if result.issues:
@@ -630,42 +614,38 @@ if __name__ == '__main__':
     print()
 
     # Example 2: Deploy application on OS
-    print("="*70)
+    print("=" * 70)
     print("Example 2: Deploying Application on Ubuntu")
-    print("-"*70)
+    print("-" * 70)
     print()
 
     # Create application structure
     webapp = vm.create_composite_structure(
-        name='webapp',
+        name="webapp",
         components={
-            'backend': LJPWComponent(
-                'backend',
-                LJPWState(0.65, 0.70, 0.85, 0.75),
-                'application',
-                {},
-                {}
+            "backend": LJPWComponent(
+                "backend", LJPWState(0.65, 0.70, 0.85, 0.75), "application", {}, {}
             ),
-            'database': LJPWComponent(
-                'database',
-                LJPWState(0.80, 0.85, 0.75, 0.85),
-                'database',
-                {},
-                {}
-            )
+            "database": LJPWComponent(
+                "database", LJPWState(0.80, 0.85, 0.75, 0.85), "database", {}, {}
+            ),
         },
-        interactions={('backend', 'database'): 0.85}
+        interactions={("backend", "database"): 0.85},
     )
 
     print(f"Application: {webapp.name}")
-    print(f"  Backend: L={webapp.root.subcomponents['backend'].state.L:.2f}, "
-          f"J={webapp.root.subcomponents['backend'].state.J:.2f}")
-    print(f"  Database: L={webapp.root.subcomponents['database'].state.L:.2f}, "
-          f"J={webapp.root.subcomponents['database'].state.J:.2f}")
+    print(
+        f"  Backend: L={webapp.root.subcomponents['backend'].state.L:.2f}, "
+        f"J={webapp.root.subcomponents['backend'].state.J:.2f}"
+    )
+    print(
+        f"  Database: L={webapp.root.subcomponents['database'].state.L:.2f}, "
+        f"J={webapp.root.subcomponents['database'].state.J:.2f}"
+    )
     print()
 
     print("Predicting integration with Ubuntu...")
-    integration = vm.predict_interaction(webapp, ubuntu, 'integrate')
+    integration = vm.predict_interaction(webapp, ubuntu, "integrate")
 
     print()
     print("PREDICTION:")
@@ -679,9 +659,9 @@ if __name__ == '__main__':
             print(f"    ⚠️  {issue}")
 
     print()
-    print("="*70)
+    print("=" * 70)
     print("KEY INSIGHT")
-    print("-"*70)
+    print("-" * 70)
     print()
     print("We just simulated:")
     print("  1. OS installation (60 time units)")
@@ -699,4 +679,4 @@ if __name__ == '__main__':
     print()
     print("This is SEMANTIC COMPUTING.")
     print("Operations on MEANING, not bytes.")
-    print("="*70)
+    print("=" * 70)
