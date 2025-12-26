@@ -47,6 +47,12 @@ from src.ljpw.ljpw_framework_v7 import (
     get_natural_equilibrium,
     get_anchor_point,
     calculate_distance,
+    # Semantic Illustration (Parabolic Compression)
+    SemanticIllustration,
+    ILLUSTRATIONS,
+    create_illustration,
+    expand_illustration,
+    illustrate_concept,
 )
 
 from src.ljpw.ljpw_baselines_v4 import (
@@ -799,6 +805,164 @@ class TestInvariantProperties:
         """Distance from point to itself is zero."""
         point = (0.5, 0.5, 0.5, 0.5)
         assert calculate_distance(point, point) == 0
+
+
+# ============================================================================
+# TEST 17: SEMANTIC ILLUSTRATION (PARABOLIC COMPRESSION)
+# ============================================================================
+
+
+class TestSemanticIllustration:
+    """Test Semantic Illustration - the mathematical equivalent of parabolic compression."""
+
+    def test_canonical_illustrations_exist(self):
+        """Canonical illustrations are defined."""
+        assert "golden_ratio" in ILLUSTRATIONS
+        assert "natural_equilibrium" in ILLUSTRATIONS
+        assert "emergent_structure" in ILLUSTRATIONS
+        assert "uncertainty_bound" in ILLUSTRATIONS
+
+    def test_golden_ratio_illustration(self):
+        """Golden ratio illustration has infinite expansion."""
+        golden = ILLUSTRATIONS["golden_ratio"]
+        assert golden.seed == PHI
+        assert golden.domain == "growth_harmony"
+        assert golden.expansion_ratio == float("inf")
+        assert golden.fidelity == 1.0
+        assert golden.is_effective()
+
+    def test_natural_equilibrium_illustration(self):
+        """Natural equilibrium illustration compresses semantic optimality."""
+        ne = ILLUSTRATIONS["natural_equilibrium"]
+        assert ne.seed == (L0, J0, P0, W0)
+        assert ne.domain == "semantic_optimality"
+        assert ne.expansion_ratio == 100.0
+        assert ne.fidelity == 0.95
+        assert ne.is_effective()
+
+    def test_emergent_structure_illustration(self):
+        """2+2 structure compresses 4D to 2D."""
+        emergent = ILLUSTRATIONS["emergent_structure"]
+        assert emergent.seed == (P0, W0)
+        assert emergent.domain == "four_dimensional_semantics"
+        assert emergent.expansion_ratio == 2.0
+        assert emergent.fidelity == 0.92
+
+    def test_compression_ratio_calculation(self):
+        """Compression ratio = expansion × fidelity."""
+        illust = SemanticIllustration(
+            seed=0.5,
+            domain="test",
+            expansion_ratio=10.0,
+            fidelity=0.8,
+        )
+        assert illust.compress_ratio() == 8.0
+
+    def test_effective_illustration_criteria(self):
+        """Effective = expansion > 2 and fidelity > 0.8."""
+        # Effective
+        effective = SemanticIllustration(
+            seed=1.0, domain="test", expansion_ratio=3.0, fidelity=0.9
+        )
+        assert effective.is_effective()
+
+        # Not effective (low expansion)
+        low_expansion = SemanticIllustration(
+            seed=1.0, domain="test", expansion_ratio=1.5, fidelity=0.9
+        )
+        assert not low_expansion.is_effective()
+
+        # Not effective (low fidelity)
+        low_fidelity = SemanticIllustration(
+            seed=1.0, domain="test", expansion_ratio=5.0, fidelity=0.6
+        )
+        assert not low_fidelity.is_effective()
+
+    def test_create_illustration_from_data(self):
+        """Create illustration from empirical data."""
+        illust = create_illustration(
+            concept="test_concept",
+            seed=0.618,
+            examples_covered=100,
+            examples_lost=10,
+        )
+        assert illust.domain == "test_concept"
+        assert illust.seed == 0.618
+        assert illust.fidelity == pytest.approx(100 / 110, rel=0.01)
+        assert illust.expansion_ratio == 100.0  # 100 examples / 1 seed value
+
+    def test_create_illustration_with_tuple_seed(self):
+        """Create illustration with tuple seed divides by seed size."""
+        illust = create_illustration(
+            concept="multi_seed",
+            seed=(0.5, 0.5),
+            examples_covered=100,
+            examples_lost=0,
+        )
+        assert illust.expansion_ratio == 50.0  # 100 examples / 2 seed values
+
+    def test_expand_golden_ratio_illustration(self):
+        """Expanding golden ratio reveals what it generates."""
+        golden = ILLUSTRATIONS["golden_ratio"]
+        expanded = expand_illustration(golden)
+
+        assert "generates" in expanded
+        assert len(expanded["generates"]) > 0
+        assert any("Fibonacci" in g for g in expanded["generates"])
+        assert any("spiral" in g for g in expanded["generates"])
+
+    def test_expand_semantic_optimality(self):
+        """Expanding natural equilibrium reveals code quality insights."""
+        ne = ILLUSTRATIONS["natural_equilibrium"]
+        expanded = expand_illustration(ne)
+
+        assert "generates" in expanded
+        assert any("quality" in g.lower() for g in expanded["generates"])
+
+    def test_illustrate_ljpw_system(self):
+        """Compress an LJPW system to its seed."""
+        system = LJPWFrameworkV7(P=0.85, W=0.92)
+        illust = illustrate_concept(system)
+
+        # Seed should be (P, W)
+        assert illust.seed == (system.P, system.W)
+        assert illust.domain == "ljpw_system"
+        assert illust.expansion_ratio == 2.0  # 2D → 4D
+
+    def test_illustrate_preserves_emergent(self):
+        """When L, J follow emergence equations, fidelity should be 1.0."""
+        # System where L, J are exactly emergent
+        system = LJPWFrameworkV7(P=0.7, W=0.8)  # L, J calculated automatically
+        illust = illustrate_concept(system)
+
+        # Since L and J are calculated from P, W, regeneration is perfect
+        assert illust.fidelity == pytest.approx(1.0, rel=0.01)
+
+    def test_illustrate_loses_fidelity_for_overridden(self):
+        """When L, J are overridden, fidelity should drop."""
+        # System with manually set L, J that differ from emergent
+        system = LJPWFrameworkV7(P=0.7, W=0.8, L=0.5, J=0.3)
+        illust = illustrate_concept(system)
+
+        # L, J don't match emergent, so fidelity < 1
+        expected_L = 0.9 * 0.8 + 0.1  # 0.82
+        expected_J = 0.85 * 0.7 + 0.05  # 0.645
+        L_error = abs(0.5 - expected_L)
+        J_error = abs(0.3 - expected_J)
+        expected_fidelity = 1.0 - (L_error + J_error) / 2
+
+        assert illust.fidelity == pytest.approx(expected_fidelity, rel=0.01)
+
+    def test_illustration_compression_invariant(self):
+        """Compression ratio is always non-negative."""
+        for _ in range(100):
+            illust = SemanticIllustration(
+                seed=random.random(),
+                domain="test",
+                expansion_ratio=random.random() * 100,
+                fidelity=random.random(),
+            )
+            assert illust.compress_ratio() >= 0
 
 
 # ============================================================================
