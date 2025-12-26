@@ -86,6 +86,12 @@ try:
         create_from_ljpw,
         get_natural_equilibrium,
         get_anchor_point,
+        # Semantic Illustration (Parabolic Compression)
+        SemanticIllustration,
+        ILLUSTRATIONS,
+        create_illustration,
+        expand_illustration,
+        illustrate_concept,
     )
 
     __all__.extend([
@@ -98,6 +104,12 @@ try:
         "create_from_ljpw",
         "get_natural_equilibrium",
         "get_anchor_point",
+        # Semantic Illustration
+        "SemanticIllustration",
+        "ILLUSTRATIONS",
+        "create_illustration",
+        "expand_illustration",
+        "illustrate_concept",
     ])
 except ImportError:
     pass
