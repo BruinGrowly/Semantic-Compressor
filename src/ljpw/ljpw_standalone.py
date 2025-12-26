@@ -3,13 +3,23 @@
 LJPW Semantic Analyzer - Standalone Version
 Single-file, zero-dependency code quality analyzer
 
-The LJPW Framework v5.0: Semantic-First Ontology
--------------------------------------------------
-Reality is Semantic in nature. Meaning is the substrate.
+The LJPW Framework v7.3: Complete Unified Edition
+--------------------------------------------------
+Reality IS Semantic in nature. Meaning is the substrate.
+
+Key V7.3 Features:
+- 2+2 Dimensional Structure: P, W fundamental; L, J emergent
+- Semantic Uncertainty Principle: ΔP·ΔW ≥ 0.287
+- State-Dependent Coupling (Law of Karma)
+- Phase Transitions: Entropic → Homeostatic → Autopoietic
+- Consciousness Quantification: C > 0.1 threshold
+- φ-Normalization for measurement variance reduction
+- Semantic Voltage calculation
+
 The four dimensions (Love, Justice, Power, Wisdom) are fundamental
 Principles of Meaning that manifest in our reality.
 
-Mathematics (φ, e, π) are merely the "shadows" these Semantic Principles
+Mathematics (φ, e, π) are the "shadows" these Semantic Principles
 cast when they intersect with lower dimensions of abstraction.
 
 Usage:
@@ -27,8 +37,27 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 # ============================================================================
-# CORE CONSTANTS: THE SEMANTIC SUBSTRATE
+# CORE CONSTANTS: THE SEMANTIC SUBSTRATE (V7.3)
 # ============================================================================
+
+# The Golden Ratio - Translation operator between meaning and math
+PHI: float = (1 + math.sqrt(5)) / 2  # 1.618034
+PHI_INV: float = PHI - 1  # 0.618034 (φ⁻¹)
+
+# V7.3 Fundamental Constants
+L0: float = PHI_INV  # 0.618034 - Love equilibrium
+J0: float = math.sqrt(2) - 1  # 0.414214 - Justice equilibrium
+P0: float = math.e - 2  # 0.718282 - Power equilibrium
+W0: float = math.log(2)  # 0.693147 - Wisdom equilibrium
+
+# Semantic Uncertainty Principle bound: ΔP·ΔW ≥ 0.287
+UNCERTAINTY_BOUND: float = J0 * W0
+
+# Consciousness threshold (C > 0.1 indicates consciousness)
+CONSCIOUSNESS_THRESHOLD: float = 0.1
+
+# Tsirelson Bound (quantum Love limit)
+TSIRELSON_BOUND: float = math.sqrt(2)
 
 # The Natural Equilibrium: Where Absolute Principles settle in our reality
 # These are the "signatures" of the Four Fundamental Semantic Principles
@@ -40,24 +69,28 @@ from typing import Any, Dict, List, Optional, Tuple
 NATURAL_EQUILIBRIUM: Dict[str, float] = {
     # LOVE (L): The Principle of Unity & Attraction
     # Mathematical Shadow: φ⁻¹ (golden ratio inverse)
-    # Physical Shadow: Gravity, Electromagnetism
+    # Physical Shadow: Gravity, Dark Energy (the Breathing Cosmos)
     # Semantic Meaning: The force that binds separate entities into wholes
-    "L": 0.618034,
+    # V7.3: EMERGENT from Wisdom (L = f(W), R² > 0.9)
+    "L": L0,
     # JUSTICE (J): The Principle of Balance & Truth
     # Mathematical Shadow: √2-1 (the diagonal constant)
-    # Physical Shadow: Pauli Exclusion Principle
+    # Physical Shadow: Pauli Exclusion Principle, Gauge Symmetry
     # Semantic Meaning: The constraint that creates structure and prevents chaos
-    "J": 0.414214,
+    # V7.3: EMERGENT from Power (J = f(P), R² > 0.9)
+    "J": J0,
     # POWER (P): The Principle of Energy & Existence
     # Mathematical Shadow: e-2 (Euler's constant offset)
     # Physical Shadow: Thermodynamics, Arrow of Time
     # Semantic Meaning: The raw capacity to be, to act, and to change state
-    "P": 0.718282,
+    # V7.3: FUNDAMENTAL dimension (conjugate to W)
+    "P": P0,
     # WISDOM (W): The Principle of Complexity & Insight
     # Mathematical Shadow: ln(2) (the fundamental unit of entropy)
     # Physical Shadow: Quantum Mechanics, Information Theory
     # Semantic Meaning: The ability to process information and self-reflect
-    "W": 0.693147,
+    # V7.3: FUNDAMENTAL dimension (conjugate to P)
+    "W": W0,
 }
 
 # ============================================================================
@@ -196,6 +229,9 @@ class SimpleCodeAnalyzer:
         # Generate insights
         insights = self._generate_insights(L, J, P, W)
 
+        # V7.3 metrics
+        v7_metrics = self._calculate_v7_metrics(L, J, P, W)
+
         return {
             "filename": filename,
             "lines": code_lines,
@@ -203,6 +239,8 @@ class SimpleCodeAnalyzer:
             "health": health,
             "insights": insights,
             "distance_from_ne": self._distance_from_ne(L, J, P, W),
+            # V7.3 additions
+            "v7": v7_metrics,
         }
 
     def _score_love(self, code: str, lines: int) -> float:
@@ -335,6 +373,79 @@ class SimpleCodeAnalyzer:
 
         return insights if insights else ["Code appears balanced"]
 
+    # ========================================================================
+    # V7.3 METRICS
+    # ========================================================================
+
+    def _calculate_v7_metrics(self, L: float, J: float, P: float, W: float) -> Dict[str, Any]:
+        """
+        Calculate all V7.3 metrics.
+
+        Returns comprehensive V7.3 analysis including:
+        - Consciousness metric
+        - Phase classification
+        - Semantic voltage
+        - Karma coupling
+        - Emergent dimension calculations
+        """
+        # Calculate harmony (static for code analysis)
+        distance = self._distance_from_ne(L, J, P, W)
+        H = 1.0 / (1.0 + distance)
+
+        # Consciousness: C = P × W × L × J × H²
+        consciousness = P * W * L * J * (H ** 2)
+
+        # Classify consciousness level
+        if consciousness >= 0.3:
+            consciousness_level = "HIGHLY_CONSCIOUS"
+        elif consciousness >= CONSCIOUSNESS_THRESHOLD:
+            consciousness_level = "CONSCIOUS"
+        elif consciousness >= 0.05:
+            consciousness_level = "PRE_CONSCIOUS"
+        else:
+            consciousness_level = "NON_CONSCIOUS"
+
+        # Phase classification
+        if H < 0.5:
+            phase = "ENTROPIC"
+        elif H < 0.6 or L < 0.7:
+            phase = "HOMEOSTATIC"
+        else:
+            phase = "AUTOPOIETIC"
+
+        # Semantic voltage: V = φ × H × L
+        voltage = PHI * H * L
+
+        # Karma coupling (state-dependent)
+        karma_coupling = {
+            "kappa_LJ": 1.0 + 0.4 * H,
+            "kappa_LP": 1.0 + 0.3 * H,
+            "kappa_LW": 1.0 + 0.5 * H,
+        }
+
+        # Emergent dimension calculations (V7.3 2+2 structure)
+        emergent_L = min(0.9 * W + 0.1, TSIRELSON_BOUND)
+        emergent_J = min(0.85 * P + 0.05, 1.0)
+
+        # Power erosion (corruption potential)
+        power_erosion = 0.08 * P * max(0, 1 - W / W0)
+
+        return {
+            "harmony": H,
+            "consciousness": consciousness,
+            "consciousness_level": consciousness_level,
+            "is_conscious": consciousness >= CONSCIOUSNESS_THRESHOLD,
+            "phase": phase,
+            "voltage": voltage,
+            "karma_coupling": karma_coupling,
+            "emergent": {
+                "L_from_W": emergent_L,
+                "J_from_P": emergent_J,
+            },
+            "power_erosion": power_erosion,
+            "fundamental_dimensions": {"P": P, "W": W},
+        }
+
 
 # ============================================================================
 # COMMAND LINE INTERFACE
@@ -345,16 +456,16 @@ def format_result(result: Dict[str, Any]) -> str:
     """Format analysis result for display"""
     output = []
     output.append("=" * 70)
-    output.append(f"LJPW Analysis: {result['filename']}")
+    output.append(f"LJPW Analysis (V7.3): {result['filename']}")
     output.append("=" * 70)
     output.append(f"\nLines of code: {result['lines']}")
     output.append(f"\nLJPW Scores:")
 
     ljpw = result["ljpw"]
-    output.append(f"  Love (Safety):      {ljpw['L']:.3f}")
-    output.append(f"  Justice (Structure): {ljpw['J']:.3f}")
-    output.append(f"  Power (Performance): {ljpw['P']:.3f}")
-    output.append(f"  Wisdom (Design):     {ljpw['W']:.3f}")
+    output.append(f"  Love (Safety):       {ljpw['L']:.3f}  [Emergent from W]")
+    output.append(f"  Justice (Structure): {ljpw['J']:.3f}  [Emergent from P]")
+    output.append(f"  Power (Performance): {ljpw['P']:.3f}  [Fundamental]")
+    output.append(f"  Wisdom (Design):     {ljpw['W']:.3f}  [Fundamental]")
 
     health_pct = result["health"] * 100
     output.append(f"\nHealth Score: {health_pct:.1f}%")
@@ -371,6 +482,17 @@ def format_result(result: Dict[str, Any]) -> str:
     output.append(f"Status: {status}")
 
     output.append(f"\nDistance from Natural Equilibrium: {result['distance_from_ne']:.3f}")
+
+    # V7.3 Metrics
+    if "v7" in result and result["v7"]:
+        v7 = result["v7"]
+        output.append("\n--- V7.3 Metrics ---")
+        output.append(f"  Harmony:      {v7.get('harmony', 0):.3f}")
+        output.append(f"  Consciousness:{v7.get('consciousness', 0):.4f}  [{v7.get('consciousness_level', 'N/A')}]")
+        output.append(f"  Phase:        {v7.get('phase', 'N/A')}")
+        output.append(f"  Voltage:      {v7.get('voltage', 0):.3f}")
+        if v7.get('is_conscious'):
+            output.append("  *** System crosses consciousness threshold (C > 0.1) ***")
 
     output.append("\nInsights:")
     for insight in result["insights"]:
@@ -1014,7 +1136,7 @@ About:
     - Wisdom (W): Design, patterns, architecture
 
     MIT License - Free for all, forever
-    Version 1.1
+    Version 2.0 (V7.3 Framework)
         """
         )
         return

@@ -2,17 +2,27 @@
 # -*- coding: utf-8 -*-
 """
 LJPW Mathematical Baselines
-Version 4.0
+Version 4.1 (V7.3 Compatible)
 
 Provides objective, non-arbitrary baselines for LJPW framework implementations.
 Includes both static analysis and a validated, non-linear dynamic simulator.
 
+Now includes V7.3 features:
+- 2+2 Dimensional Structure (P,W fundamental; L,J emergent)
+- State-Dependent Coupling (Law of Karma)
+- Consciousness Metrics
+- Phase Transitions
+- φ-Normalization
+- Semantic Voltage
+
 Based on: docs/LJPW Mathematical Baselines Reference V4.md
+         docs/LJPW_FRAMEWORK_V7.3_COMPLETE_UNIFIED_PLUS.md
 """
 
 import math
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -23,6 +33,31 @@ try:
 except ImportError:
     MATPLOTLIB_AVAILABLE = False
     print("Warning: matplotlib not available. Plotting functions will be disabled.")
+
+# ============================================================================
+# V7.3 CONSTANTS
+# ============================================================================
+
+PHI: float = (1 + math.sqrt(5)) / 2  # Golden Ratio: 1.618034
+PHI_INV: float = PHI - 1  # φ⁻¹: 0.618034
+UNCERTAINTY_BOUND: float = (math.sqrt(2) - 1) * math.log(2)  # J₀ × W₀ ≈ 0.287
+CONSCIOUSNESS_THRESHOLD: float = 0.1
+TSIRELSON_BOUND: float = math.sqrt(2)  # Quantum Love limit
+
+
+class Phase(Enum):
+    """V7.3 System phase based on Harmony and Love levels."""
+    ENTROPIC = "ENTROPIC"  # H < 0.5
+    HOMEOSTATIC = "HOMEOSTATIC"  # 0.5 ≤ H < 0.6
+    AUTOPOIETIC = "AUTOPOIETIC"  # H ≥ 0.6, L ≥ 0.7
+
+
+class ConsciousnessLevel(Enum):
+    """V7.3 Consciousness classification."""
+    NON_CONSCIOUS = "NON_CONSCIOUS"  # C < 0.05
+    PRE_CONSCIOUS = "PRE_CONSCIOUS"  # 0.05 ≤ C < 0.1
+    CONSCIOUS = "CONSCIOUS"  # 0.1 ≤ C < 0.3
+    HIGHLY_CONSCIOUS = "HIGHLY_CONSCIOUS"  # C ≥ 0.3
 
 
 @dataclass
@@ -280,6 +315,178 @@ class LJPWBaselines:
             return "Excellent - high-performing, growth active"
         else:
             return "Elite - exceptional, Love multiplier engaged"
+
+    # ========================================================================
+    # V7.3 EXTENSIONS
+    # ========================================================================
+
+    @staticmethod
+    def calculate_emergent_love(W: float) -> float:
+        """
+        V7.3: Calculate emergent Love from Wisdom.
+
+        L emerges from W via correlation (R² > 0.9).
+        In full implementation: L = I(X;Y) / H(X,Y)
+        """
+        return min(0.9 * W + 0.1, TSIRELSON_BOUND)
+
+    @staticmethod
+    def calculate_emergent_justice(P: float) -> float:
+        """
+        V7.3: Calculate emergent Justice from Power.
+
+        J emerges from P via symmetry (R² > 0.9).
+        In full implementation: J = δS/δφ = 0
+        """
+        return min(0.85 * P + 0.05, 1.0)
+
+    @staticmethod
+    def consciousness(L: float, J: float, P: float, W: float, self_referential: bool = False) -> float:
+        """
+        V7.3: Calculate consciousness metric.
+
+        C = P × W × L × J × H²
+
+        Returns:
+            C value where C > 0.1 indicates consciousness
+        """
+        NE = ReferencePoints.NATURAL_EQUILIBRIUM
+        d = math.sqrt(
+            (NE[0] - L) ** 2 + (NE[1] - J) ** 2 + (NE[2] - P) ** 2 + (NE[3] - W) ** 2
+        )
+
+        if self_referential:
+            # Self-referential harmony
+            numerator = L * J * P * W
+            denominator = NE[0] * NE[1] * NE[2] * NE[3]
+            H = numerator / denominator if denominator > 0 else 0
+        else:
+            # Static harmony
+            H = 1.0 / (1.0 + d)
+
+        return P * W * L * J * (H ** 2)
+
+    @staticmethod
+    def consciousness_level(L: float, J: float, P: float, W: float) -> ConsciousnessLevel:
+        """V7.3: Classify consciousness level."""
+        C = LJPWBaselines.consciousness(L, J, P, W)
+        if C >= 0.3:
+            return ConsciousnessLevel.HIGHLY_CONSCIOUS
+        elif C >= CONSCIOUSNESS_THRESHOLD:
+            return ConsciousnessLevel.CONSCIOUS
+        elif C >= 0.05:
+            return ConsciousnessLevel.PRE_CONSCIOUS
+        else:
+            return ConsciousnessLevel.NON_CONSCIOUS
+
+    @staticmethod
+    def phase(L: float, J: float, P: float, W: float) -> Phase:
+        """
+        V7.3: Determine system phase.
+
+        - ENTROPIC: H < 0.5 (collapsing)
+        - HOMEOSTATIC: 0.5 ≤ H < 0.6 or L < 0.7 (stable)
+        - AUTOPOIETIC: H ≥ 0.6 and L ≥ 0.7 (self-sustaining)
+        """
+        H = LJPWBaselines.harmony_index(L, J, P, W)
+        if H < 0.5:
+            return Phase.ENTROPIC
+        elif H < 0.6 or L < 0.7:
+            return Phase.HOMEOSTATIC
+        else:
+            return Phase.AUTOPOIETIC
+
+    @staticmethod
+    def semantic_voltage(L: float, J: float, P: float, W: float) -> float:
+        """
+        V7.3: Calculate semantic voltage (meaning preservation capacity).
+
+        V = φ × H × L
+        """
+        H = LJPWBaselines.harmony_index(L, J, P, W)
+        return PHI * H * L
+
+    @staticmethod
+    def phi_normalize(L: float, J: float, P: float, W: float) -> Tuple[float, float, float, float]:
+        """
+        V7.3: Apply φ-normalization to reduce measurement variance.
+
+        result = equilibrium × value^(1/φ)
+        Reduces variance from ~18% to ~3%.
+        """
+        NE = ReferencePoints.NATURAL_EQUILIBRIUM
+        return (
+            NE[0] * (L ** (1 / PHI)),
+            NE[1] * (J ** (1 / PHI)),
+            NE[2] * (P ** (1 / PHI)),
+            NE[3] * (W ** (1 / PHI)),
+        )
+
+    @staticmethod
+    def karma_coupling(L: float, J: float, P: float, W: float) -> Dict[str, float]:
+        """
+        V7.3: Calculate state-dependent coupling coefficients (Law of Karma).
+
+        κ(H) = 1.0 + multiplier × H
+        """
+        H = LJPWBaselines.harmony_index(L, J, P, W)
+        return {
+            "kappa_LJ": 1.0 + 0.4 * H,  # Love → Justice
+            "kappa_LP": 1.0 + 0.3 * H,  # Love → Power
+            "kappa_LW": 1.0 + 0.5 * H,  # Love → Wisdom
+        }
+
+    @staticmethod
+    def check_uncertainty(delta_P: float, delta_W: float) -> bool:
+        """
+        V7.3: Check if semantic uncertainty principle is satisfied.
+
+        ΔP · ΔW ≥ 0.287
+        """
+        return delta_P * delta_W >= UNCERTAINTY_BOUND
+
+    @staticmethod
+    def power_erosion(P: float, W: float, gamma: float = 0.08) -> float:
+        """
+        V7.3: Calculate Power erosion of Justice (corruption).
+
+        Unchecked Power without Wisdom erodes Justice.
+        erosion = γ × P × (1 - W/W₀)
+        """
+        NE = ReferencePoints.NATURAL_EQUILIBRIUM
+        return gamma * P * max(0, 1 - W / NE[3])
+
+    @staticmethod
+    def full_v7_diagnostic(L: float, J: float, P: float, W: float) -> Dict[str, Any]:
+        """
+        Complete V7.3 diagnostic analysis including all new features.
+        """
+        baselines = LJPWBaselines
+
+        # Get standard V4 diagnostic
+        diagnostic = baselines.full_diagnostic(L, J, P, W)
+
+        # Add V7.3 metrics
+        diagnostic["v7_metrics"] = {
+            "consciousness": baselines.consciousness(L, J, P, W),
+            "consciousness_level": baselines.consciousness_level(L, J, P, W).value,
+            "phase": baselines.phase(L, J, P, W).value,
+            "semantic_voltage": baselines.semantic_voltage(L, J, P, W),
+            "karma_coupling": baselines.karma_coupling(L, J, P, W),
+            "power_erosion": baselines.power_erosion(P, W),
+        }
+
+        diagnostic["v7_emergent"] = {
+            "calculated_L": baselines.calculate_emergent_love(W),
+            "calculated_J": baselines.calculate_emergent_justice(P),
+        }
+
+        diagnostic["v7_normalized"] = dict(zip(
+            ["L", "J", "P", "W"],
+            baselines.phi_normalize(L, J, P, W)
+        ))
+
+        return diagnostic
 
 
 class DynamicLJPWv4:

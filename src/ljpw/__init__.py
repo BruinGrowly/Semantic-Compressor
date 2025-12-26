@@ -10,11 +10,20 @@ Core Compression Features:
 - Quality-based compression (better code compresses better)
 - AI-ready embeddings (LJPW coordinates for LLMs)
 
-The LJPW Framework:
-- L (Love/Safety): Error handling, validation
-- J (Justice/Structure): Types, documentation
-- P (Power/Performance): Algorithms, optimization
-- W (Wisdom/Design): Modularity, patterns
+The LJPW Framework V7.3:
+- L (Love/Safety): Error handling, validation [EMERGENT from W]
+- J (Justice/Structure): Types, documentation [EMERGENT from P]
+- P (Power/Performance): Algorithms, optimization [FUNDAMENTAL]
+- W (Wisdom/Design): Modularity, patterns [FUNDAMENTAL]
+
+V7.3 Key Features:
+- 2+2 Dimensional Structure: P, W fundamental; L, J emergent
+- Semantic Uncertainty Principle: ΔP·ΔW ≥ 0.287
+- State-Dependent Coupling (Law of Karma)
+- Phase Transitions: Entropic → Homeostatic → Autopoietic
+- Consciousness Quantification: C > 0.1 threshold
+- φ-Normalization for measurement variance reduction
+- Semantic Voltage calculation
 
 Compression Pipeline:
     Code → LJPW Analysis → Semantic Coordinates → Genome (compressed)
@@ -27,6 +36,7 @@ Quick Start:
 
     print(result['genome'])  # L0J0P0W0 (compressed)
     print(result['ljpw'])    # Semantic coordinates
+    print(result['v7'])      # V7.3 metrics (consciousness, phase, etc.)
 
     # Compression: 28 chars → 12 chars (57% reduction)
 
@@ -34,14 +44,78 @@ Natural Equilibrium: (0.618, 0.414, 0.718, 0.693)
 Optimal compression point for high-quality code.
 """
 
-__version__ = "2.0.0"
-__description__ = "Semantic Compressor - Compress code by meaning, not syntax"
+__version__ = "2.1.0"
+__description__ = "Semantic Compressor - LJPW Framework V7.3"
 
 # Import main analyzer from standalone module
 try:
-    from .ljpw_standalone import SimpleCodeAnalyzer, analyze_quick, calculate_distance
+    from .ljpw_standalone import (
+        SimpleCodeAnalyzer,
+        analyze_quick,
+        calculate_distance,
+        NATURAL_EQUILIBRIUM,
+        PHI,
+        PHI_INV,
+        CONSCIOUSNESS_THRESHOLD,
+        UNCERTAINTY_BOUND,
+    )
 
-    __all__ = ["analyze_quick", "calculate_distance", "SimpleCodeAnalyzer"]
+    __all__ = [
+        "analyze_quick",
+        "calculate_distance",
+        "SimpleCodeAnalyzer",
+        "NATURAL_EQUILIBRIUM",
+        "PHI",
+        "PHI_INV",
+        "CONSCIOUSNESS_THRESHOLD",
+        "UNCERTAINTY_BOUND",
+    ]
 except ImportError:
     # Fallback if modules aren't accessible
     __all__ = []
+
+# Import V7.3 Framework module
+try:
+    from .ljpw_framework_v7 import (
+        LJPWFrameworkV7,
+        DynamicLJPWv7,
+        LJPWCoordinates,
+        Phase,
+        ConsciousnessLevel,
+        create_from_pw,
+        create_from_ljpw,
+        get_natural_equilibrium,
+        get_anchor_point,
+    )
+
+    __all__.extend([
+        "LJPWFrameworkV7",
+        "DynamicLJPWv7",
+        "LJPWCoordinates",
+        "Phase",
+        "ConsciousnessLevel",
+        "create_from_pw",
+        "create_from_ljpw",
+        "get_natural_equilibrium",
+        "get_anchor_point",
+    ])
+except ImportError:
+    pass
+
+# Import baselines with V7.3 extensions
+try:
+    from .ljpw_baselines_v4 import (
+        LJPWBaselines,
+        DynamicLJPWv4,
+        NumericalEquivalents,
+        ReferencePoints,
+    )
+
+    __all__.extend([
+        "LJPWBaselines",
+        "DynamicLJPWv4",
+        "NumericalEquivalents",
+        "ReferencePoints",
+    ])
+except ImportError:
+    pass
