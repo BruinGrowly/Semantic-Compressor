@@ -856,42 +856,99 @@ def calculate_distance(
 #
 # THE ARCHITECT'S INVERSION: Meaning is primary. Mathematics is its shadow.
 #
-# SEMANTIC PRINCIPLE:
-#   A parable compresses infinite meaning into a concrete anchor that GENERATES
-#   understanding on demand. "Consider the lilies" → infinite peace about provision.
+# ═══════════════════════════════════════════════════════════════════════════
+# THE SEMANTIC FORMULA (Primary)
+# ═══════════════════════════════════════════════════════════════════════════
 #
-# MATHEMATICAL SHADOW (The Generating Function):
-#   A seed value that, when operated upon, produces an infinite domain.
+# A parable compresses through THREE components (from Part XXV):
 #
-#   G(x) = 1/(1-x-x²) generates the entire Fibonacci sequence
-#   φ = (1+√5)/2 generates F_n = (φⁿ - ψⁿ)/√5 for all n
-#   e^x generates all its own derivatives
+#   BRICK     = The seed (irreducible truth, concrete anchor)
+#   MORTAR    = Love (the binding force that connects seed to domain)
+#   BLUEPRINT = φ (the self-referential proportion)
 #
-# This is GENERATIVE COMPRESSION — the seed doesn't store the data,
-# it PRODUCES it. This is Kolmogorov complexity in action:
+# The compression mechanism is SELF-REFERENCE:
 #
-#   K(x) = length of shortest program that outputs x
+#   ┌─────────────────────────────────────┐
+#   │         φ = 1 + 1/φ                 │
+#   └─────────────────────────────────────┘
 #
-# A parable has low K(seed) but generates high K(understanding).
-# The compression ratio is: K(generated) / K(seed)
+# This equation contains infinite depth because it REFERS TO ITSELF.
+# The formula IS the value. The seed IS the tree.
 #
-# For φ:  K(φ) = O(1), K(Fibonacci) = ∞  →  ratio = ∞
+# ═══════════════════════════════════════════════════════════════════════════
+# SEMANTIC COMPRESSION EQUATION
+# ═══════════════════════════════════════════════════════════════════════════
 #
-# THE FORMAL EQUIVALENCE:
+#   M = B × L^n × φ^(-d)
 #
-#   Semantic Compression          Mathematical Shadow
-#   ─────────────────────────────────────────────────────
-#   Parable/Illustration    ↔    Generating Function
-#   Seed (concrete anchor)  ↔    Generator (compact form)
-#   Expansion ratio         ↔    Degrees of freedom generated
-#   Fidelity                ↔    Convergence radius
-#   Domain (abstract)       ↔    Generated sequence/space
+# Where:
+#   M = Meaning generated
+#   B = Brick (seed value, irreducible truth)
+#   L = Love coefficient (binding strength, κ from coupling matrix)
+#   n = Expansion iterations (how many times Love binds to new domains)
+#   d = Distance from Source (Anchor Point)
+#   φ^(-d) = Translation factor (meaning → manifestation)
 #
-# The LJPW Framework itself is a generating function:
-#   Seed: (P, W) — 2 fundamental values
-#   Generates: (L, J, P, W, H, C, V, phase, ...) — infinite metrics
+# For infinite self-reference (n → ∞), M → ∞ from finite B.
+# THIS is how 8 symbols contain infinite meaning.
 #
-# This is not metaphor. This is the mathematical shadow of the semantic truth.
+# ═══════════════════════════════════════════════════════════════════════════
+# THE MATHEMATICAL SHADOW (Derived)
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# The generating function is the shadow of parabolic compression:
+#
+#   G(x) = 1 + x·G(x)     ← Self-referential (like φ = 1 + 1/φ)
+#   G(x) = 1/(1-x)        ← Generates infinite series
+#
+# For Fibonacci:
+#   G(x) = x/(1 - x - x²) ← Self-referential structure
+#   G(x) = x + x² + 2x³ + 3x⁴ + 5x⁵ + ...
+#
+# Kolmogorov complexity:
+#   K(seed) = O(1)        ← Finite description
+#   K(output) = ∞         ← Infinite generated content
+#   Ratio = ∞             ← Infinite compression
+#
+# ═══════════════════════════════════════════════════════════════════════════
+# THE UNITY: SEMANTIC ↔ MATHEMATICAL
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#   Semantic Principle          Mathematical Shadow
+#   ─────────────────────────────────────────────────────────────────────────
+#   Self-reference (φ=1+1/φ)    Recursive generating function G=1+xG
+#   Love (binding force)        Multiplication / Composition
+#   Blueprint (φ proportion)    Convergence radius
+#   Brick (seed)                Generator input
+#   Infinite meaning            Infinite series
+#
+# ═══════════════════════════════════════════════════════════════════════════
+# EXAMPLES
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# PARABLE: "Consider the lilies"
+#   Brick:     "lilies" (concrete, irreducible image)
+#   Mortar:    Love binds lilies → provision → trust → peace → ...
+#   Blueprint: Each binding follows φ-proportion (self-similar expansion)
+#   Result:    Infinite understanding from 2 words
+#
+# CONSTANT: φ = (1+√5)/2
+#   Brick:     8 symbols
+#   Mortar:    Self-reference (φ = 1 + 1/φ) binds to itself infinitely
+#   Blueprint: IS φ (the formula embodies its own proportion)
+#   Result:    Infinite Fibonacci, spirals, growth patterns, DNA, galaxies
+#
+# LJPW: (P, W) seed
+#   Brick:     2 fundamental values
+#   Mortar:    Emergence equations bind P→J, W→L
+#   Blueprint: φ-normalization, coupling matrix
+#   Result:    Infinite semantic metrics (H, C, V, phase, karma, health...)
+#
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# THE SEED IS THE TREE. THE FORMULA IS THE VALUE. THE WORD IS THE MEANING.
+#
+# ═══════════════════════════════════════════════════════════════════════════
 
 
 @dataclass
@@ -996,6 +1053,82 @@ LJPW_GENERATOR = GeneratingFunction(
     generator=_ljpw_generator,
     domain_size=float("inf"),  # Generates infinite metric space
 )
+
+
+# ============================================================================
+# THE SEMANTIC COMPRESSION FORMULA
+# ============================================================================
+
+
+def semantic_compression(
+    brick: float,
+    love: float = 1.5,
+    iterations: int = 1,
+    distance: float = 0.0,
+) -> float:
+    """
+    Compute the Semantic Compression Formula.
+
+    M = B × L^n × φ^(-d)
+
+    This is the PRIMARY formula. The generating function is its shadow.
+
+    Args:
+        brick: B - The seed value (irreducible truth)
+        love: L - Love coefficient (default 1.5, the L→W coupling)
+        iterations: n - Expansion iterations (Love binding cycles)
+        distance: d - Distance from Source (Anchor Point)
+
+    Returns:
+        M - Meaning generated
+
+    Examples:
+        >>> semantic_compression(1.0, love=1.5, iterations=10)
+        57.665...  # 1.5^10 ≈ 57.67x expansion
+
+        >>> semantic_compression(1.0, love=1.5, iterations=float('inf'))
+        inf  # Infinite meaning from finite seed
+    """
+    # M = B × L^n × φ^(-d)
+    if iterations == float("inf"):
+        return float("inf")
+
+    translation_factor = PHI ** (-distance)
+    meaning = brick * (love ** iterations) * translation_factor
+    return meaning
+
+
+def self_referential_depth(formula: callable, seed: float, max_depth: int = 100) -> int:
+    """
+    Measure the self-referential depth of a formula.
+
+    φ = 1 + 1/φ has infinite depth (converges to φ).
+    Most formulas have depth 1 (no self-reference).
+
+    Args:
+        formula: A function f where f(x) may reference x
+        seed: Starting value
+        max_depth: Maximum iterations to test
+
+    Returns:
+        Depth before convergence (or max_depth if infinite)
+    """
+    x = seed
+    for depth in range(1, max_depth + 1):
+        x_new = formula(x)
+        if abs(x_new - x) < 1e-10:
+            return depth
+        x = x_new
+    return max_depth  # Infinite or very deep
+
+
+def phi_self_reference(x: float) -> float:
+    """The self-referential formula for φ: f(x) = 1 + 1/x."""
+    return 1 + 1 / x if x != 0 else float("inf")
+
+
+# Demonstrate: φ is the fixed point of its own self-reference
+PHI_DEPTH = self_referential_depth(phi_self_reference, 1.0)  # Should be ~40 iterations
 
 
 def semantic_to_generating(illustration: "SemanticIllustration") -> GeneratingFunction:

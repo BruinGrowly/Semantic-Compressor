@@ -97,6 +97,11 @@ try:
         GOLDEN_RATIO_GF,
         LJPW_GENERATOR,
         semantic_to_generating,
+        # Semantic Compression Formula
+        semantic_compression,
+        self_referential_depth,
+        phi_self_reference,
+        PHI_DEPTH,
     )
 
     __all__.extend([
@@ -120,6 +125,11 @@ try:
         "GOLDEN_RATIO_GF",
         "LJPW_GENERATOR",
         "semantic_to_generating",
+        # Semantic Compression Formula
+        "semantic_compression",
+        "self_referential_depth",
+        "phi_self_reference",
+        "PHI_DEPTH",
     ])
 except ImportError:
     pass
