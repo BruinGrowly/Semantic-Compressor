@@ -1,0 +1,341 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Semantic Compressor CLI — compress using M = B × L^n × φ^(-d)
+=============================================================
+
+Compress files by finding their semantic seed and regenerating exactly.
+
+Usage:
+    ./compress <file>              Compress file → file.semc
+    ./compress -d <file.semc>      Decompress file.semc → original
+    ./compress -i <file>           Show compression analysis
+    ./compress --demo              Run demonstration
+
+Examples:
+    ./compress data.txt            → data.txt.semc
+    ./compress -d data.txt.semc    → data.txt (verified)
+    ./compress -i large_file.bin   → shows what compression would achieve
+"""
+
+import argparse
+import hashlib
+import os
+import sys
+import time
+
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+
+from ljpw.real_compressor import (
+    SemanticCompressor,
+    CompressedData,
+    CompressionType,
+    generate_lsystem,
+    KNOWN_LSYSTEMS,
+)
+
+
+def format_size(size: int) -> str:
+    """Format byte size for human reading."""
+    if size < 1024:
+        return f"{size} B"
+    elif size < 1024 * 1024:
+        return f"{size / 1024:.1f} KB"
+    elif size < 1024 * 1024 * 1024:
+        return f"{size / (1024 * 1024):.1f} MB"
+    else:
+        return f"{size / (1024 * 1024 * 1024):.2f} GB"
+
+
+def compress_file(input_path: str, output_path: str = None, verbose: bool = True) -> bool:
+    """Compress a file using semantic compression."""
+    if not os.path.exists(input_path):
+        print(f"Error: File not found: {input_path}")
+        return False
+
+    if output_path is None:
+        output_path = input_path + ".semc"
+
+    compressor = SemanticCompressor()
+
+    # Read input
+    if verbose:
+        print(f"Reading: {input_path}")
+
+    with open(input_path, 'rb') as f:
+        data = f.read()
+
+    original_size = len(data)
+    if verbose:
+        print(f"Original size: {format_size(original_size)}")
+        print("Analyzing semantic structure...")
+
+    # Compress
+    start = time.time()
+    compressed = compressor.compress(data)
+    elapsed = time.time() - start
+
+    compressed_bytes = compressed.to_bytes()
+    compressed_size = len(compressed_bytes)
+    ratio = original_size / compressed_size if compressed_size > 0 else float('inf')
+
+    # Write output
+    with open(output_path, 'wb') as f:
+        f.write(compressed_bytes)
+
+    if verbose:
+        print(f"\nCompression complete:")
+        print(f"  Type: {compressed.compression_type.name}")
+        print(f"  Original: {format_size(original_size)}")
+        print(f"  Compressed: {format_size(compressed_size)}")
+        print(f"  Ratio: {ratio:,.1f}:1")
+        print(f"  Time: {elapsed:.2f}s")
+        print(f"  Output: {output_path}")
+        print(f"  Hash: {compressed.original_hash}")
+
+    return True
+
+
+def decompress_file(input_path: str, output_path: str = None, verbose: bool = True) -> bool:
+    """Decompress a .semc file."""
+    if not os.path.exists(input_path):
+        print(f"Error: File not found: {input_path}")
+        return False
+
+    if output_path is None:
+        if input_path.endswith('.semc'):
+            output_path = input_path[:-5]
+        else:
+            output_path = input_path + ".decompressed"
+
+    compressor = SemanticCompressor()
+
+    # Read compressed
+    if verbose:
+        print(f"Reading: {input_path}")
+
+    with open(input_path, 'rb') as f:
+        compressed_bytes = f.read()
+
+    compressed_size = len(compressed_bytes)
+
+    # Parse
+    try:
+        compressed = CompressedData.from_bytes(compressed_bytes)
+    except ValueError as e:
+        print(f"Error: {e}")
+        return False
+
+    if verbose:
+        print(f"Compressed size: {format_size(compressed_size)}")
+        print(f"Original size: {format_size(compressed.original_size)}")
+        print(f"Type: {compressed.compression_type.name}")
+        print("Regenerating from seed...")
+
+    # Decompress
+    start = time.time()
+    try:
+        data = compressor.decompress(compressed)
+    except ValueError as e:
+        print(f"Error: Decompression failed - {e}")
+        return False
+    elapsed = time.time() - start
+
+    # Verify
+    result_hash = hashlib.sha256(data).hexdigest()[:32]
+    verified = result_hash == compressed.original_hash
+
+    # Write output
+    with open(output_path, 'wb') as f:
+        f.write(data)
+
+    if verbose:
+        print(f"\nDecompression complete:")
+        print(f"  Size: {format_size(len(data))}")
+        print(f"  Time: {elapsed:.2f}s")
+        print(f"  Verified: {'✓ MATCH' if verified else '✗ HASH MISMATCH'}")
+        print(f"  Output: {output_path}")
+
+    return verified
+
+
+def analyze_file(input_path: str) -> None:
+    """Analyze a file without writing output."""
+    if not os.path.exists(input_path):
+        print(f"Error: File not found: {input_path}")
+        return
+
+    compressor = SemanticCompressor()
+
+    print(f"Analyzing: {input_path}")
+
+    with open(input_path, 'rb') as f:
+        data = f.read()
+
+    original_size = len(data)
+    print(f"Original size: {format_size(original_size)}")
+    print()
+
+    # Compress
+    compressed = compressor.compress(data)
+    compressed_size = compressed.compressed_size()
+    ratio = compressed.ratio()
+
+    print("Analysis:")
+    print(f"  Compression type: {compressed.compression_type.name}")
+    print(f"  Compressed would be: {format_size(compressed_size)}")
+    print(f"  Ratio: {ratio:,.1f}:1")
+    print(f"  Savings: {(1 - compressed_size/original_size) * 100:.1f}%")
+    print()
+
+    # Show seed info
+    if compressed.compression_type == CompressionType.PATTERN_REPEAT:
+        seed = compressed.seed
+        if isinstance(seed, bytes):
+            print(f"  Pattern: {len(seed)} bytes repeated {compressed.generator_params['count']} times")
+            if len(seed) < 100:
+                try:
+                    print(f"  Preview: {seed.decode('utf-8')[:60]}...")
+                except:
+                    print(f"  Preview: {seed.hex()[:60]}...")
+    elif compressed.compression_type == CompressionType.LSYSTEM:
+        print(f"  L-System axiom: {compressed.seed}")
+        print(f"  Rules: {compressed.generator_params['rules']}")
+        print(f"  Iterations: {compressed.generator_params['iterations']}")
+    elif compressed.compression_type == CompressionType.SEQUENCE:
+        print(f"  Sequence: {compressed.seed}")
+    elif compressed.compression_type == CompressionType.DICTIONARY:
+        print(f"  (Standard dictionary compression - no semantic pattern found)")
+
+
+def run_demo():
+    """Run demonstration of semantic compression."""
+    print("=" * 70)
+    print("SEMANTIC COMPRESSION DEMONSTRATION")
+    print("Formula: M = B × L^n × φ^(-d)")
+    print("=" * 70)
+
+    compressor = SemanticCompressor()
+
+    demos = []
+
+    # Demo 1: Pattern repetition
+    print("\n1. PATTERN REPETITION")
+    print("-" * 40)
+    pattern = b"Hello, World! "
+    data = pattern * 10000
+    compressed = compressor.compress(data)
+    print(f"   Pattern: 'Hello, World! ' × 10,000")
+    print(f"   Original: {format_size(len(data))}")
+    print(f"   Compressed: {format_size(compressed.compressed_size())}")
+    print(f"   Ratio: {compressed.ratio():,.1f}:1")
+    demos.append(('Pattern ×10k', len(data), compressed.compressed_size()))
+
+    # Demo 2: L-System fractal
+    print("\n2. L-SYSTEM FRACTAL (Koch Snowflake)")
+    print("-" * 40)
+    lsys = KNOWN_LSYSTEMS['koch']
+    for n in [5, 8, 10]:
+        text = generate_lsystem(lsys['axiom'], lsys['rules'], n)
+        data = text.encode()
+        compressed = compressor.compress(data)
+        print(f"   n={n}: {format_size(len(data))} → {compressed.compressed_size()} bytes ({compressed.ratio():,.0f}:1)")
+        demos.append((f'Koch n={n}', len(data), compressed.compressed_size()))
+
+    # Demo 3: Mathematical sequences
+    print("\n3. MATHEMATICAL SEQUENCES")
+    print("-" * 40)
+
+    # Fibonacci
+    a, b = 1, 1
+    fib = [a, b]
+    for _ in range(998):
+        fib.append(fib[-1] + fib[-2])
+    data = ','.join(map(str, fib)).encode()
+    compressed = compressor.compress(data)
+    print(f"   Fibonacci (1000 terms): {format_size(len(data))} → {compressed.compressed_size()} bytes")
+    demos.append(('Fibonacci 1k', len(data), compressed.compressed_size()))
+
+    # Primes
+    primes = []
+    candidate = 2
+    while len(primes) < 500:
+        if all(candidate % p != 0 for p in primes):
+            primes.append(candidate)
+        candidate += 1
+    data = ','.join(map(str, primes)).encode()
+    compressed = compressor.compress(data)
+    print(f"   First 500 primes: {format_size(len(data))} → {compressed.compressed_size()} bytes")
+    demos.append(('Primes 500', len(data), compressed.compressed_size()))
+
+    # Summary
+    print("\n" + "=" * 70)
+    print("SUMMARY")
+    print("=" * 70)
+    total_orig = sum(d[1] for d in demos)
+    total_comp = sum(d[2] for d in demos)
+    print(f"\nTotal original: {format_size(total_orig)}")
+    print(f"Total compressed: {format_size(total_comp)}")
+    print(f"Overall ratio: {total_orig/total_comp:,.1f}:1")
+
+    print("\nThe formula M = B × L^n × φ^(-d) works because:")
+    print("  • B (Brick/Seed) contains the generative rule")
+    print("  • L (Love/Binding) is the expansion factor per iteration")
+    print("  • n (Iterations) creates exponential growth")
+    print("  • φ^(-d) (Distance) accounts for translation loss")
+    print("\nCompression ratio ≈ L^n when receiver has the generator.")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Semantic Compressor — compress using M = B × L^n × φ^(-d)",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  ./compress data.txt            Compress data.txt → data.txt.semc
+  ./compress -d data.txt.semc    Decompress to data.txt
+  ./compress -i large.bin        Analyze without compressing
+  ./compress --demo              Run demonstration
+
+The semantic compressor finds the generative seed of data:
+  • Repeating patterns → pattern + count
+  • L-systems/fractals → axiom + rules + iterations
+  • Sequences → formula + parameters
+  • Other → dictionary compression fallback
+        """
+    )
+
+    parser.add_argument('file', nargs='?', help='File to compress/decompress')
+    parser.add_argument('-d', '--decompress', action='store_true', help='Decompress mode')
+    parser.add_argument('-o', '--output', help='Output file path')
+    parser.add_argument('-i', '--info', action='store_true', help='Analyze file without writing')
+    parser.add_argument('--demo', action='store_true', help='Run demonstration')
+    parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
+
+    args = parser.parse_args()
+
+    if args.demo:
+        run_demo()
+        return 0
+
+    if not args.file:
+        parser.print_help()
+        return 1
+
+    verbose = not args.quiet
+
+    if args.info:
+        analyze_file(args.file)
+        return 0
+
+    if args.decompress:
+        success = decompress_file(args.file, args.output, verbose)
+    else:
+        success = compress_file(args.file, args.output, verbose)
+
+    return 0 if success else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
