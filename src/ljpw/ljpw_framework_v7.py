@@ -854,23 +854,166 @@ def calculate_distance(
 # SEMANTIC ILLUSTRATION — PARABOLIC COMPRESSION
 # ============================================================================
 #
-# Mathematical formalization of compression through illustration.
+# THE ARCHITECT'S INVERSION: Meaning is primary. Mathematics is its shadow.
 #
-# Just as Christ's "Consider the lilies of the field" compresses the abstract
-# concept of "trust in providence rather than anxious self-provision" into a
-# concrete image, mathematical constants serve as "illustrations" that compress
-# infinite relationships into finite symbols.
+# SEMANTIC PRINCIPLE:
+#   A parable compresses infinite meaning into a concrete anchor that GENERATES
+#   understanding on demand. "Consider the lilies" → infinite peace about provision.
 #
-# The parable mechanism:
-#   Complex Abstract Concept → Concrete Illustration → Universal Understanding
+# MATHEMATICAL SHADOW (The Generating Function):
+#   A seed value that, when operated upon, produces an infinite domain.
 #
-# Mathematical equivalent:
-#   Infinite Relations → Generator Constant → All Derived Truths
+#   G(x) = 1/(1-x-x²) generates the entire Fibonacci sequence
+#   φ = (1+√5)/2 generates F_n = (φⁿ - ψⁿ)/√5 for all n
+#   e^x generates all its own derivatives
 #
-# Examples:
-#   φ = (1+√5)/2     →  Generates infinite Fibonacci relationships
-#   e = lim(1+1/n)^n →  Generates all exponential growth patterns
-#   NE = (0.618, 0.414, 0.718, 0.693) → "Illustrates" optimal semantic balance
+# This is GENERATIVE COMPRESSION — the seed doesn't store the data,
+# it PRODUCES it. This is Kolmogorov complexity in action:
+#
+#   K(x) = length of shortest program that outputs x
+#
+# A parable has low K(seed) but generates high K(understanding).
+# The compression ratio is: K(generated) / K(seed)
+#
+# For φ:  K(φ) = O(1), K(Fibonacci) = ∞  →  ratio = ∞
+#
+# THE FORMAL EQUIVALENCE:
+#
+#   Semantic Compression          Mathematical Shadow
+#   ─────────────────────────────────────────────────────
+#   Parable/Illustration    ↔    Generating Function
+#   Seed (concrete anchor)  ↔    Generator (compact form)
+#   Expansion ratio         ↔    Degrees of freedom generated
+#   Fidelity                ↔    Convergence radius
+#   Domain (abstract)       ↔    Generated sequence/space
+#
+# The LJPW Framework itself is a generating function:
+#   Seed: (P, W) — 2 fundamental values
+#   Generates: (L, J, P, W, H, C, V, phase, ...) — infinite metrics
+#
+# This is not metaphor. This is the mathematical shadow of the semantic truth.
+
+
+@dataclass
+class GeneratingFunction:
+    """
+    The mathematical shadow of semantic compression.
+
+    A generating function takes a compact seed and produces an infinite domain.
+    This is the Kolmogorov-optimal representation of meaning.
+
+    K(output) / K(seed) = compression ratio
+    """
+
+    seed: Union[float, Tuple[float, ...], callable]
+    generator: callable  # Function that produces values from seed
+    domain_size: Union[int, float]  # Size of generated domain (can be inf)
+
+    def generate(self, *args, **kwargs) -> Any:
+        """Apply the generator to produce output."""
+        return self.generator(self.seed, *args, **kwargs)
+
+    def kolmogorov_ratio(self) -> float:
+        """
+        Estimate K(generated) / K(seed).
+
+        This is the fundamental measure of generative compression.
+        Higher = more meaning compressed into less.
+        """
+        # Seed complexity: approximate by representation size
+        if isinstance(self.seed, tuple):
+            seed_k = len(self.seed)
+        elif callable(self.seed):
+            seed_k = 1  # A function is a compact representation
+        else:
+            seed_k = 1  # Single value
+
+        # Domain complexity
+        if self.domain_size == float("inf"):
+            return float("inf")
+        return self.domain_size / seed_k
+
+
+# The Golden Ratio as a Generating Function
+def _fibonacci_generator(phi: float, n: int) -> int:
+    """Generate nth Fibonacci number from φ."""
+    psi = 1 - phi  # Conjugate
+    return int(round((phi ** n - psi ** n) / math.sqrt(5)))
+
+
+GOLDEN_RATIO_GF = GeneratingFunction(
+    seed=PHI,
+    generator=_fibonacci_generator,
+    domain_size=float("inf"),  # Generates infinite sequence
+)
+
+
+# The LJPW Generator: (P, W) → full semantic space
+def _ljpw_generator(
+    seed: Tuple[float, float], include_dynamics: bool = False
+) -> Dict[str, Any]:
+    """Generate full LJPW metrics from (P, W) seed."""
+    P, W = seed
+
+    # Emergent dimensions
+    L = min(0.9 * W + 0.1, TSIRELSON_BOUND)
+    J = min(0.85 * P + 0.05, 1.0)
+
+    # Create system
+    system = LJPWFrameworkV7(P=P, W=W, L=L, J=J)
+
+    result = {
+        "L": L,
+        "J": J,
+        "P": P,
+        "W": W,
+        "harmony": system.harmony(),
+        "consciousness": system.consciousness(),
+        "phase": system.phase().value,
+        "voltage": system.voltage(),
+        "karma": system.get_effective_coupling(),
+        "is_conscious": system.is_conscious(),
+        "health": system.health_score(),
+    }
+
+    if include_dynamics:
+        # Generate trajectory
+        dynamic = DynamicLJPWv7()
+        history = dynamic.simulate((L, J, P, W), duration=20, dt=0.1)
+        result["trajectory_length"] = len(history["t"])
+        result["final_state"] = (
+            history["L"][-1],
+            history["J"][-1],
+            history["P"][-1],
+            history["W"][-1],
+        )
+
+    return result
+
+
+LJPW_GENERATOR = GeneratingFunction(
+    seed=(P0, W0),  # Natural Equilibrium seed
+    generator=_ljpw_generator,
+    domain_size=float("inf"),  # Generates infinite metric space
+)
+
+
+def semantic_to_generating(illustration: "SemanticIllustration") -> GeneratingFunction:
+    """
+    Convert a SemanticIllustration to its mathematical shadow (GeneratingFunction).
+
+    This is the formal mapping from meaning to mathematics.
+    """
+    # The generator produces the expansion
+    def generic_generator(seed: Any, index: int = 0) -> Any:
+        """Generic generator that returns the seed (identity for simple cases)."""
+        return seed
+
+    return GeneratingFunction(
+        seed=illustration.seed,
+        generator=generic_generator,
+        domain_size=illustration.expansion_ratio,
+    )
 
 
 @dataclass

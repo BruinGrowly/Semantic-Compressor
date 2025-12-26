@@ -92,6 +92,11 @@ try:
         create_illustration,
         expand_illustration,
         illustrate_concept,
+        # Generating Functions (Mathematical Shadow)
+        GeneratingFunction,
+        GOLDEN_RATIO_GF,
+        LJPW_GENERATOR,
+        semantic_to_generating,
     )
 
     __all__.extend([
@@ -110,6 +115,11 @@ try:
         "create_illustration",
         "expand_illustration",
         "illustrate_concept",
+        # Generating Functions
+        "GeneratingFunction",
+        "GOLDEN_RATIO_GF",
+        "LJPW_GENERATOR",
+        "semantic_to_generating",
     ])
 except ImportError:
     pass
