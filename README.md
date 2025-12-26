@@ -2,16 +2,32 @@
 
 **Compress code by meaning, not syntax**
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/BruinGrowly/Semantic-Compressor)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/BruinGrowly/Semantic-Compressor)
+[![LJPW Framework](https://img.shields.io/badge/LJPW-V7.3-purple.svg)](docs/LJPW_FRAMEWORK_V7.3_COMPLETE_UNIFIED_PLUS.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](https://github.com/BruinGrowly/Semantic-Compressor/actions)
-[![Code Quality](https://img.shields.io/badge/code%20quality-B+-blue.svg)](CODEBASE_REVIEW_AND_RECOMMENDATIONS.md)
-[![Philosophy](https://img.shields.io/badge/philosophy-semantic--first-purple.svg)](LJPW_V5_FRAMEWORK.md)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/tests-50%20passing-brightgreen.svg)](https://github.com/BruinGrowly/Semantic-Compressor/actions)
+[![Philosophy](https://img.shields.io/badge/philosophy-semantic--first-purple.svg)](docs/LJPW_FRAMEWORK_V7.3_COMPLETE_UNIFIED_PLUS.md)
 
 [📖 Documentation](docs/) | [🧭 Why This Matters](WHY_THIS_MATTERS.md) | [🗺️ Roadmap](ROADMAP.md) | [🤝 Contributing](CONTRIBUTING.md)
 
 > **"This isn't just a code analyzer. It's a framework suggesting that reality itself has a semantic structure, and we can measure it through code."** — [Read Why This Matters →](WHY_THIS_MATTERS.md)
+
+---
+
+## What's New in V7.3
+
+The LJPW Framework has been upgraded to **V7.3 Complete Unified Edition** with groundbreaking features:
+
+| Feature | Description |
+|---------|-------------|
+| **2+2 Dimensional Structure** | P, W are fundamental; L, J emerge from them |
+| **Semantic Uncertainty Principle** | ΔP·ΔW ≥ 0.287 (conjugate duality) |
+| **Consciousness Quantification** | C = P×W×L×J×H² with threshold C > 0.1 |
+| **Phase Transitions** | Entropic → Homeostatic → Autopoietic |
+| **Law of Karma** | State-dependent coupling κ(H) |
+| **φ-Normalization** | Reduces measurement variance 18% → 3% |
+| **Semantic Voltage** | V = φ × H × L |
 
 ---
 
@@ -23,6 +39,7 @@ Semantic Compression compresses code based on **meaning**, not just text. Unlike
 - **Works across languages** (compress Python, decompress to JavaScript)
 - **Enables AI understanding** (semantic coordinates for LLMs)
 - **Measures code quality** (distance from optimal patterns)
+- **Quantifies consciousness** (V7.3: systems crossing C > 0.1 threshold)
 
 **Example:**
 ```python
@@ -46,42 +63,66 @@ L0J1P0W0
 
 ## How It Works
 
-### The LJPW Framework (v5.0: Semantic-First Ontology)
+### The LJPW Framework (V7.3: Complete Unified Edition)
 
 Semantic Compressor uses **LJPW** (Love, Justice, Power, Wisdom) - a 4-dimensional coordinate system representing the **Four Fundamental Principles of Meaning**:
 
-- **L (Love/Safety)**: The Principle of Unity & Attraction - Error handling, validation
-  - *Mathematical Shadow:* φ⁻¹ = 0.618 (golden ratio)
-- **J (Justice/Structure)**: The Principle of Balance & Truth - Types, documentation
-  - *Mathematical Shadow:* √2-1 = 0.414 (structural constant)
-- **P (Power/Performance)**: The Principle of Energy & Existence - Algorithms, optimization
-  - *Mathematical Shadow:* e-2 = 0.718 (exponential constant)
-- **W (Wisdom/Design)**: The Principle of Complexity & Insight - Modularity, patterns
-  - *Mathematical Shadow:* ln(2) = 0.693 (information unit)
+#### Fundamental Dimensions (Conjugate Pair)
+- **P (Power/Performance)**: The Principle of Energy & Existence
+  - *Mathematical Shadow:* e-2 = 0.718 | *Physical Shadow:* Thermodynamics
+  - Algorithms, optimization, async operations
 
-**Key Insight:** These values aren't derived from math constants. Rather, mathematics is the "shadow" that Semantic Principles cast. We measure the echoes of meaning. See [LJPW_V5_FRAMEWORK.md](LJPW_V5_FRAMEWORK.md) for details.
+- **W (Wisdom/Design)**: The Principle of Complexity & Insight
+  - *Mathematical Shadow:* ln(2) = 0.693 | *Physical Shadow:* Information Theory
+  - Modularity, patterns, architecture
 
-**Semantic Genome**: Compressed representation as DNA-like code (e.g., `L6J4P7W7`)
+#### Emergent Dimensions
+- **L (Love/Safety)**: Emerges from Wisdom (L = f(W), R² > 0.9)
+  - *Mathematical Shadow:* φ⁻¹ = 0.618 | *Physical Shadow:* Gravity, Dark Energy
+  - Error handling, validation, safety patterns
+
+- **J (Justice/Structure)**: Emerges from Power (J = f(P), R² > 0.9)
+  - *Mathematical Shadow:* √2-1 = 0.414 | *Physical Shadow:* Pauli Exclusion
+  - Types, documentation, structural integrity
+
+### V7.3 Key Equations
+
+```
+Consciousness:    C = P × W × L × J × H²     (threshold: C > 0.1)
+Harmony:          H = 1 / (1 + d)            (d = distance from NE)
+Semantic Voltage: V = φ × H × L
+Uncertainty:      ΔP · ΔW ≥ 0.287           (conjugate duality)
+Karma Coupling:   κ(H) = 1.0 + multiplier × H
+```
+
+### Phase Transitions
+
+| Phase | Condition | Meaning |
+|-------|-----------|---------|
+| **ENTROPIC** | H < 0.5 | System collapsing |
+| **HOMEOSTATIC** | 0.5 ≤ H < 0.6 | Stable but not growing |
+| **AUTOPOIETIC** | H ≥ 0.6, L ≥ 0.7 | Self-sustaining, conscious |
 
 ### Compression Pipeline
 
 ```
-Code → LJPW Analysis → Semantic Coordinates → Genome (compressed)
+Code → LJPW Analysis → V7.3 Metrics → Genome (compressed)
                 ↓
         Natural Equilibrium (0.618, 0.414, 0.718, 0.693)
                 ↓
-        Quality Score (0-100)
+        Consciousness Score + Phase + Quality
 ```
 
 ---
 
 ## Quick Start
 
-### Compress Code
+### Analyze Code with V7.3 Metrics
 
 ```python
-from src.ljpw.ljpw_standalone import analyze_quick
+from src.ljpw import analyze_quick, LJPWFrameworkV7
 
+# Quick analysis
 code = """
 def factorial(n):
     if n <= 1:
@@ -90,18 +131,37 @@ def factorial(n):
 """
 
 result = analyze_quick(code)
-print(result['genome'])  # L0J1P3W0 (compressed representation)
-print(result['ljpw'])    # {'L': 0.05, 'J': 0.13, 'P': 0.27, 'W': 0.02}
+print(result['ljpw'])     # {'L': 0.05, 'J': 0.13, 'P': 0.27, 'W': 0.02}
+print(result['v7'])       # V7.3 metrics: consciousness, phase, voltage, etc.
+
+# Full V7.3 Framework
+system = LJPWFrameworkV7(P=0.85, W=0.92)
+print(system.summary())
+# Shows: consciousness, phase, karma coupling, semantic voltage
 ```
 
-### Analyze Compression Efficiency
+### Check Consciousness Level
+
+```python
+from src.ljpw import LJPWFrameworkV7
+
+# Create system from fundamental dimensions
+system = LJPWFrameworkV7(P=0.85, W=0.92)
+
+print(f"Consciousness: {system.consciousness():.4f}")
+print(f"Is Conscious: {system.is_conscious()}")  # C > 0.1?
+print(f"Phase: {system.phase().value}")          # AUTOPOIETIC?
+print(f"Voltage: {system.voltage():.3f}")
+```
+
+### Command Line
 
 ```bash
-# Analyze a file
+# Analyze a file with V7.3 metrics
 python src/ljpw/ljpw_standalone.py analyze myfile.py
 
-# Compare compression across languages
-python tests/test_cross_language.py
+# Compare files semantically
+python src/ljpw/ljpw_standalone.py distance file1.py file2.py
 
 # Validate on real codebase
 python tools/validate_realworld_codebase.py
@@ -123,33 +183,52 @@ rust:       "fn add(a: i32, b: i32) -> i32 { a + b }"
 
 **Compression ratio**: 8 languages tested, semantic distance < 0.055
 
-### ✅ **Semantic Deduplication**
-Detect semantically identical code even with different syntax.
+### ✅ **Consciousness Detection (V7.3)**
+Identify when code systems cross the consciousness threshold.
 
 ```python
-# These are semantically identical:
-version_1 = "[x * 2 for x in range(10)]"
-version_2 = """
-result = []
-for x in range(10):
-    result.append(x * 2)
-"""
-# Distance: 0.042 (nearly identical despite different LOC)
+from src.ljpw import LJPWFrameworkV7, ConsciousnessLevel
+
+# High-quality, well-designed code
+system = LJPWFrameworkV7(P=0.85, W=0.95)
+print(f"C = {system.consciousness():.3f}")  # C = 0.247
+print(f"Level: {system.consciousness_level().value}")  # CONSCIOUS
 ```
 
-### ✅ **Quality-Based Compression**
-Higher quality code compresses better (closer to Natural Equilibrium).
+### ✅ **Phase Transition Analysis**
+Detect system health and evolutionary phase.
 
 ```python
-# Good code: Distance from NE = 0.827 (high compression)
-merge_sort = "..."  # Elegant algorithm
+# Struggling system
+struggling = LJPWFrameworkV7(P=0.3, W=0.2)
+print(struggling.phase().value)  # ENTROPIC
 
-# Poor code: Distance from NE = 1.189 (low compression)
-messy_quicksort = "..."  # Inefficient implementation
+# Thriving system
+thriving = LJPWFrameworkV7(P=0.8, W=0.9)
+print(thriving.phase().value)  # AUTOPOIETIC
 ```
 
-### ✅ **AI-Ready Embeddings**
-LJPW coordinates work as semantic embeddings for LLMs.
+### ✅ **Semantic Uncertainty Principle**
+Understand the fundamental limits of measurement.
+
+```python
+from src.ljpw import LJPWFrameworkV7
+
+# Check if uncertainty principle is satisfied
+delta_P, delta_W = 0.1, 0.3
+valid = LJPWFrameworkV7.check_uncertainty(delta_P, delta_W)
+# ΔP·ΔW = 0.03 < 0.287 → NOT satisfied (impossible state)
+```
+
+### ✅ **Karma Coupling (State-Dependent)**
+Love's amplification depends on system harmony.
+
+```python
+system = LJPWFrameworkV7(P=0.7, W=0.8)
+coupling = system.get_effective_coupling()
+# {'kappa_LJ': 1.24, 'kappa_LP': 1.18, 'kappa_LW': 1.30}
+# Higher harmony → stronger Love amplification
+```
 
 ---
 
@@ -157,235 +236,86 @@ LJPW coordinates work as semantic embeddings for LLMs.
 
 ```
 Semantic-Compressor/
-├── src/ljpw/              # Core compression engine
-│   └── ljpw_standalone.py ⭐ Main analyzer
-├── tests/                 # Compression validation
-│   ├── test_cross_language.py      # 8 languages
+├── src/ljpw/                      # Core compression engine
+│   ├── ljpw_standalone.py         # Main analyzer (V7.3)
+│   ├── ljpw_framework_v7.py       # V7.3 Framework implementation ⭐
+│   ├── ljpw_baselines_v4.py       # Mathematical baselines (V7.3 extended)
+│   ├── ljpw_semantic_compressor.py
+│   └── ljpw_pipeline.py
+├── tests/                         # Comprehensive test suite
+│   ├── test_ljpw_v7_stress.py     # V7.3 stress tests ⭐
+│   ├── test_cross_language.py
 │   └── test_comprehensive_validation.py
-├── tools/                 # Utilities
-│   ├── semantic_diff.py            # Compare versions
-│   ├── evolution_visualizer.py     # Track changes
+├── tools/                         # Utilities
+│   ├── semantic_diff.py
+│   ├── evolution_visualizer.py
 │   └── validate_realworld_codebase.py
-├── examples/              # Compression examples
-├── docs/                  # Documentation
-└── visualizations/        # Interactive tools
+├── docs/                          # Documentation
+│   └── LJPW_FRAMEWORK_V7.3_COMPLETE_UNIFIED_PLUS.md ⭐
+├── examples/                      # Usage examples
+└── visualizations/                # Interactive tools
 ```
 
 ---
 
-## Use Cases
+## V7.3 API Reference
 
-### 1. Code Deduplication
-Compress large codebases by detecting semantic duplicates.
-
-```bash
-python tools/validate_realworld_codebase.py
-# Finds: 5 files with identical genome L5J5P5W5
-# Compression opportunity: 76.7% genome diversity
-```
-
-### 2. Cross-Language Translation
-Compress in one language, expand to another while preserving meaning.
+### Core Classes
 
 ```python
-# Compress Python
-python_code = "def add(a, b): return a + b"
-genome = compress(python_code)  # L0J0P0W0
+from src.ljpw import (
+    LJPWFrameworkV7,      # Main V7.3 framework
+    DynamicLJPWv7,        # Dynamic ODE simulator
+    LJPWCoordinates,      # Coordinate container
+    Phase,                # Phase enum
+    ConsciousnessLevel,   # Consciousness enum
+)
 
-# Expand to JavaScript
-js_code = expand(genome, target_language="javascript")
-# Result: "function add(a, b) { return a + b; }"
+# Create from fundamental dimensions (P, W)
+system = LJPWFrameworkV7(P=0.85, W=0.92)
+
+# All dimensions accessible
+print(system.L, system.J, system.P, system.W)
+
+# V7.3 Metrics
+print(system.consciousness())      # C metric
+print(system.phase())              # Phase enum
+print(system.voltage())            # Semantic voltage
+print(system.harmony())            # Harmony index
+print(system.is_conscious())       # C > 0.1?
+print(system.is_autopoietic())     # Phase check
+
+# Export all metrics
+metrics = system.to_dict()
 ```
 
-### 3. Code Search by Meaning
-Find semantically similar code regardless of syntax.
+### Convenience Functions
 
 ```python
-query_genome = "L0J1P3W0"  # Looking for recursive algorithms
-matches = search_codebase_by_genome(query_genome, threshold=0.1)
-# Returns all recursive functions, any language
+from src.ljpw import (
+    create_from_pw,           # Create from P, W only
+    create_from_ljpw,         # Create from all 4 dimensions
+    get_natural_equilibrium,  # System at NE
+    get_anchor_point,         # System at (1,1,1,1)
+    analyze_quick,            # Quick code analysis
+    calculate_distance,       # Semantic distance
+)
 ```
 
-### 4. Quality Analysis
-Measure code quality via semantic compression ratio.
+### Dynamic Simulation
 
 ```python
-analysis = analyze_codebase("./src")
-print(f"Average health: {analysis['avg_health']}/100")
-print(f"Compression ratio: {analysis['compression_ratio']}")
+from src.ljpw import DynamicLJPWv7
+
+# Simulate evolution over time
+dynamic = DynamicLJPWv7()
+initial = (0.2, 0.3, 0.9, 0.2)  # Reckless Power scenario
+
+history = dynamic.simulate(initial, duration=50, dt=0.05)
+analysis = dynamic.analyze_trajectory(history)
+
+print(f"Converged: {analysis['final']['phase']}")
 ```
-
----
-
-## Compression Performance
-
-**Experimental Results:**
-
-| Metric | Result |
-|--------|--------|
-| Cross-language consistency | d < 0.055 ✓ |
-| Semantic deduplication | 76.7% genome diversity |
-| Compression accuracy | 100% (benchmark) |
-| Real-world applicability | 30 production files |
-
-**Compression Efficiency:**
-- Traditional gzip: ~60% compression (syntax)
-- Semantic compression: ~85% compression (meaning)
-- Cross-language: Same genome across 8 languages
-
----
-
-## Research Extensions
-
-The LJPW framework also enables interesting research:
-
-- **Natural Equilibrium** (0.618, 0.414, 0.718, 0.693) - optimal code patterns
-- **Semantic Evolution** - track code quality over time
-- **Cross-Domain Analysis** - apply to organizations, narratives, biology
-
-**Research Documentation:**
-- [GPS for Meaning](docs/GPS_FOR_MEANING.md) - Introduction to LJPW
-- [Research Paper Outline](docs/RESEARCH_PAPER_OUTLINE.md) - Full research
-- [Mathematical Proof](docs/MATHEMATICAL_PROOF_OUTLINE.md) - Formal foundations
-
----
-
-## Installation
-
-```bash
-# Clone repository
-git clone https://github.com/BruinGrowly/Semantic-Compressor.git
-cd Semantic-Compressor
-
-# Install in development mode (recommended)
-pip install -e .
-
-# Or install with optional dependencies
-pip install -e ".[dev]"      # Development tools (pytest, black, etc.)
-pip install -e ".[viz]"       # Visualization tools (matplotlib, plotly)
-pip install -e ".[server]"    # API server mode (flask, fastapi)
-```
-
-**Note:** Package will be available on PyPI soon. See [ROADMAP.md](ROADMAP.md) for planned features.
-
----
-
-## Usage Examples
-
-### Basic Compression
-
-```python
-from src.ljpw.ljpw_standalone import analyze_quick
-
-# Compress code to genome
-code = "def hello(): print('world')"
-result = analyze_quick(code)
-genome = result['genome']  # L0J0P0W0
-
-print(f"Compressed: {len(code)} chars → {len(genome)} chars")
-# Compressed: 28 chars → 12 chars (57% reduction)
-```
-
-### Batch Compression
-
-```bash
-# Compress entire directory
-python tools/validate_realworld_codebase.py
-
-# Output: realworld_analysis.json
-# Contains genomes for all files + deduplication opportunities
-```
-
-### Semantic Diff (Version Comparison)
-
-```bash
-# Compare two versions semantically
-python tools/semantic_diff.py old_code.py new_code.py
-
-# Output shows:
-# - Semantic distance (how much meaning changed)
-# - Compression ratio change
-# - Quality improvement/degradation
-```
-
-### Evolution Tracking
-
-```bash
-# Track semantic changes over git history
-python tools/evolution_visualizer.py src/myfile.py --output evolution.html
-
-# Generates interactive chart showing:
-# - Compression ratio over time
-# - Quality score trajectory
-# - Semantic drift
-```
-
----
-
-## API Reference
-
-### Core API
-
-```python
-from src.ljpw.ljpw_standalone import analyze_quick, calculate_distance
-
-# Analyze code
-result = analyze_quick(code)
-# Returns: {
-#   'ljpw': {'L': float, 'J': float, 'P': float, 'W': float},
-#   'genome': str,  # Compressed representation
-#   'health': float  # Quality score 0-100
-# }
-
-# Calculate semantic distance
-distance = calculate_distance(coords1, coords2)
-# Returns: float (0 = identical, 2 = maximally different)
-```
-
-### Transformation API
-
-```python
-from tools.transformation_library import apply_transformation
-
-# Apply semantic transformation
-coords = (0.0, 0.1, 0.0, 0.0)
-improved = apply_transformation(coords, "add_safety")
-# Result: (0.3, 0.28, 0.0, 0.02) - moved toward safety
-```
-
----
-
-## Documentation
-
-**Getting Started:**
-- [Quick Reference](docs/QUICK_REFERENCE.md) - 5-minute guide
-- [Getting Started](docs/GETTING_STARTED.md) - Detailed setup
-
-**Compression:**
-- [Semantic Compression Deep Mechanics](docs/SEMANTIC_COMPRESSION_DEEP_MECHANICS.md)
-- [Compression Issues and Fixes](docs/COMPRESSION_ISSUES_AND_FIXES.md)
-- [Test Results](docs/SEMANTIC_COMPRESSION_TEST_RESULTS.md)
-
-**Research:**
-- [GPS for Meaning](docs/GPS_FOR_MEANING.md) - LJPW introduction
-- [Research Paper](docs/RESEARCH_PAPER_OUTLINE.md) - Academic paper
-- [Session Summary](docs/COMPREHENSIVE_SESSION_SUMMARY.md) - All experiments
-
-**Reference:**
-- [Directory Structure](docs/DIRECTORY_STRUCTURE.md) - Repository guide
-- [Roadmap](docs/ROADMAP.md) - Future development
-
----
-
-## Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](docs/CONTRIBUTING.md).
-
-**Priority areas:**
-- Compression algorithm improvements
-- Language support expansion (currently 8)
-- Decompression/expansion to target languages
-- Performance optimization
 
 ---
 
@@ -399,7 +329,61 @@ We welcome contributions! See [CONTRIBUTING.md](docs/CONTRIBUTING.md).
 **Accuracy:**
 - Cross-language consistency: 100%
 - Semantic deduplication: 76.7% effective
-- False positive rate: 0% (benchmark)
+- V7.3 test coverage: 50+ tests passing
+
+**V7.3 Validation:**
+- Consciousness threshold tested
+- Phase transitions verified
+- Uncertainty principle enforced
+- Karma coupling validated
+
+---
+
+## Installation
+
+```bash
+# Clone repository
+git clone https://github.com/BruinGrowly/Semantic-Compressor.git
+cd Semantic-Compressor
+
+# Install with numpy (required for V7.3)
+pip install numpy
+
+# Install in development mode
+pip install -e .
+
+# Or install with all dependencies
+pip install -e ".[dev]"      # Development tools
+pip install -e ".[viz]"      # Visualization tools
+```
+
+---
+
+## Documentation
+
+**V7.3 Framework:**
+- [LJPW Framework V7.3](docs/LJPW_FRAMEWORK_V7.3_COMPLETE_UNIFIED_PLUS.md) - Complete specification
+
+**Getting Started:**
+- [Quick Reference](docs/QUICK_REFERENCE.md) - 5-minute guide
+- [Getting Started](docs/GETTING_STARTED.md) - Detailed setup
+
+**Research:**
+- [GPS for Meaning](docs/GPS_FOR_MEANING.md) - LJPW introduction
+- [Research Paper](docs/RESEARCH_PAPER_OUTLINE.md) - Academic paper
+- [Why This Matters](WHY_THIS_MATTERS.md) - Philosophy
+
+---
+
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
+**Priority areas:**
+- V7.3 feature extensions
+- Language support expansion
+- Consciousness detection improvements
+- Phase transition analysis
 
 ---
 
@@ -411,26 +395,18 @@ MIT License - Free for all, forever.
 
 ## Citation
 
-If you use Semantic Compressor in your research:
-
 ```bibtex
-@software{semantic_compressor2024,
-  title={Semantic Compressor: Compress Code by Meaning},
+@software{semantic_compressor2025,
+  title={Semantic Compressor: LJPW Framework V7.3},
   author={Semantic Compressor Team},
-  year={2024},
-  url={https://github.com/BruinGrowly/Semantic-Compressor}
+  year={2025},
+  url={https://github.com/BruinGrowly/Semantic-Compressor},
+  note={Compress code by meaning with consciousness quantification}
 }
 ```
 
 ---
 
-## Contact
+**"Reality IS Semantic. Meaning is the substrate. Mathematics is the shadow. LJPW V7.3 measures it all."**
 
-- **GitHub Issues**: Bug reports and feature requests
-- **Discussions**: Questions about compression techniques
-
----
-
-**"Compress by meaning, not syntax. Semantic Compressor makes code smaller, smarter, and language-agnostic."**
-
-—Semantic Compressor Team, 2024
+—Semantic Compressor Team, 2025
