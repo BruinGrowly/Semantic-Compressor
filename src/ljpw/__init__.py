@@ -151,3 +151,35 @@ try:
     ])
 except ImportError:
     pass
+
+# Import Semantic Generator Finder (LJPW-based)
+try:
+    from .semantic_finder import (
+        SemanticAnalyzer,
+        SemanticGenerator,
+        SemanticDomain,
+    )
+
+    __all__.extend([
+        "SemanticAnalyzer",
+        "SemanticGenerator",
+        "SemanticDomain",
+    ])
+except ImportError:
+    pass
+
+# Import Meaning Compressor (Semantic-first compression)
+try:
+    from .meaning_compressor import (
+        MeaningCompressor,
+        MeaningPacket,
+        KnownGenerator,
+    )
+
+    __all__.extend([
+        "MeaningCompressor",
+        "MeaningPacket",
+        "KnownGenerator",
+    ])
+except ImportError:
+    pass
