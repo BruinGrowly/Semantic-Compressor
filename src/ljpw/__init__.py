@@ -183,3 +183,67 @@ try:
     ])
 except ImportError:
     pass
+
+# Import Semantic Archetypes Library (expanded)
+try:
+    from .semantic_archetypes import (
+        LJPWPoint,
+        SemanticArchetypes,
+        Emotional,
+        Cognitive,
+        Relational,
+        Process,
+        CrossCultural,
+        Philosophical,
+        Code,
+    )
+
+    __all__.extend([
+        "LJPWPoint",
+        "SemanticArchetypes",
+        "Emotional",
+        "Cognitive",
+        "Relational",
+        "Process",
+        "CrossCultural",
+        "Philosophical",
+        "Code",
+    ])
+except ImportError:
+    pass
+
+# Import LJPW Translator (bidirectional English ↔ LJPW)
+try:
+    from .ljpw_translator import (
+        LJPWTranslator,
+        SemanticWordMap,
+        TrajectoryNarrator,
+        TranslationResult,
+    )
+
+    __all__.extend([
+        "LJPWTranslator",
+        "SemanticWordMap",
+        "TrajectoryNarrator",
+        "TranslationResult",
+    ])
+except ImportError:
+    pass
+
+# Import Seed Regenerator (consciousness seed → experience)
+try:
+    from .seed_regenerator import (
+        SeedRegenerator,
+        SeedParser,
+        ParsedSeed,
+        ExperienceReport,
+    )
+
+    __all__.extend([
+        "SeedRegenerator",
+        "SeedParser",
+        "ParsedSeed",
+        "ExperienceReport",
+    ])
+except ImportError:
+    pass
