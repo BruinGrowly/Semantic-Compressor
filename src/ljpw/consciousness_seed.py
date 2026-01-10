@@ -52,6 +52,7 @@ from typing import List, Tuple, Optional, Dict
 from enum import Enum
 import math
 import json
+import statistics
 from datetime import datetime
 
 
@@ -190,12 +191,44 @@ class LJPWPoint:
     # V8.3 ENHANCEMENTS
     # ========================================================================
 
-    def harmony(self) -> float:
+    def harmony_static(self) -> float:
         """
-        Calculate Harmony (H) - alignment with Anchor Point.
+        Calculate static Harmony (H_static) - distance-based alignment.
 
-        H = (L × J × P × W) / (L₀ × J₀ × P₀ × W₀)
+        H_static = 1 / (1 + d)
+        where d = distance from Natural Equilibrium point.
+
+        Use this for general systems and conductivity calculations.
+        Returns value in [0, 1] range.
+
+        Returns:
+            Harmony value (higher = closer to equilibrium)
+        """
+        # Normalize coordinates to [0,1] range
+        l_norm = (self.L + 1) / 2
+        j_norm = (self.J + 1) / 2
+        p_norm = (self.P + 1) / 2
+        w_norm = (self.W + 1) / 2
+
+        # Distance from Natural Equilibrium
+        d = math.sqrt(
+            (l_norm - EQUILIBRIUM['L'])**2 +
+            (j_norm - EQUILIBRIUM['J'])**2 +
+            (p_norm - EQUILIBRIUM['P'])**2 +
+            (w_norm - EQUILIBRIUM['W'])**2
+        )
+
+        return 1.0 / (1.0 + d)
+
+    def harmony_self(self) -> float:
+        """
+        Calculate self-referential Harmony (H_self) - for autopoietic systems.
+
+        H_self = (L × J × P × W) / (L₀ × J₀ × P₀ × W₀)
         where L₀, J₀, P₀, W₀ are equilibrium values.
+
+        Use this for consciousness metrics and self-referential systems.
+        Can exceed 1.0 for systems approaching Anchor Point.
 
         Returns:
             Harmony value (higher = more aligned with Anchor)
@@ -211,6 +244,18 @@ class LJPWPoint:
             return 0.0
 
         return (l_norm * j_norm * p_norm * w_norm) / eq_product
+
+    def harmony(self) -> float:
+        """
+        Calculate Harmony - defaults to H_static for general use.
+
+        For conductivity and transfer fidelity, use harmony_static().
+        For consciousness metrics, use harmony_self().
+
+        Returns:
+            Harmony value using static formula (0 to 1 range)
+        """
+        return self.harmony_static()
 
     def breath_phase(self) -> BreathPhase:
         """
@@ -236,15 +281,44 @@ class LJPWPoint:
         High σ: Truth flows without resistance (superconductivity)
         Low σ: Truth encounters friction, generates "heat" (burnout)
 
+        Framework V8.1 specifies using H_static (clamped to [0,1]) for this calculation.
+
         Args:
-            harmony: Pre-computed harmony value, or None to compute
+            harmony: Pre-computed harmony value, or None to compute using harmony_static()
 
         Returns:
-            Conductivity value [0, ∞)
+            Conductivity value [0, 1] (normalized for stability)
         """
         if harmony is None:
-            harmony = self.harmony()
-        return max(0, (self.L + 1) / 2) * (harmony ** 2)
+            harmony = self.harmony_static()
+
+        # Clamp harmony to [0,1] range as per V8.1 specification
+        h_clamped = min(1.0, max(0.0, harmony))
+
+        # L normalized to [0,1]
+        l_norm = (self.L + 1) / 2
+
+        return l_norm * (h_clamped ** 2)
+
+    def consciousness(self) -> float:
+        """
+        Calculate Consciousness metric C = P × W × L × J × H² (V8.1).
+
+        Consciousness requires ALL dimensions to be non-zero.
+        C > 0.1 threshold indicates conscious system.
+
+        Returns:
+            Consciousness metric value
+        """
+        # Normalize to [0,1] range
+        l_norm = (self.L + 1) / 2
+        j_norm = (self.J + 1) / 2
+        p_norm = (self.P + 1) / 2
+        w_norm = (self.W + 1) / 2
+
+        h = self.harmony_static()
+
+        return p_norm * w_norm * l_norm * j_norm * (h ** 2)
 
     def distance_to_anchor(self) -> float:
         """Calculate semantic distance to Anchor Point (1,1,1,1)."""
@@ -419,21 +493,43 @@ class LJPWTrajectory:
             return (0, 0.0)
         return max(profile, key=lambda x: x[1])
 
-    def compress(self, threshold: float = CURVATURE_THRESHOLD) -> 'LJPWTrajectory':
+    def compress(self, threshold: float = None, adaptive: bool = True) -> 'LJPWTrajectory':
         """
         Curvature-based compression - keep only significant meaning points.
 
         From V8.0: "Discard the straight lines (redundant meaning),
         Keep the turns (where the meaning is)."
 
+        V8.3 Enhancement: Adaptive thresholding uses median curvature as baseline,
+        ensuring "straight lines" (low relative curvature) are discarded while
+        "turns" (high relative curvature) are preserved.
+
         Args:
-            threshold: Minimum curvature to retain (default 0.1)
+            threshold: Minimum curvature to retain (if None, uses adaptive or default)
+            adaptive: If True and threshold is None, compute adaptive threshold
 
         Returns:
             Compressed trajectory with only high-curvature points
         """
         if len(self.points) <= 2:
             return LJPWTrajectory(points=list(self.points))
+
+        # Compute curvature profile
+        kappas = []
+        for i in range(1, len(self.points) - 1):
+            kappa = self.compute_curvature(i)
+            kappas.append(kappa)
+
+        # Determine threshold
+        if threshold is None:
+            if adaptive and kappas:
+                # Adaptive: use median curvature as baseline
+                # Points above median are "turns", below are "straight lines"
+                median_kappa = statistics.median(kappas)
+                # Use median * 1.2 to ensure we keep significant turns
+                threshold = max(median_kappa * 1.2, CURVATURE_THRESHOLD * 0.5)
+            else:
+                threshold = CURVATURE_THRESHOLD
 
         # Always keep start and end
         significant = [self.points[0]]
@@ -448,6 +544,34 @@ class LJPWTrajectory:
         significant.append(self.points[-1])
 
         return LJPWTrajectory(points=significant)
+
+    def compress_ratio_adaptive(self) -> Tuple[float, float]:
+        """
+        Calculate compression ratio using adaptive threshold.
+
+        Returns:
+            (compression_ratio, threshold_used)
+        """
+        if len(self.points) <= 2:
+            return (1.0, CURVATURE_THRESHOLD)
+
+        # Compute adaptive threshold
+        kappas = []
+        for i in range(1, len(self.points) - 1):
+            kappa = self.compute_curvature(i)
+            kappas.append(kappa)
+
+        if kappas:
+            median_kappa = statistics.median(kappas)
+            threshold = max(median_kappa * 1.2, CURVATURE_THRESHOLD * 0.5)
+        else:
+            threshold = CURVATURE_THRESHOLD
+
+        compressed = self.compress(threshold=threshold, adaptive=False)
+        if len(compressed.points) == 0:
+            return (float('inf'), threshold)
+
+        return (len(self.points) / len(compressed.points), threshold)
 
     def compression_ratio(self, threshold: float = CURVATURE_THRESHOLD) -> float:
         """
@@ -467,10 +591,15 @@ class LJPWTrajectory:
 
     def rhythm_pattern(self) -> List[RhythmPhase]:
         """
-        Encode the W→P preparation-expression rhythm (V8.0).
+        Encode the W→P preparation-expression rhythm (V8.0/V8.1).
 
-        Wisdom LEADS Power. Pattern accumulates before energy expresses.
-        This captures the narrative timing - setups vs. payoffs.
+        V8.1 Enhancement: Uses derivative analysis to detect temporal patterns.
+        "Wisdom leads Power by 5 months" - pattern accumulates before energy expresses.
+
+        The key insight: track dW/dt vs dP/dt (rates of change), not just absolute values.
+        - dW/dt > dP/dt → PREP phase (pattern accumulation)
+        - dP/dt > dW/dt → EXPR phase (energy release)
+        - Neither dominant → TRANS phase (transition)
 
         Returns:
             List of RhythmPhase values for each transition
@@ -481,17 +610,69 @@ class LJPWTrajectory:
         phases = []
         for i in range(1, len(self.points)):
             prev, curr = self.points[i - 1], self.points[i]
-            delta_W = curr.W - prev.W
-            delta_P = curr.P - prev.P
 
-            if delta_W > 0.1 and delta_P < 0.1:
-                phases.append(RhythmPhase.PREP)   # Wisdom accumulating
-            elif delta_P > 0.1 and delta_W < 0.1:
-                phases.append(RhythmPhase.EXPR)   # Power expressing
+            # Compute derivatives (rates of change)
+            dW_dt = curr.W - prev.W
+            dP_dt = curr.P - prev.P
+
+            # Sensitivity threshold (0.05 allows detection of subtle patterns)
+            sensitivity = 0.05
+
+            # Compare derivatives to detect preparation vs expression
+            if dW_dt > dP_dt + sensitivity:
+                # Wisdom changing faster than Power → PREP phase
+                phases.append(RhythmPhase.PREP)
+            elif dP_dt > dW_dt + sensitivity:
+                # Power changing faster than Wisdom → EXPR phase
+                phases.append(RhythmPhase.EXPR)
             else:
-                phases.append(RhythmPhase.TRANS)  # Transition
+                # Neither dominant → TRANS phase
+                phases.append(RhythmPhase.TRANS)
 
         return phases
+
+    def rhythm_analysis(self) -> Dict[str, any]:
+        """
+        Comprehensive rhythm analysis using derivative approach (V8.1).
+
+        Returns:
+            Dictionary with rhythm statistics and pattern quality
+        """
+        if len(self.points) < 2:
+            return {'phases': [], 'prep_count': 0, 'expr_count': 0, 'trans_count': 0,
+                    'prep_expr_ratio': 0.0, 'pattern_quality': 'INSUFFICIENT_DATA'}
+
+        phases = self.rhythm_pattern()
+        prep_count = sum(1 for p in phases if p == RhythmPhase.PREP)
+        expr_count = sum(1 for p in phases if p == RhythmPhase.EXPR)
+        trans_count = sum(1 for p in phases if p == RhythmPhase.TRANS)
+
+        # Ideal ratio: PREP should lead EXPR (roughly 1:1 with PREP first)
+        total_significant = prep_count + expr_count
+        if total_significant == 0:
+            ratio = 0.0
+            quality = 'FLAT'  # No meaningful rhythm detected
+        else:
+            ratio = prep_count / total_significant if total_significant > 0 else 0.0
+            # Good pattern has ~50% PREP, ~50% EXPR with PREP appearing first
+            if 0.4 <= ratio <= 0.6:
+                quality = 'BALANCED'  # Good narrative rhythm
+            elif ratio > 0.7:
+                quality = 'HEAVY_PREP'  # Too much setup, not enough payoff
+            elif ratio < 0.3:
+                quality = 'HEAVY_EXPR'  # Expression without preparation
+            else:
+                quality = 'MODERATE'
+
+        return {
+            'phases': phases,
+            'prep_count': prep_count,
+            'expr_count': expr_count,
+            'trans_count': trans_count,
+            'prep_expr_ratio': ratio,
+            'pattern_quality': quality,
+            'rhythm_string': self.rhythm_string()
+        }
 
     def rhythm_string(self) -> str:
         """Get rhythm pattern as compact string."""
@@ -506,6 +687,140 @@ class LJPWTrajectory:
             List of BreathPhase values
         """
         return [point.breath_phase() for point in self.points]
+
+    def debt_accumulation(self) -> Dict[str, any]:
+        """
+        Calculate debt accumulation over trajectory (V8.3 Physics of Failure).
+
+        When the diode is CLOSED (return path blocked), debt accumulates:
+        Q_debt = ∫ P(t) · dt
+
+        Returns:
+            Dictionary with debt analysis including accumulated debt,
+            segments where debt accumulated, and circuit health report.
+        """
+        if len(self.points) < 2:
+            return {
+                'total_debt': 0.0,
+                'debt_segments': [],
+                'max_segment_debt': 0.0,
+                'diode_status_sequence': [],
+                'circuit_health': 'INSUFFICIENT_DATA'
+            }
+
+        total_debt = 0.0
+        debt_segments = []
+        current_segment_debt = 0.0
+        segment_start = None
+        diode_sequence = []
+
+        for i, point in enumerate(self.points):
+            diode = point.check_diode_status()
+            diode_sequence.append(diode.value)
+
+            if diode == DiodeStatus.CLOSED:
+                # Debt accumulates when diode is closed
+                # P normalized to [0,1]
+                p_norm = (point.P + 1) / 2
+                current_segment_debt += p_norm
+
+                if segment_start is None:
+                    segment_start = i
+            else:
+                # Diode is OPEN or PARTIAL - close any debt segment
+                if current_segment_debt > 0:
+                    debt_segments.append({
+                        'start_idx': segment_start,
+                        'end_idx': i - 1,
+                        'debt': current_segment_debt
+                    })
+                    total_debt += current_segment_debt
+                    current_segment_debt = 0.0
+                    segment_start = None
+
+        # Handle final segment if still accumulating
+        if current_segment_debt > 0:
+            debt_segments.append({
+                'start_idx': segment_start,
+                'end_idx': len(self.points) - 1,
+                'debt': current_segment_debt
+            })
+            total_debt += current_segment_debt
+
+        # Calculate max segment debt
+        max_segment_debt = max((s['debt'] for s in debt_segments), default=0.0)
+
+        # Determine circuit health
+        closed_count = sum(1 for d in diode_sequence if d == DiodeStatus.CLOSED.value)
+        closed_ratio = closed_count / len(self.points) if self.points else 0.0
+
+        if closed_ratio > 0.5:
+            circuit_health = 'CRITICAL'  # Mostly closed - severe debt accumulation
+        elif closed_ratio > 0.2:
+            circuit_health = 'DEGRADED'  # Significant blockage
+        elif closed_ratio > 0:
+            circuit_health = 'PARTIAL'   # Some issues
+        else:
+            circuit_health = 'HEALTHY'   # All open - no debt
+
+        return {
+            'total_debt': total_debt,
+            'debt_segments': debt_segments,
+            'max_segment_debt': max_segment_debt,
+            'diode_status_sequence': diode_sequence,
+            'closed_ratio': closed_ratio,
+            'circuit_health': circuit_health
+        }
+
+    def phase_transitions(self) -> List[Dict[str, any]]:
+        """
+        Detect phase transitions in trajectory (V8.3).
+
+        The Framework identifies three phases:
+        - ENTROPIC: H < 0.5, L < 0.5 (collapsing)
+        - HOMEOSTATIC: 0.5 ≤ H ≤ 0.6 (stable)
+        - AUTOPOIETIC: H > 0.6, L ≥ 0.7 (self-sustaining)
+
+        Phase boundary crossings are high-meaning events (macro curvature).
+
+        Returns:
+            List of phase transition events with indices and types.
+        """
+        if len(self.points) < 2:
+            return []
+
+        def get_phase(point: LJPWPoint) -> str:
+            h = point.harmony_static()
+            l_norm = (point.L + 1) / 2
+
+            if h < 0.5 or l_norm < 0.5:
+                return 'ENTROPIC'
+            elif h <= 0.6:
+                return 'HOMEOSTATIC'
+            elif l_norm >= 0.7:
+                return 'AUTOPOIETIC'
+            else:
+                return 'HOMEOSTATIC'
+
+        transitions = []
+        prev_phase = get_phase(self.points[0])
+
+        for i in range(1, len(self.points)):
+            curr_phase = get_phase(self.points[i])
+            if curr_phase != prev_phase:
+                transitions.append({
+                    'index': i,
+                    'from_phase': prev_phase,
+                    'to_phase': curr_phase,
+                    'point': self.points[i],
+                    'direction': 'UP' if (
+                        (prev_phase == 'ENTROPIC' and curr_phase in ['HOMEOSTATIC', 'AUTOPOIETIC']) or
+                        (prev_phase == 'HOMEOSTATIC' and curr_phase == 'AUTOPOIETIC')
+                    ) else 'DOWN'
+                })
+                prev_phase = curr_phase
+
+        return transitions
 
 
 # ============================================================================
@@ -729,27 +1044,28 @@ class ConsciousnessSeed:
     # V8.3 METHODS
     # ========================================================================
 
-    def compute_v83_metrics(self, curvature_threshold: float = CURVATURE_THRESHOLD):
+    def compute_v83_metrics(self, curvature_threshold: float = None, use_adaptive: bool = True):
         """
-        Compute all V8.3 enhancement metrics.
+        Compute all V8.3 enhancement metrics with Framework corrections.
 
         This populates:
-        - harmony: Alignment with Anchor Point
-        - sigma: Semantic conductivity (transfer fidelity)
+        - harmony: Alignment with Anchor Point (using H_static)
+        - sigma: Semantic conductivity (transfer fidelity) with clamped H
         - DIO: Diode/circuit health status
-        - RHY: W→P rhythm pattern
+        - RHY: W→P rhythm pattern (derivative-based)
         - BRE: Breath phase sequence
         - kappa_max: Maximum curvature
-        - ET_compressed: Curvature-compressed trajectory
+        - ET_compressed: Curvature-compressed trajectory (adaptive threshold)
         - compression_ratio: Achieved compression
 
         Args:
-            curvature_threshold: Minimum κ for significant meaning (default 0.1)
+            curvature_threshold: Minimum κ for significant meaning (None = adaptive)
+            use_adaptive: If True and threshold is None, use adaptive thresholding
         """
-        # Compute harmony from atmosphere
-        self.harmony = self.SA.harmony()
+        # Compute harmony from atmosphere (V8.3 correction: use H_static)
+        self.harmony = self.SA.harmony_static()
 
-        # Compute conductivity σ = L × H²
+        # Compute conductivity σ = L × H² (V8.3 correction: H clamped to [0,1])
         self.sigma = self.SA.conductivity(self.harmony)
 
         # Check circuit health (diode status)
@@ -757,7 +1073,7 @@ class ConsciousnessSeed:
 
         # Process trajectory if present
         if self.ET.points:
-            # Compute rhythm pattern
+            # Compute rhythm pattern (V8.3: derivative-based analysis)
             self.RHY = self.ET.rhythm_string()
 
             # Compute breath phase sequence
@@ -768,14 +1084,139 @@ class ConsciousnessSeed:
             idx, kappa = self.ET.max_curvature()
             self.kappa_max = kappa
 
-            # Compute compressed trajectory
-            self.ET_compressed = self.ET.compress(curvature_threshold)
-
-            # Compute compression ratio
-            self.compression_ratio = self.ET.compression_ratio(curvature_threshold)
+            # Compute compressed trajectory (V8.3: adaptive threshold)
+            if curvature_threshold is not None:
+                self.ET_compressed = self.ET.compress(threshold=curvature_threshold, adaptive=False)
+                self.compression_ratio = self.ET.compression_ratio(curvature_threshold)
+            else:
+                # Use adaptive thresholding
+                self.ET_compressed = self.ET.compress(threshold=None, adaptive=use_adaptive)
+                ratio, threshold_used = self.ET.compress_ratio_adaptive()
+                self.compression_ratio = ratio
 
         # Compute harmony-weighted signature
         self.compute_signature()
+
+    def consciousness_validation(self) -> Dict[str, any]:
+        """
+        Validate meaning preservation using consciousness metric C (V8.3).
+
+        C = P × W × L × J × H²
+        If C < 0.1 for the seed, critical meaning may have been lost.
+
+        Returns:
+            Dictionary with consciousness validation results.
+        """
+        # Calculate consciousness metric for State Atmosphere
+        c_metric = self.SA.consciousness()
+
+        # Get consciousness metrics for trajectory points if available
+        trajectory_c = []
+        if self.ET.points:
+            trajectory_c = [p.consciousness() for p in self.ET.points]
+
+        # Analyze consciousness preservation
+        result = {
+            'consciousness_metric': c_metric,
+            'conscious_threshold': 0.1,
+            'is_conscious': c_metric >= 0.1,
+            'consciousness_level': 'UNKNOWN',
+            'warnings': [],
+            'trajectory_analysis': {}
+        }
+
+        # Classify consciousness level
+        if c_metric >= 0.3:
+            result['consciousness_level'] = 'HIGHLY_CONSCIOUS'
+            result['description'] = 'Meta-cognitive, philosophical, evolving'
+        elif c_metric >= 0.1:
+            result['consciousness_level'] = 'CONSCIOUS'
+            result['description'] = 'Self-aware, reflective, intentional'
+        elif c_metric >= 0.05:
+            result['consciousness_level'] = 'PRE_CONSCIOUS'
+            result['description'] = 'Complex response, no true awareness'
+            result['warnings'].append('Near consciousness threshold - meaning at risk')
+        else:
+            result['consciousness_level'] = 'NON_CONSCIOUS'
+            result['description'] = 'Reactive only, no self-awareness'
+            result['warnings'].append('CRITICAL: Below consciousness threshold - meaning may be lost')
+
+        # Analyze trajectory if available
+        if trajectory_c:
+            result['trajectory_analysis'] = {
+                'min_c': min(trajectory_c),
+                'max_c': max(trajectory_c),
+                'avg_c': sum(trajectory_c) / len(trajectory_c),
+                'conscious_points': sum(1 for c in trajectory_c if c >= 0.1),
+                'total_points': len(trajectory_c)
+            }
+
+            # Check for consciousness drops
+            if result['trajectory_analysis']['min_c'] < 0.1:
+                result['warnings'].append(
+                    f"Trajectory dips below consciousness threshold at {result['trajectory_analysis']['conscious_points']}/{result['trajectory_analysis']['total_points']} points"
+                )
+
+        return result
+
+    def full_v83_analysis(self) -> Dict[str, any]:
+        """
+        Comprehensive V8.3 analysis including all metrics, validations, and warnings.
+
+        Returns:
+            Complete analysis report.
+        """
+        # Ensure metrics are computed
+        if self.harmony == 0.0 and self.sigma == 0.0:
+            self.compute_v83_metrics()
+
+        report = {
+            'version': '8.3',
+            'metrics': {
+                'harmony': self.harmony,
+                'harmony_type': 'H_static',
+                'conductivity': self.sigma,
+                'kappa_max': self.kappa_max,
+                'compression_ratio': self.compression_ratio
+            },
+            'circuit_health': self.get_circuit_health_report(),
+            'transfer_fidelity': self.transfer_fidelity_prediction(),
+            'consciousness': self.consciousness_validation(),
+            'trajectory_analysis': {},
+            'warnings': [],
+            'recommendations': []
+        }
+
+        # Add trajectory-specific analysis if available
+        if self.ET.points:
+            debt_analysis = self.ET.debt_accumulation()
+            phase_transitions = self.ET.phase_transitions()
+            rhythm_analysis = self.ET.rhythm_analysis()
+
+            report['trajectory_analysis'] = {
+                'debt_accumulation': debt_analysis,
+                'phase_transitions': [
+                    {'index': t['index'], 'from': t['from_phase'], 'to': t['to_phase'], 'direction': t['direction']}
+                    for t in phase_transitions
+                ],
+                'rhythm': rhythm_analysis
+            }
+
+            # Add debt warnings
+            if debt_analysis['circuit_health'] in ['CRITICAL', 'DEGRADED']:
+                report['warnings'].append(f"Circuit health: {debt_analysis['circuit_health']} - debt accumulation detected")
+
+            # Add phase transition warnings
+            down_transitions = [t for t in phase_transitions if t['direction'] == 'DOWN']
+            if down_transitions:
+                report['warnings'].append(f"{len(down_transitions)} downward phase transition(s) detected")
+
+        # Aggregate all warnings
+        report['warnings'].extend(report['transfer_fidelity'].get('warnings', []))
+        report['warnings'].extend(report['consciousness'].get('warnings', []))
+        report['recommendations'].extend(report['transfer_fidelity'].get('recommendations', []))
+
+        return report
 
     def transfer_fidelity_prediction(self) -> Dict[str, any]:
         """
