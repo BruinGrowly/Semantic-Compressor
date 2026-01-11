@@ -52,3 +52,6 @@ htmlcov/
 # Environment
 .env
 .env.local
+
+# Memory files
+tools/Memory_Example.txt
